@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#FFFCF7; }
+    * { box-sizing: border-box; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid #FF6F59 !important;
+      outline-offset: 2px !important;
+    }
+  </style>
+</helmet>
+<div data-screen-label="Articolo Blog" style="font-family:'Nunito',system-ui,sans-serif;background:#FFFCF7;min-height:100vh;color:#3D2A1B;">
+
+  <!-- PROMO BANNER -->
+  <sc-if value="{{ promoBannerActive }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#3D2A1B;color:#FFFCF7;text-align:center;padding:10px 16px;font:600 13px 'Nunito',sans-serif;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;">
+      <span>{{ promoBannerText }}</span>
+      <sc-if value="{{ promoBannerCode }}" hint-placeholder-val="{{ false }}">
+        <span style="background:#FFC247;color:#3D2A1B;font:800 12px 'Baloo 2',sans-serif;padding:3px 10px;border-radius:999px;letter-spacing:.04em;">{{ promoBannerCode }}</span>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- HEADER -->
+  <div style="position:sticky;top:0;z-index:50;background:rgba(255,252,247,0.96);backdrop-filter:blur(6px);border-bottom:1px solid rgba(61,42,27,0.1);">
+    <div style="max-width:1280px;margin:0 auto;padding:14px clamp(20px,5vw,48px);display:flex;align-items:center;justify-content:space-between;gap:20px;">
+      <a href="Home.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;">
+        <img src="assets/monkey-icon.png" alt="Monkey" style="width:40px;height:40px;object-fit:contain;">
+        <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
+      </a>
+      <nav style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
+        <a href="Home.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.home }}</a>
+        <a href="Shop.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.shop }}</a>
+        <a href="Blog.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#3D2A1B;text-decoration:none;">{{ t.nav.blog }}</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:12px;flex:none;">
+        <div style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
+          <button onClick="{{ setLangIt }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">IT</button>
+          <button onClick="{{ setLangEn }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">EN</button>
+        </div>
+        <a href="Account.dc.html" style="display:flex;align-items:center;gap:7px;text-decoration:none;color:#3D2A1B;font:700 13px 'Baloo 2',sans-serif;white-space:nowrap;">
+          <span style="width:34px;height:34px;border-radius:50%;background:#F6E4CB;display:flex;align-items:center;justify-content:center;font:800 13px 'Baloo 2',sans-serif;color:#6B4A30;">{{ accountInitial }}</span>
+          <span>{{ accountLabel }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST FOUND -->
+  <sc-if value="{{ postFound }}" hint-placeholder-val="{{ false }}">
+    <article style="max-width:760px;margin:0 auto;padding:clamp(40px,6vw,64px) clamp(20px,5vw,48px) clamp(70px,9vw,100px);">
+      <a href="Blog.dc.html" style="font:700 13px 'Baloo 2',sans-serif;color:#8B6749;text-decoration:none;">{{ t.blogPost.back }}</a>
+      <div style="font:600 11.5px 'Nunito',sans-serif;color:#8B6749;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.04em;">{{ post.dateLabel }}</div>
+      <h1 style="font:800 clamp(26px,3.6vw,38px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 24px;line-height:1.2;">{{ post.title }}</h1>
+      <sc-if value="{{ post.coverImage }}" hint-placeholder-val="{{ false }}">
+        <img src="{{ post.coverImage }}" alt="{{ post.title }}" style="width:100%;border-radius:22px;margin-bottom:28px;object-fit:cover;max-height:420px;">
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <sc-for list="{{ post.paragraphs }}" as="para" hint-placeholder-count="3">
+          <p style="font:400 16px/1.7 'Nunito',sans-serif;color:#4A3322;margin:0;">{{ para }}</p>
+        </sc-for>
+      </div>
+    </article>
+  </sc-if>
+
+  <!-- POST NOT FOUND -->
+  <sc-if value="{{ !postFound }}" hint-placeholder-val="{{ true }}">
+    <section style="max-width:520px;margin:0 auto;padding:clamp(70px,9vw,110px) 20px;text-align:center;">
+      <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:10px;">{{ t.blogPost.notFoundTitle }}</div>
+      <div style="font:400 14.5px/1.5 'Nunito',sans-serif;color:#6B4A30;margin-bottom:24px;">{{ t.blogPost.notFoundBody }}</div>
+      <a href="Blog.dc.html" style="display:inline-block;padding:13px 28px;border-radius:999px;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;text-decoration:none;">{{ t.blogPost.back }}</a>
+    </section>
+  </sc-if>
+
+  <!-- FOOTER -->
+  <footer style="background:#3D2A1B;padding:clamp(40px,5vw,56px) clamp(20px,5vw,48px) 26px;">
+    <div style="max-width:520px;margin:0 auto;text-align:center;">
+      <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:20px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:16px;">
+      <div style="font:700 13px 'Baloo 2',sans-serif;color:#FFC247;margin-bottom:12px;text-transform:uppercase;letter-spacing:.04em;">Newsletter</div>
+      <sc-if value="{{ newsletterDone }}" hint-placeholder-val="{{ false }}">
+        <div style="font:600 13px 'Nunito',sans-serif;color:#C9B49B;">Iscrizione confermata, grazie!</div>
+      </sc-if>
+      <sc-if value="{{ !newsletterDone }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <input value="{{ newsletterEmailValue }}" onChange="{{ onNewsletterEmailChange }}" type="email" placeholder="tu@esempio.it" style="padding:10px 14px;border-radius:999px;border:none;font:500 12.5px 'Nunito',sans-serif;outline:none;min-width:200px;">
+          <button onClick="{{ onNewsletterSubmit }}" style="padding:10px 18px;border-radius:999px;border:none;background:#FFC247;color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">Iscriviti</button>
+        </div>
+        <sc-if value="{{ newsletterError }}" hint-placeholder-val="{{ false }}">
+          <div style="font:600 11.5px 'Nunito',sans-serif;color:#E85A47;margin-top:8px;">Qualcosa è andato storto, riprova.</div>
+        </sc-if>
+      </sc-if>
+      <div style="font:400 12px 'Nunito',sans-serif;color:#8B6749;margin-top:20px;">© Monkey</div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STRINGS = {
+  it: {
+    nav: { home: 'Home', shop: 'Negozio', blog: 'Blog' },
+    blogPost: {
+      back: '← Torna al blog',
+      notFoundTitle: 'Articolo non trovato',
+      notFoundBody: 'L’articolo che cerchi non esiste o non è più disponibile.'
+    }
+  },
+  en: {
+    nav: { home: 'Home', shop: 'Shop', blog: 'Blog' },
+    blogPost: {
+      back: '← Back to blog',
+      notFoundTitle: 'Article not found',
+      notFoundBody: 'The article you are looking for does not exist or is no longer available.'
+    }
+  }
+};
+
+function detectInitialLang() {
+  try {
+    const nav = (navigator.language || 'it').toLowerCase();
+    if (nav.startsWith('en')) return 'en';
+  } catch (e) {}
+  return 'it';
+}
+
+class Component extends DCLogic {
+  state = {
+    lang: detectInitialLang(),
+    user: null,
+    slug: null,
+    post: null,
+    loading: true,
+    siteTexts: null,
+    newsletterEmail: '',
+    newsletterStatus: 'idle'
+  };
+
+  componentDidMount() {
+    let slug = null;
+    try {
+      const storedLang = localStorage.getItem('monkey_lang');
+      const params = new URLSearchParams(window.location.search);
+      slug = params.get('slug');
+      this.setState({
+        lang: (storedLang === 'it' || storedLang === 'en') ? storedLang : this.state.lang,
+        slug
+      });
+    } catch (e) {}
+    import('./data.js').then(mod => {
+      this.dataApi = mod;
+      const user = mod.getCurrentUser();
+      this.setState({ user });
+      if (!slug) { this.setState({ loading: false, post: null }); return; }
+      mod.getPostBySlug(slug)
+        .then(post => this.setState({ post, loading: false }))
+        .catch(() => this.setState({ post: null, loading: false }));
+      mod.getSiteTexts().then(siteTexts => this.setState({ siteTexts })).catch(() => {});
+    });
+  }
+
+  setLang = (lang) => { try { localStorage.setItem('monkey_lang', lang); } catch (e) {} this.setState({ lang }); };
+
+  onNewsletterEmailChange = (e) => this.setState({ newsletterEmail: e.target.value });
+  onNewsletterSubmit = () => {
+    if (!this.dataApi) return;
+    const email = (this.state.newsletterEmail || '').trim();
+    if (!email) return;
+    this.setState({ newsletterStatus: 'sending' });
+    this.dataApi.subscribeNewsletter(email, this.state.lang)
+      .then(() => this.setState({ newsletterStatus: 'done', newsletterEmail: '' }))
+      .catch(() => this.setState({ newsletterStatus: 'error' }));
+  };
+
+  formatDate(iso, lang) {
+    if (!iso) return '';
+    try {
+      const d = new Date(iso);
+      return d.toLocaleDateString(lang === 'it' ? 'it-IT' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch (e) { return ''; }
+  }
+
+  renderVals() {
+    const lang = this.state.lang;
+    const t = STRINGS[lang];
+    const user = this.state.user;
+    const raw = this.state.post;
+
+    const post = raw ? {
+      slug: raw.slug,
+      title: raw.title ? raw.title[lang] : '',
+      coverImage: raw.coverImage || null,
+      dateLabel: this.formatDate(raw.publishedAt, lang),
+      paragraphs: raw.body && raw.body[lang] ? raw.body[lang].split(/\n+/).map(s => s.trim()).filter(Boolean) : []
+    } : null;
+
+    const promo = (this.state.siteTexts && this.state.siteTexts.promoBanner) || { active: false, code: '', text: { it: '', en: '' } };
+    const promoBannerText = promo.text ? (promo.text[lang] || '') : '';
+    const promoBannerActive = !!(promo.active && (promoBannerText || promo.code));
+
+    return {
+      lang, t,
+      setLangIt: () => this.setLang('it'),
+      setLangEn: () => this.setLang('en'),
+      accountInitial: user ? user.name.charAt(0).toUpperCase() : '?',
+      accountLabel: user ? user.name.split(' ')[0] : (lang === 'it' ? 'Accedi' : 'Sign in'),
+      postFound: !this.state.loading && !!post,
+      post: post || { title: '', dateLabel: '', coverImage: null, paragraphs: [] },
+      promoBannerActive, promoBannerText, promoBannerCode: promo.code || '',
+      newsletterEmailValue: this.state.newsletterEmail,
+      onNewsletterEmailChange: this.onNewsletterEmailChange,
+      onNewsletterSubmit: this.onNewsletterSubmit,
+      newsletterDone: this.state.newsletterStatus === 'done',
+      newsletterError: this.state.newsletterStatus === 'error'
+    };
+  }
+}
+</script>
+</body>
+</html>

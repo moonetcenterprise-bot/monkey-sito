@@ -1,0 +1,22 @@
+# === Backend Node.js ===
+backend/node_modules/
+backend/.env
+backend/coverage/
+backend/*.log
+backend/npm-install.log
+backend/jest-output.log
+
+# === Generico ===
+node_modules/
+.env
+.env.local
+*.log
+.DS_Store
+Thumbs.db
+
+# === Backup e archivi non necessari nel repository ===
+*.zip
+
+# === Editor/IDE ===
+.vscode/
+.idea/

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#FFFCF7; }
+    * { box-sizing: border-box; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid #FF6F59 !important;
+      outline-offset: 2px !important;
+    }
+  </style>
+</helmet>
+<div data-screen-label="Blog" style="font-family:'Nunito',system-ui,sans-serif;background:#FFFCF7;min-height:100vh;color:#3D2A1B;">
+
+  <!-- PROMO BANNER -->
+  <sc-if value="{{ promoBannerActive }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#3D2A1B;color:#FFFCF7;text-align:center;padding:10px 16px;font:600 13px 'Nunito',sans-serif;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;">
+      <span>{{ promoBannerText }}</span>
+      <sc-if value="{{ promoBannerCode }}" hint-placeholder-val="{{ false }}">
+        <span style="background:#FFC247;color:#3D2A1B;font:800 12px 'Baloo 2',sans-serif;padding:3px 10px;border-radius:999px;letter-spacing:.04em;">{{ promoBannerCode }}</span>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- HEADER -->
+  <div style="position:sticky;top:0;z-index:50;background:rgba(255,252,247,0.96);backdrop-filter:blur(6px);border-bottom:1px solid rgba(61,42,27,0.1);">
+    <div style="max-width:1280px;margin:0 auto;padding:14px clamp(20px,5vw,48px);display:flex;align-items:center;justify-content:space-between;gap:20px;">
+      <a href="Home.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;">
+        <img src="assets/monkey-icon.png" alt="Monkey" style="width:40px;height:40px;object-fit:contain;">
+        <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
+      </a>
+      <nav style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
+        <a href="Home.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.home }}</a>
+        <a href="Shop.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.shop }}</a>
+        <a href="Blog.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#3D2A1B;text-decoration:none;">{{ t.nav.blog }}</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:12px;flex:none;">
+        <div style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
+          <button onClick="{{ setLangIt }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">IT</button>
+          <button onClick="{{ setLangEn }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">EN</button>
+        </div>
+        <a href="Account.dc.html" style="display:flex;align-items:center;gap:7px;text-decoration:none;color:#3D2A1B;font:700 13px 'Baloo 2',sans-serif;white-space:nowrap;">
+          <span style="width:34px;height:34px;border-radius:50%;background:#F6E4CB;display:flex;align-items:center;justify-content:center;font:800 13px 'Baloo 2',sans-serif;color:#6B4A30;">{{ accountInitial }}</span>
+          <span>{{ accountLabel }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <section style="max-width:1280px;margin:0 auto;padding:clamp(40px,6vw,64px) clamp(20px,5vw,48px) clamp(24px,4vw,36px);">
+    <h1 style="font:800 clamp(28px,4vw,40px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 10px;">{{ t.blog.title }}</h1>
+    <p style="font:400 15.5px/1.5 'Nunito',sans-serif;color:#6B4A30;margin:0;max-width:560px;">{{ t.blog.subtitle }}</p>
+  </section>
+
+  <!-- POSTS GRID -->
+  <section style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,48px) clamp(70px,9vw,100px);">
+    <sc-if value="{{ hasPosts }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:26px;">
+        <sc-for list="{{ posts }}" as="post" hint-placeholder-count="0">
+          <a href="BlogPost.dc.html?slug={{ post.slug }}" style="text-decoration:none;display:block;background:#fff;border-radius:22px;border:1px solid rgba(61,42,27,0.1);overflow:hidden;">
+            <div style="position:relative;width:100%;aspect-ratio:16/10;background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 14px,#F6E4CB 14px,#F6E4CB 28px);">
+              <sc-if value="{{ post.coverImage }}" hint-placeholder-val="{{ false }}">
+                <img src="{{ post.coverImage }}" alt="{{ post.title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+              </sc-if>
+            </div>
+            <div style="padding:20px 22px 24px;">
+              <div style="font:600 11.5px 'Nunito',sans-serif;color:#8B6749;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;">{{ post.dateLabel }}</div>
+              <div style="font:800 18px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:8px;line-height:1.25;">{{ post.title }}</div>
+              <div style="font:400 13.5px/1.55 'Nunito',sans-serif;color:#6B4A30;">{{ post.excerpt }}</div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ !hasPosts }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FBEFDD;border-radius:24px;padding:56px 40px;text-align:center;max-width:480px;">
+        <div style="font:600 15px 'Nunito',sans-serif;color:#6B4A30;">{{ t.blog.empty }}</div>
+      </div>
+    </sc-if>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#3D2A1B;padding:clamp(40px,5vw,56px) clamp(20px,5vw,48px) 26px;">
+    <div style="max-width:520px;margin:0 auto;text-align:center;">
+      <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:20px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:16px;">
+      <div style="font:700 13px 'Baloo 2',sans-serif;color:#FFC247;margin-bottom:12px;text-transform:uppercase;letter-spacing:.04em;">Newsletter</div>
+      <sc-if value="{{ newsletterDone }}" hint-placeholder-val="{{ false }}">
+        <div style="font:600 13px 'Nunito',sans-serif;color:#C9B49B;">Iscrizione confermata, grazie!</div>
+      </sc-if>
+      <sc-if value="{{ !newsletterDone }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <input value="{{ newsletterEmailValue }}" onChange="{{ onNewsletterEmailChange }}" type="email" placeholder="tu@esempio.it" style="padding:10px 14px;border-radius:999px;border:none;font:500 12.5px 'Nunito',sans-serif;outline:none;min-width:200px;">
+          <button onClick="{{ onNewsletterSubmit }}" style="padding:10px 18px;border-radius:999px;border:none;background:#FFC247;color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">Iscriviti</button>
+        </div>
+        <sc-if value="{{ newsletterError }}" hint-placeholder-val="{{ false }}">
+          <div style="font:600 11.5px 'Nunito',sans-serif;color:#E85A47;margin-top:8px;">Qualcosa è andato storto, riprova.</div>
+        </sc-if>
+      </sc-if>
+      <div style="font:400 12px 'Nunito',sans-serif;color:#8B6749;margin-top:20px;">© Monkey</div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STRINGS = {
+  it: {
+    nav: { home: 'Home', shop: 'Negozio', blog: 'Blog' },
+    blog: {
+      title: 'Il blog Monkey',
+      subtitle: 'Idee, attività e spunti sul mondo del colorare, per famiglie e appassionati.',
+      empty: 'Non ci sono ancora articoli pubblicati. Torna presto a trovarci!'
+    }
+  },
+  en: {
+    nav: { home: 'Home', shop: 'Shop', blog: 'Blog' },
+    blog: {
+      title: 'The Monkey blog',
+      subtitle: 'Ideas, activities and inspiration about coloring, for families and enthusiasts.',
+      empty: 'No articles published yet. Check back soon!'
+    }
+  }
+};
+
+function detectInitialLang() {
+  try {
+    const nav = (navigator.language || 'it').toLowerCase();
+    if (nav.startsWith('en')) return 'en';
+  } catch (e) {}
+  return 'it';
+}
+
+class Component extends DCLogic {
+  state = {
+    lang: detectInitialLang(),
+    user: null,
+    posts: [],
+    postsLoading: true,
+    siteTexts: null,
+    newsletterEmail: '',
+    newsletterStatus: 'idle'
+  };
+
+  componentDidMount() {
+    try {
+      const storedLang = localStorage.getItem('monkey_lang');
+      this.setState({ lang: (storedLang === 'it' || storedLang === 'en') ? storedLang : this.state.lang });
+    } catch (e) {}
+    import('./data.js').then(mod => {
+      this.dataApi = mod;
+      const user = mod.getCurrentUser();
+      this.setState({ user });
+      mod.getPosts()
+        .then(posts => this.setState({ posts, postsLoading: false }))
+        .catch(() => this.setState({ posts: [], postsLoading: false }));
+      mod.getSiteTexts().then(siteTexts => this.setState({ siteTexts })).catch(() => {});
+    });
+  }
+
+  setLang = (lang) => { try { localStorage.setItem('monkey_lang', lang); } catch (e) {} this.setState({ lang }); };
+
+  onNewsletterEmailChange = (e) => this.setState({ newsletterEmail: e.target.value });
+  onNewsletterSubmit = () => {
+    if (!this.dataApi) return;
+    const email = (this.state.newsletterEmail || '').trim();
+    if (!email) return;
+    this.setState({ newsletterStatus: 'sending' });
+    this.dataApi.subscribeNewsletter(email, this.state.lang)
+      .then(() => this.setState({ newsletterStatus: 'done', newsletterEmail: '' }))
+      .catch(() => this.setState({ newsletterStatus: 'error' }));
+  };
+
+  formatDate(iso, lang) {
+    if (!iso) return '';
+    try {
+      const d = new Date(iso);
+      return d.toLocaleDateString(lang === 'it' ? 'it-IT' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch (e) { return ''; }
+  }
+
+  renderVals() {
+    const lang = this.state.lang;
+    const t = STRINGS[lang];
+    const user = this.state.user;
+
+    const posts = (this.state.posts || []).map(p => ({
+      slug: p.slug,
+      title: p.title ? p.title[lang] : '',
+      excerpt: p.excerpt ? (p.excerpt[lang] || '') : '',
+      coverImage: p.coverImage || null,
+      dateLabel: this.formatDate(p.publishedAt, lang)
+    }));
+
+    const promo = (this.state.siteTexts && this.state.siteTexts.promoBanner) || { active: false, code: '', text: { it: '', en: '' } };
+    const promoBannerText = promo.text ? (promo.text[lang] || '') : '';
+    const promoBannerActive = !!(promo.active && (promoBannerText || promo.code));
+
+    return {
+      lang, t,
+      setLangIt: () => this.setLang('it'),
+      setLangEn: () => this.setLang('en'),
+      accountInitial: user ? user.name.charAt(0).toUpperCase() : '?',
+      accountLabel: user ? user.name.split(' ')[0] : (lang === 'it' ? 'Accedi' : 'Sign in'),
+      posts,
+      hasPosts: posts.length > 0,
+      promoBannerActive, promoBannerText, promoBannerCode: promo.code || '',
+      newsletterEmailValue: this.state.newsletterEmail,
+      onNewsletterEmailChange: this.onNewsletterEmailChange,
+      onNewsletterSubmit: this.onNewsletterSubmit,
+      newsletterDone: this.state.newsletterStatus === 'done',
+      newsletterError: this.state.newsletterStatus === 'error'
+    };
+  }
+}
+</script>
+</body>
+</html>

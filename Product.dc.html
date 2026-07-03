@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#FFFCF7; }
+    * { box-sizing: border-box; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid #FF6F59 !important;
+      outline-offset: 2px !important;
+    }
+  </style>
+</helmet>
+<div data-screen-label="Prodotto" style="font-family:'Nunito',system-ui,sans-serif;background:#FFFCF7;min-height:100vh;color:#3D2A1B;">
+
+  <!-- PROMO BANNER -->
+  <sc-if value="{{ promoBannerActive }}" hint-placeholder-val="{{ false }}">
+    <div style="background:#3D2A1B;color:#FFFCF7;text-align:center;padding:10px 16px;font:600 13px 'Nunito',sans-serif;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;">
+      <span>{{ promoBannerText }}</span>
+      <sc-if value="{{ promoBannerCode }}" hint-placeholder-val="{{ false }}">
+        <span style="background:#FFC247;color:#3D2A1B;font:800 12px 'Baloo 2',sans-serif;padding:3px 10px;border-radius:999px;letter-spacing:.04em;">{{ promoBannerCode }}</span>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- HEADER -->
+  <div style="position:sticky;top:0;z-index:50;background:rgba(255,252,247,0.96);backdrop-filter:blur(6px);border-bottom:1px solid rgba(61,42,27,0.1);">
+    <div style="max-width:1280px;margin:0 auto;padding:14px clamp(20px,5vw,48px);display:flex;align-items:center;justify-content:space-between;gap:20px;">
+      <a href="Home.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;">
+        <img src="assets/monkey-icon.png" alt="Monkey" style="width:40px;height:40px;object-fit:contain;">
+        <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
+      </a>
+      <nav style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
+        <a href="Home.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.home }}</a>
+        <a href="Shop.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.shop }}</a>
+        <a href="Shop.dc.html?cat=kids" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.kids }}</a>
+        <a href="Shop.dc.html?cat=teens" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.teens }}</a>
+        <a href="Shop.dc.html?cat=adults" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.adults }}</a>
+        <a href="Home.dc.html#about" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.about }}</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:12px;flex:none;">
+        <div style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
+          <button onClick="{{ setLangIt }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">IT</button>
+          <button onClick="{{ setLangEn }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">EN</button>
+        </div>
+        <button onClick="{{ toggleCart }}" aria-label="cart" style="position:relative;width:42px;height:42px;border-radius:50%;border:2px solid rgba(61,42,27,0.15);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <span style="display:block;width:18px;height:15px;border:2px solid #3D2A1B;border-radius:2px 2px 5px 5px;position:relative;">
+            <span style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:9px;height:9px;border:2px solid #3D2A1B;border-bottom:none;border-radius:7px 7px 0 0;"></span>
+          </span>
+          <sc-if value="{{ cartCount }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;top:-4px;right:-4px;background:#FF6F59;color:#fff;font:800 10px 'Nunito';width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;">{{ cartCount }}</span>
+          </sc-if>
+        </button>
+        <a href="Account.dc.html" style="display:flex;align-items:center;gap:7px;text-decoration:none;color:#3D2A1B;font:700 13px 'Baloo 2',sans-serif;white-space:nowrap;">
+          <span style="width:34px;height:34px;border-radius:50%;background:#F6E4CB;display:flex;align-items:center;justify-content:center;font:800 13px 'Baloo 2',sans-serif;color:#6B4A30;">{{ accountInitial }}</span>
+          <span>{{ accountLabel }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div style="max-width:1280px;margin:0 auto;padding:20px clamp(20px,5vw,48px) 0;">
+    <div style="font:600 13px 'Nunito',sans-serif;color:#8B6749;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <a href="Home.dc.html" style="color:#8B6749;text-decoration:none;">{{ t.breadcrumb.home }}</a>
+      <span>/</span>
+      <a href="Shop.dc.html" style="color:#8B6749;text-decoration:none;">{{ t.breadcrumb.shop }}</a>
+      <span>/</span>
+      <a href="Shop.dc.html?cat={{ p.category }}" style="color:#8B6749;text-decoration:none;">{{ p.catLabel }}</a>
+      <span>/</span>
+      <span style="color:#3D2A1B;">{{ p.title }}</span>
+    </div>
+  </div>
+
+  <!-- DETAIL -->
+  <section style="max-width:1280px;margin:0 auto;padding:clamp(24px,4vw,40px) clamp(20px,5vw,48px) clamp(60px,8vw,90px);display:flex;gap:48px;flex-wrap:wrap;">
+    <div style="flex:1 1 380px;min-width:300px;max-width:480px;">
+      <div style="position:relative;width:100%;aspect-ratio:1/1;border-radius:28px;overflow:hidden;background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 18px,#F6E4CB 18px,#F6E4CB 36px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
+        <sc-if value="{{ p.imageDataUrl }}" hint-placeholder-val="{{ false }}">
+          <img src="{{ p.imageDataUrl }}" alt="{{ p.title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+        </sc-if>
+        <div style="width:54px;height:54px;border-radius:50%;border:3px solid #B89A7E;"></div>
+        <div style="font:600 11.5px/1.4 ui-monospace,Menlo,monospace;color:#8B6749;text-align:center;padding:0 30px;text-transform:uppercase;letter-spacing:.03em;">{{ p.coverCaption }}</div>
+        <sc-if value="{{ p.badgeLabel }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:18px;left:18px;background:{{ p.badgeBg }};color:{{ p.badgeFg }};font:700 12.5px 'Nunito',sans-serif;padding:7px 14px;border-radius:999px;">{{ p.badgeLabel }}</div>
+        </sc-if>
+        <button onClick="{{ onToggleFav }}" aria-label="favorite" style="position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,252,247,0.92);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:{{ favColor }};">{{ favGlyph }}</button>
+      </div>
+    </div>
+    <div style="flex:1 1 420px;min-width:300px;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+        <span style="{{ p.catGlyphStyle }}"></span>
+        <span style="font:800 11.5px 'Nunito',sans-serif;color:#8B6749;text-transform:uppercase;letter-spacing:.05em;">{{ p.catLabel }}</span>
+      </div>
+      <h1 style="font:800 clamp(28px,3.6vw,38px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 12px;">{{ p.title }}</h1>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+        <div style="position:relative;display:inline-block;font-size:16px;letter-spacing:2px;line-height:1;">
+          <div style="color:#EADFCC;">★★★★★</div>
+          <div style="position:absolute;inset:0;overflow:hidden;width:{{ p.ratingPct }}%;color:#FF6F59;">★★★★★</div>
+        </div>
+        <span style="font:700 14px 'Nunito',sans-serif;color:#3D2A1B;">{{ p.rating }}</span>
+        <span style="font:400 13px 'Nunito',sans-serif;color:#8B6749;">({{ p.reviewsCount }} {{ t.product.reviews }})</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:20px;">
+        <span style="font:800 30px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ p.priceFormatted }}</span>
+        <sc-if value="{{ p.oldPriceFormatted }}" hint-placeholder-val="{{ false }}">
+          <span style="font:600 17px 'Nunito',sans-serif;color:#8B6749;text-decoration:line-through;">{{ p.oldPriceFormatted }}</span>
+        </sc-if>
+      </div>
+      <p style="font:400 15.5px/1.65 'Nunito',sans-serif;color:#6B4A30;margin:0 0 26px;max-width:480px;">{{ p.description }}</p>
+
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:10px;background:#FBEFDD;border-radius:999px;padding:6px;">
+          <button onClick="{{ decQty }}" style="width:32px;height:32px;border-radius:50%;border:none;background:#fff;cursor:pointer;font:700 16px 'Nunito',sans-serif;color:#3D2A1B;">−</button>
+          <span style="font:800 15px 'Baloo 2',sans-serif;color:#3D2A1B;min-width:18px;text-align:center;">{{ qty }}</span>
+          <button onClick="{{ incQty }}" style="width:32px;height:32px;border-radius:50%;border:none;background:#fff;cursor:pointer;font:700 16px 'Nunito',sans-serif;color:#3D2A1B;">+</button>
+        </div>
+        <span style="font:600 13px 'Nunito',sans-serif;color:#8B6749;">{{ t.product.quantity }}</span>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:30px;">
+        <button onClick="{{ addToCart }}" style="flex:1 1 200px;padding:16px 24px;border-radius:999px;border:2px solid #3D2A1B;background:{{ addBg }};color:#3D2A1B;font:700 15px 'Baloo 2',sans-serif;cursor:pointer;">{{ addLabel }}</button>
+        <a href="{{ p.amazonUrl }}" target="_blank" rel="noopener" style="flex:1 1 200px;padding:16px 24px;border-radius:999px;background:{{ accent }};color:#fff;font:700 15px 'Baloo 2',sans-serif;text-align:center;text-decoration:none;">{{ t.product.buyNow }}</a>
+      </div>
+
+      <div style="border-top:1px solid rgba(61,42,27,0.1);padding-top:20px;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;justify-content:space-between;max-width:380px;">
+          <span style="font:600 14px 'Nunito',sans-serif;color:#8B6749;">{{ t.product.format }}</span>
+          <span style="font:700 14px 'Nunito',sans-serif;color:#3D2A1B;">{{ p.format }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;max-width:380px;">
+          <span style="font:600 14px 'Nunito',sans-serif;color:#8B6749;">{{ t.product.pages }}</span>
+          <span style="font:700 14px 'Nunito',sans-serif;color:#3D2A1B;">{{ p.pages }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;max-width:380px;">
+          <span style="font:600 14px 'Nunito',sans-serif;color:#8B6749;">{{ t.product.age }}</span>
+          <span style="font:700 14px 'Nunito',sans-serif;color:#3D2A1B;">{{ p.age }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELATED -->
+  <section style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,48px) clamp(60px,8vw,90px);">
+    <h2 style="font:800 clamp(24px,3.2vw,30px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 24px;">{{ t.product.related }}</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;">
+      <sc-for list="{{ related }}" as="item" hint-placeholder-count="4">
+        <div style="background:#fff;border-radius:22px;border:1px solid rgba(61,42,27,0.1);padding:16px;display:flex;flex-direction:column;gap:10px;" style-hover="transform:translateY(-5px);box-shadow:0 16px 32px rgba(61,42,27,0.12);">
+          <a href="Product.dc.html?slug={{ item.slug }}" style="text-decoration:none;display:block;">
+            <div style="position:relative;width:100%;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 14px,#F6E4CB 14px,#F6E4CB 28px);display:flex;align-items:center;justify-content:center;margin-bottom:6px;">
+              <sc-if value="{{ item.imageDataUrl }}" hint-placeholder-val="{{ false }}">
+                <img src="{{ item.imageDataUrl }}" alt="{{ item.title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+              </sc-if>
+              <div style="width:24px;height:24px;border-radius:50%;border:2.5px solid #B89A7E;"></div>
+            </div>
+            <div style="font:700 15.5px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:4px;">{{ item.title }}</div>
+          </a>
+          <div style="display:flex;align-items:baseline;gap:8px;">
+            <span style="font:800 17px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ item.priceFormatted }}</span>
+          </div>
+          <button onClick="{{ item.onAdd }}" style="padding:9px 10px;border-radius:999px;border:2px solid #3D2A1B;background:#fff;color:#3D2A1B;font:700 12px 'Baloo 2',sans-serif;cursor:pointer;">{{ t.product.addToCart }}</button>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,48px) clamp(60px,8vw,90px);">
+    <h2 style="font:800 clamp(24px,3.2vw,30px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 24px;">{{ reviewsSectionTitle }}</h2>
+
+    <sc-if value="{{ hasReviews }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-bottom:32px;">
+        <sc-for list="{{ reviews }}" as="rev" hint-placeholder-count="3">
+          <div style="background:#FBEFDD;border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:14px;">
+            <div style="color:#FF6F59;font-size:14px;letter-spacing:2px;">{{ rev.stars }}</div>
+            <div style="font:400 14.5px/1.55 'Nunito',sans-serif;color:#4A3322;flex:1;">"{{ rev.quote }}"</div>
+            <div style="font:700 13px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ rev.name }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ !hasReviews }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#FBEFDD;border-radius:22px;padding:36px;text-align:center;font:600 14px 'Nunito',sans-serif;color:#8B6749;margin-bottom:32px;">{{ reviewsEmptyLabel }}</div>
+    </sc-if>
+
+    <div style="background:#FFFCF7;border:1.5px solid rgba(61,42,27,0.1);border-radius:22px;padding:26px;max-width:520px;">
+      <sc-if value="{{ reviewFormVisible }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ reviewDone }}" hint-placeholder-val="{{ false }}">
+          <div style="font:700 14px 'Nunito',sans-serif;color:#3D2A1B;">Grazie per la tua recensione! Sarà visibile dopo la moderazione.</div>
+        </sc-if>
+        <sc-if value="{{ !reviewDone }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <select value="{{ reviewRatingValue }}" onChange="{{ onReviewRatingChange }}" style="padding:10px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:600 13.5px 'Nunito',sans-serif;color:#3D2A1B;">
+              <option value="5">★★★★★ (5)</option>
+              <option value="4">★★★★☆ (4)</option>
+              <option value="3">★★★☆☆ (3)</option>
+              <option value="2">★★☆☆☆ (2)</option>
+              <option value="1">★☆☆☆☆ (1)</option>
+            </select>
+            <textarea value="{{ reviewBodyValue }}" onChange="{{ onReviewBodyChange }}" placeholder="{{ reviewPlaceholder }}" rows="3" style="padding:12px 14px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:400 13.5px/1.5 'Nunito',sans-serif;color:#3D2A1B;resize:vertical;"></textarea>
+            <button onClick="{{ onReviewSubmit }}" style="padding:12px;border-radius:999px;border:none;background:{{ accent }};color:#fff;font:700 13.5px 'Baloo 2',sans-serif;cursor:pointer;">{{ reviewSubmitLabel }}</button>
+            <sc-if value="{{ reviewError }}" hint-placeholder-val="{{ false }}">
+              <div style="font:600 12px 'Nunito',sans-serif;color:#E85A47;">Qualcosa è andato storto, riprova.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ !reviewFormVisible }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start;">
+          <div style="font:600 13.5px 'Nunito',sans-serif;color:#6B4A30;">{{ reviewLoginPrompt }}</div>
+          <a href="Account.dc.html" style="padding:11px 24px;border-radius:999px;background:#3D2A1B;color:#FFFCF7;font:700 13px 'Baloo 2',sans-serif;text-decoration:none;">{{ reviewLoginCta }}</a>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#3D2A1B;padding:clamp(48px,6vw,72px) clamp(20px,5vw,48px) 28px;">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:36px;padding-bottom:36px;border-bottom:1px solid rgba(255,252,247,0.1);">
+      <div>
+        <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:20px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:14px;">
+        <p style="font:400 13.5px/1.6 'Nunito',sans-serif;color:#C9B49B;max-width:240px;margin:0 0 16px;">{{ t.footer.tagline }}</p>
+        <div style="display:flex;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,252,247,0.1);color:#FFFCF7;font:700 11px 'Nunito',sans-serif;display:flex;align-items:center;justify-content:center;">IG</div>
+          <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,252,247,0.1);color:#FFFCF7;font:700 11px 'Nunito',sans-serif;display:flex;align-items:center;justify-content:center;">FB</div>
+          <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,252,247,0.1);color:#FFFCF7;font:700 11px 'Nunito',sans-serif;display:flex;align-items:center;justify-content:center;">TT</div>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 13px 'Baloo 2',sans-serif;color:#FFC247;margin-bottom:14px;text-transform:uppercase;letter-spacing:.04em;">{{ t.footer.shopTitle }}</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <a href="Shop.dc.html?cat=kids" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.nav.kids }}</a>
+          <a href="Shop.dc.html?cat=teens" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.nav.teens }}</a>
+          <a href="Shop.dc.html?cat=adults" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.nav.adults }}</a>
+          <a href="Shop.dc.html?cat=seasonal" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.nav.seasonal }}</a>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 13px 'Baloo 2',sans-serif;color:#FFC247;margin-bottom:14px;text-transform:uppercase;letter-spacing:.04em;">Newsletter</div>
+        <sc-if value="{{ newsletterDone }}" hint-placeholder-val="{{ false }}">
+          <div style="font:600 13px 'Nunito',sans-serif;color:#C9B49B;">Iscrizione confermata, grazie!</div>
+        </sc-if>
+        <sc-if value="{{ !newsletterDone }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:220px;">
+            <input value="{{ newsletterEmailValue }}" onChange="{{ onNewsletterEmailChange }}" type="email" placeholder="tu@esempio.it" style="padding:10px 14px;border-radius:999px;border:none;font:500 12.5px 'Nunito',sans-serif;outline:none;">
+            <button onClick="{{ onNewsletterSubmit }}" style="padding:10px 14px;border-radius:999px;border:none;background:#FFC247;color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">Iscriviti</button>
+            <sc-if value="{{ newsletterError }}" hint-placeholder-val="{{ false }}">
+              <div style="font:600 11.5px 'Nunito',sans-serif;color:#E85A47;">Qualcosa è andato storto, riprova.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+      <div>
+        <div style="font:700 13px 'Baloo 2',sans-serif;color:#FFC247;margin-bottom:14px;text-transform:uppercase;letter-spacing:.04em;">{{ t.footer.helpTitle }}</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <a href="#" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.footer.help1 }}</a>
+          <a href="#" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.footer.help2 }}</a>
+          <a href="#" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.footer.help3 }}</a>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 13px 'Baloo 2',sans-serif;color:#FFC247;margin-bottom:14px;text-transform:uppercase;letter-spacing:.04em;">{{ t.footer.companyTitle }}</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <a href="Home.dc.html#about" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.footer.company1 }}</a>
+          <a href="#" style="font:400 13.5px 'Nunito',sans-serif;color:#C9B49B;text-decoration:none;">{{ t.footer.company2 }}</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:22px;">
+      <div style="font:400 12.5px 'Nunito',sans-serif;color:#9C8268;">© 2026 Monkey. {{ t.footer.rights }}</div>
+      <div style="font:400 12.5px 'Nunito',sans-serif;color:#9C8268;">{{ t.footer.amazonNote }}</div>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <sc-if value="{{ cartOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCart }}" style="position:fixed;inset:0;background:rgba(61,42,27,0.4);z-index:90;"></div>
+    <div style="position:fixed;top:0;right:0;height:100%;width:min(400px,100%);background:#FFFCF7;z-index:91;box-shadow:-12px 0 40px rgba(61,42,27,0.2);display:flex;flex-direction:column;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid rgba(61,42,27,0.1);">
+        <div style="font:800 19px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ t.cartDrawer.title }}</div>
+        <button onClick="{{ closeCart }}" style="border:none;background:#F6E4CB;width:34px;height:34px;border-radius:50%;cursor:pointer;font:700 16px 'Nunito',sans-serif;color:#3D2A1B;">×</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:18px 24px;display:flex;flex-direction:column;gap:16px;">
+        <sc-for list="{{ cartLines }}" as="line" hint-placeholder-count="0">
+          <div style="display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(61,42,27,0.08);padding-bottom:14px;">
+            <div style="width:56px;height:56px;border-radius:12px;flex:none;background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 8px,#F6E4CB 8px,#F6E4CB 16px);"></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font:700 13.5px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:4px;">{{ line.title }}</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <button onClick="{{ line.onDec }}" style="width:22px;height:22px;border-radius:50%;border:1px solid rgba(61,42,27,0.2);background:#fff;cursor:pointer;font:700 12px 'Nunito',sans-serif;color:#3D2A1B;">−</button>
+                <span style="font:700 13px 'Nunito',sans-serif;color:#3D2A1B;min-width:14px;text-align:center;">{{ line.qty }}</span>
+                <button onClick="{{ line.onInc }}" style="width:22px;height:22px;border-radius:50%;border:1px solid rgba(61,42,27,0.2);background:#fff;cursor:pointer;font:700 12px 'Nunito',sans-serif;color:#3D2A1B;">+</button>
+                <span style="font:800 13.5px 'Baloo 2',sans-serif;color:#3D2A1B;margin-left:6px;">{{ line.priceFormatted }}</span>
+              </div>
+              <div style="display:flex;gap:14px;">
+                <a href="{{ line.amazonUrl }}" target="_blank" rel="noopener" style="font:700 12px 'Nunito',sans-serif;color:#FF6F59;text-decoration:none;">{{ t.cartDrawer.perItem }}</a>
+                <button onClick="{{ line.onRemove }}" style="border:none;background:none;cursor:pointer;font:700 12px 'Nunito',sans-serif;color:#8B6749;padding:0;">{{ t.cartDrawer.remove }}</button>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:40px 10px;">
+            <div style="width:54px;height:54px;border-radius:50%;background:#FBEFDD;display:flex;align-items:center;justify-content:center;">
+              <span style="display:block;width:20px;height:17px;border:2px solid #B89A7E;border-radius:2px 2px 6px 6px;position:relative;">
+                <span style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:10px;height:10px;border:2px solid #B89A7E;border-bottom:none;border-radius:8px 8px 0 0;"></span>
+              </span>
+            </div>
+            <div style="font:600 14.5px 'Nunito',sans-serif;color:#6B4A30;">{{ t.cartDrawer.empty }}</div>
+            <a href="Shop.dc.html" style="padding:12px 26px;border-radius:999px;background:#3D2A1B;color:#FFFCF7;font:700 13.5px 'Baloo 2',sans-serif;text-decoration:none;">{{ t.cartDrawer.emptyCta }}</a>
+          </div>
+        </sc-if>
+      </div>
+      <div style="padding:20px 24px 26px;border-top:1px solid rgba(61,42,27,0.1);">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;">
+          <span style="font:700 14px 'Nunito',sans-serif;color:#6B4A30;">{{ t.cartDrawer.subtotal }}</span>
+          <span style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ cartTotalFormatted }}</span>
+        </div>
+        <a href="{{ cartSearchUrl }}" target="_blank" rel="noopener" style="display:block;text-align:center;padding:15px;border-radius:999px;background:{{ accent }};color:#fff;font:700 15px 'Baloo 2',sans-serif;text-decoration:none;margin-bottom:10px;">{{ t.cartDrawer.checkout }}</a>
+        <div style="text-align:center;font:600 11px 'Nunito',sans-serif;color:#8B6749;margin-bottom:10px;">Ti apriamo la ricerca su Amazon con i titoli del tuo carrello</div>
+        <button onClick="{{ closeCart }}" style="display:block;width:100%;text-align:center;padding:13px;border-radius:999px;background:transparent;border:none;color:#6B4A30;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ t.cartDrawer.continueShopping }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#FF6F59&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#FF6F59&quot;, &quot;#FFC247&quot;, &quot;#E85A47&quot;]}, &quot;showBadges&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;}}">
+const STRINGS = {
+  it: {
+    nav: { home: 'Home', shop: 'Negozio', kids: 'Bambini', teens: 'Adolescenti', adults: 'Adulti', seasonal: 'Stagionali', about: 'Chi siamo', contact: 'Contatti', cart: 'Carrello' },
+    product: { addToCart: 'Aggiungi al carrello', buyNow: 'Acquista su Amazon', addedToCart: 'Aggiunto!', pages: 'Pagine', age: 'Età consigliata', format: 'Formato', description: 'Descrizione', related: 'Ti potrebbe piacere anche', reviews: 'recensioni', quantity: 'Quantità' },
+    badges: { bestseller: 'Bestseller', new: 'Novità', gift: 'Idea regalo', sale: 'Offerta' },
+    reviews: { title: 'Cosa dicono le famiglie Monkey' },
+    footer: {
+      tagline: 'Libri da colorare per ogni età, pensati per far staccare la mente.', shopTitle: 'Negozio', helpTitle: 'Assistenza', companyTitle: 'Azienda',
+      help1: 'Contatti', help2: 'Spedizioni', help3: 'Domande frequenti', company1: 'Chi siamo', company2: 'Sostenibilità',
+      rights: 'Tutti i diritti riservati.', amazonNote: 'Gli acquisti vengono completati su Amazon.'
+    },
+    cartDrawer: { title: 'Il tuo carrello', empty: 'Il carrello è vuoto.', emptyCta: 'Vai al negozio', subtotal: 'Subtotale', checkout: 'Acquista su Amazon', remove: 'Rimuovi', continueShopping: 'Continua lo shopping', perItem: 'Acquista su Amazon' },
+    breadcrumb: { home: 'Home', shop: 'Negozio' }
+  },
+  en: {
+    nav: { home: 'Home', shop: 'Shop', kids: 'Kids', teens: 'Teens', adults: 'Adults', seasonal: 'Seasonal', about: 'About', contact: 'Contact', cart: 'Cart' },
+    product: { addToCart: 'Add to cart', buyNow: 'Buy on Amazon', addedToCart: 'Added!', pages: 'Pages', age: 'Recommended age', format: 'Format', description: 'Description', related: 'You might also like', reviews: 'reviews', quantity: 'Quantity' },
+    badges: { bestseller: 'Bestseller', new: 'New', gift: 'Gift idea', sale: 'Sale' },
+    reviews: { title: 'What Monkey families say' },
+    footer: {
+      tagline: 'Coloring books for every age, made to switch your mind off.', shopTitle: 'Shop', helpTitle: 'Support', companyTitle: 'Company',
+      help1: 'Contact', help2: 'Shipping', help3: 'FAQ', company1: 'About us', company2: 'Sustainability',
+      rights: 'All rights reserved.', amazonNote: 'Purchases are completed on Amazon.'
+    },
+    cartDrawer: { title: 'Your cart', empty: 'Your cart is empty.', emptyCta: 'Go to shop', subtotal: 'Subtotal', checkout: 'Buy on Amazon', remove: 'Remove', continueShopping: 'Continue shopping', perItem: 'Buy on Amazon' },
+    breadcrumb: { home: 'Home', shop: 'Shop' }
+  }
+};
+
+const PRODUCTS = [
+  { id: 1, slug: 'amici-della-giungla', category: 'kids', price: 9.90, pages: 32, age: '4-8', rating: 4.8, reviewsCount: 142, badge: null,
+    title: { it: 'Amici della Giungla', en: 'Jungle Friends' },
+    description: { it: 'Un viaggio tra le pagine della giungla: animali buffi e amichevoli disegnati con tratti semplici, perfetti per le prime esperienze con pastelli e pennarelli.', en: 'A journey through the jungle: friendly, fun animals drawn with simple lines, perfect for first experiences with crayons and markers.' } },
+  { id: 2, slug: 'nel-mare-blu', category: 'kids', price: 9.90, pages: 28, age: '4-8', rating: 4.7, reviewsCount: 98, badge: null,
+    title: { it: 'Nel Mare Blu', en: 'Under the Blue Sea' },
+    description: { it: 'Un’avventura sottomarina disegnata a tratti grandi e arrotondati, ideale per i più piccoli che scoprono il piacere di colorare.', en: 'An underwater adventure drawn with big, rounded shapes, ideal for little ones discovering the joy of coloring.' } },
+  { id: 3, slug: 'dinosauri-curiosi', category: 'kids', price: 10.90, pages: 36, age: '5-9', rating: 4.9, reviewsCount: 261, badge: 'bestseller',
+    title: { it: 'Dinosauri Curiosi', en: 'Curious Dinosaurs' },
+    description: { it: 'T-Rex, triceratopi e tanti altri dinosauri in scene preistoriche piene di dettagli giocosi: il bestseller della linea bambini.', en: 'T-Rex, triceratops and many more dinosaurs in prehistoric scenes full of playful details: the bestseller of the kids line.' } },
+  { id: 4, slug: 'fiabe-della-buonanotte', category: 'kids', price: 9.90, pages: 32, age: '4-7', rating: 4.6, reviewsCount: 54, badge: 'new',
+    title: { it: 'Fiabe della Buonanotte', en: 'Bedtime Fairy Tales' },
+    description: { it: 'Scene fiabesche delicate, perfette per un momento di calma prima della nanna, da colorare insieme a mamma e papà.', en: 'Gentle fairy-tale scenes, perfect for a calm moment before bed, to color together with mom and dad.' } },
+  { id: 5, slug: 'citta-di-notte', category: 'teens', price: 12.90, pages: 40, age: '10-15', rating: 4.7, reviewsCount: 76, badge: null,
+    title: { it: 'Città di Notte', en: 'City Nights' },
+    description: { it: 'Grattacieli, insegne luminose e atmosfere urbane in stile pop art: un libro dinamico per chi ama il dettaglio.', en: 'Skyscrapers, glowing signs and urban vibes in pop-art style: a dynamic book for detail lovers.' } },
+  { id: 6, slug: 'musica-e-groove', category: 'teens', price: 12.90, pages: 38, age: '10-15', rating: 4.8, reviewsCount: 41, badge: 'new',
+    title: { it: 'Musica e Groove', en: 'Music & Groove' },
+    description: { it: 'Una collezione dedicata agli amanti della musica, con pattern ritmici e dettagli ispirati al mondo dei concerti.', en: 'A collection for music lovers, with rhythmic patterns and details inspired by the concert world.' } },
+  { id: 7, slug: 'creature-fantastiche', category: 'teens', price: 13.90, pages: 44, age: '10-15', rating: 4.9, reviewsCount: 188, badge: 'bestseller',
+    title: { it: 'Creature Fantastiche', en: 'Fantastic Creatures' },
+    description: { it: 'Il libro più richiesto dagli adolescenti: creature leggendarie disegnate con grande dettaglio, tra fantasy e avventura.', en: 'The most requested book among teens: legendary creatures drawn in great detail, between fantasy and adventure.' } },
+  { id: 8, slug: 'skate-e-streetstyle', category: 'teens', price: 12.90, pages: 36, age: '11-16', rating: 4.5, reviewsCount: 33, badge: null,
+    title: { it: 'Skate & Streetstyle', en: 'Skate & Streetstyle' },
+    description: { it: 'Pattern geometrici e scene di street culture per chi ama uno stile più ribelle e contemporaneo.', en: 'Geometric patterns and street-culture scenes for a more rebellious, contemporary style.' } },
+  { id: 9, slug: 'mandala-zen', category: 'adults', price: 14.90, pages: 48, age: '18+', rating: 4.9, reviewsCount: 312, badge: 'bestseller',
+    title: { it: 'Mandala Zen', en: 'Zen Mandalas' },
+    description: { it: 'Mandala intricati pensati per la meditazione attiva: il titolo più venduto della collezione adulti.', en: 'Intricate mandalas designed for active meditation: the best-selling title of the adult collection.' } },
+  { id: 10, slug: 'giardino-segreto', category: 'adults', price: 15.90, pages: 52, age: '18+', rating: 4.8, reviewsCount: 167, badge: 'sale', oldPrice: 17.90,
+    title: { it: 'Giardino Segreto', en: 'Secret Garden' },
+    description: { it: 'Un giardino immaginario ricco di dettagli botanici finissimi, per perdersi tra petali e rampicanti.', en: 'An imaginary garden rich in fine botanical detail, to get lost among petals and climbing vines.' } },
+  { id: 11, slug: 'geometrie-infinite', category: 'adults', price: 14.90, pages: 44, age: '18+', rating: 4.7, reviewsCount: 59, badge: 'new',
+    title: { it: 'Geometrie Infinite', en: 'Infinite Geometries' },
+    description: { it: 'Forme che si ripetono e si intrecciano in composizioni geometriche pensate per concentrazione e calma.', en: 'Shapes that repeat and intertwine in geometric compositions designed for focus and calm.' } },
+  { id: 12, slug: 'citta-del-mondo', category: 'adults', price: 15.90, pages: 56, age: '18+', rating: 4.8, reviewsCount: 91, badge: null,
+    title: { it: 'Città del Mondo', en: 'Cities of the World' },
+    description: { it: 'Skyline e monumenti iconici da tutto il mondo, illustrati in line art minimale e ricca di dettagli architettonici.', en: 'Skylines and iconic landmarks from around the world, illustrated in minimal line art rich with architectural detail.' } },
+  { id: 13, slug: 'magia-di-natale', category: 'seasonal', price: 11.90, pages: 34, age: 'tutte le età', rating: 4.9, reviewsCount: 204, badge: 'gift',
+    title: { it: 'Magia di Natale', en: 'Christmas Magic' },
+    description: { it: 'L’atmosfera natalizia in ogni pagina: perfetto come idea regalo sotto l’albero, per tutta la famiglia.', en: 'The Christmas spirit on every page: a perfect gift idea under the tree, for the whole family.' } },
+  { id: 14, slug: 'fiori-di-primavera', category: 'seasonal', price: 11.90, pages: 30, age: 'tutte le età', rating: 4.6, reviewsCount: 47, badge: null,
+    title: { it: 'Fiori di Primavera', en: 'Spring Blossoms' },
+    description: { it: 'Un’esplosione di fiori e colori tenui per accogliere la primavera, pagina dopo pagina.', en: 'An explosion of flowers and soft colors to welcome spring, page after page.' } },
+  { id: 15, slug: 'estate-al-mare', category: 'seasonal', price: 11.90, pages: 30, age: 'tutte le età', rating: 4.7, reviewsCount: 63, badge: null,
+    title: { it: 'Estate al Mare', en: 'Summer by the Sea' },
+    description: { it: 'Scene estive spensierate: il compagno ideale per le vacanze e i viaggi in macchina.', en: 'Carefree summer scenes: the ideal companion for holidays and road trips.' } },
+  { id: 16, slug: 'autunno-dorato', category: 'seasonal', price: 11.90, pages: 32, age: 'tutte le età', rating: 4.8, reviewsCount: 39, badge: 'gift',
+    title: { it: 'Autunno Dorato', en: 'Golden Autumn' },
+    description: { it: 'I colori caldi dell’autunno in ogni dettaglio: ideale anche come idea regalo di fine anno scolastico.', en: 'The warm colors of autumn in every detail: also a great gift idea for the end of the school year.' } }
+];
+
+const CAT_GLYPH = {
+  kids: 'width:8px;height:8px;border-radius:50%;background:#6B4A30;display:inline-block;',
+  teens: 'width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid #6B4A30;display:inline-block;',
+  adults: 'width:7px;height:7px;background:#6B4A30;transform:rotate(45deg);display:inline-block;',
+  seasonal: 'width:8px;height:8px;background:#6B4A30;display:inline-block;'
+};
+
+const BADGE_STYLE = {
+  bestseller: { bg: '#FF6F59', fg: '#FFFFFF' },
+  new: { bg: '#3D2A1B', fg: '#FFFCF7' },
+  gift: { bg: '#FFC247', fg: '#3D2A1B' },
+  sale: { bg: '#E85A47', fg: '#FFFFFF' }
+};
+
+function detectInitialLang() {
+  try {
+    const nav = (navigator.language || 'it').toLowerCase();
+    if (nav.startsWith('en')) return 'en';
+  } catch (e) {}
+  return 'it';
+}
+
+class Component extends DCLogic {
+  state = {
+    lang: detectInitialLang(),
+    cart: [],
+    cartOpen: false,
+    addedId: null,
+    qty: 1,
+    slug: null,
+    products: PRODUCTS,
+    user: null,
+    favorites: [],
+    reviews: [],
+    reviewsLoading: true,
+    reviewRating: 5,
+    reviewBody: '',
+    reviewStatus: 'idle',
+    siteTexts: null,
+    newsletterEmail: '',
+    newsletterStatus: 'idle'
+  };
+
+  componentDidMount() {
+    try {
+      const storedLang = localStorage.getItem('monkey_lang');
+      const storedCart = localStorage.getItem('monkey_cart');
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('slug') || PRODUCTS[0].slug;
+      this._slug = slug;
+      this.setState({
+        lang: (storedLang === 'it' || storedLang === 'en') ? storedLang : this.state.lang,
+        cart: storedCart ? JSON.parse(storedCart) : [],
+        slug
+      });
+    } catch (e) {
+      this._slug = PRODUCTS[0].slug;
+      this.setState({ slug: PRODUCTS[0].slug });
+    }
+    import('./data.js').then(mod => {
+      this.dataApi = mod;
+      const user = mod.getCurrentUser();
+      this.setState({ user, favorites: mod.getFavorites(user && user.email) });
+      mod.getProducts().then(products => this.setState({ products }));
+      mod.getReviews(this._slug)
+        .then(reviews => this.setState({ reviews, reviewsLoading: false }))
+        .catch(() => this.setState({ reviews: [], reviewsLoading: false }));
+      mod.getSiteTexts().then(siteTexts => this.setState({ siteTexts })).catch(() => {});
+    });
+  }
+
+  onReviewRatingChange = (e) => this.setState({ reviewRating: Number(e.target.value) });
+  onReviewBodyChange = (e) => this.setState({ reviewBody: e.target.value });
+
+  onReviewSubmit = () => {
+    if (!this.dataApi) return;
+    if (!this.state.user) { window.location.href = 'Account.dc.html'; return; }
+    const body = (this.state.reviewBody || '').trim();
+    if (!body) return;
+    this.setState({ reviewStatus: 'sending' });
+    this.dataApi.addReview(this._slug, { rating: this.state.reviewRating, body })
+      .then(() => this.setState({ reviewStatus: 'done', reviewBody: '', reviewRating: 5 }))
+      .catch(() => this.setState({ reviewStatus: 'error' }));
+  };
+
+  onNewsletterEmailChange = (e) => this.setState({ newsletterEmail: e.target.value });
+  onNewsletterSubmit = () => {
+    if (!this.dataApi) return;
+    const email = (this.state.newsletterEmail || '').trim();
+    if (!email) return;
+    this.setState({ newsletterStatus: 'sending' });
+    this.dataApi.subscribeNewsletter(email, this.state.lang)
+      .then(() => this.setState({ newsletterStatus: 'done', newsletterEmail: '' }))
+      .catch(() => this.setState({ newsletterStatus: 'error' }));
+  };
+
+  toggleFavorite = (productId) => {
+    if (!this.dataApi) return;
+    if (!this.state.user) { window.location.href = 'Account.dc.html'; return; }
+    const favorites = this.dataApi.toggleFavorite(this.state.user.email, productId);
+    this.setState({ favorites });
+  };
+
+  saveCart(next) {
+    try { localStorage.setItem('monkey_cart', JSON.stringify(next)); } catch (e) {}
+    this.setState({ cart: next });
+  }
+
+  setLang = (lang) => {
+    try { localStorage.setItem('monkey_lang', lang); } catch (e) {}
+    this.setState({ lang });
+  };
+
+  toggleCart = () => this.setState(s => ({ cartOpen: !s.cartOpen }));
+  closeCart = () => this.setState({ cartOpen: false });
+  incQty = () => this.setState(s => ({ qty: s.qty + 1 }));
+  decQty = () => this.setState(s => ({ qty: Math.max(1, s.qty - 1) }));
+
+  addCurrentToCart = (id, qty) => {
+    const next = this.state.cart.slice();
+    const existing = next.find(i => i.id === id);
+    if (existing) existing.qty += qty; else next.push({ id, qty });
+    this.saveCart(next);
+    this.setState({ addedId: id, qty: 1 });
+    clearTimeout(this._addedTimer);
+    this._addedTimer = setTimeout(() => this.setState({ addedId: null }), 1400);
+  };
+
+  addRelatedToCart = (id) => {
+    const next = this.state.cart.slice();
+    const existing = next.find(i => i.id === id);
+    if (existing) existing.qty += 1; else next.push({ id, qty: 1 });
+    this.saveCart(next);
+  };
+
+  removeFromCart = (id) => { this.saveCart(this.state.cart.filter(i => i.id !== id)); };
+
+  changeQty = (id, delta) => {
+    const next = this.state.cart.map(i => (i.id === id ? { ...i, qty: i.qty + delta } : i)).filter(i => i.qty > 0);
+    this.saveCart(next);
+  };
+
+  formatPrice(value, lang) {
+    const v = value.toFixed(2);
+    return lang === 'en' ? ('€' + v) : (v.replace('.', ',') + ' €');
+  }
+
+  amazonUrl(p, lang) { return p.amazonUrl || ('https://www.amazon.it/s?k=' + encodeURIComponent('Monkey ' + p.title[lang])); }
+
+  // Non esiste un vero carrello multi-articolo su Amazon raggiungibile da
+  // link esterno: costruiamo quindi una ricerca Amazon con i titoli reali
+  // nel carrello, invece del link generico fisso di prima.
+  cartSearchUrl(lang) {
+    const cart = this.state.cart;
+    if (!cart.length) return 'https://www.amazon.it/s?k=Monkey';
+    const titles = cart
+      .map(line => {
+        const p = this.state.products.find(pr => pr.id === line.id);
+        return p ? p.title[lang] : null;
+      })
+      .filter(Boolean);
+    const query = 'Monkey ' + titles.join(' ');
+    return 'https://www.amazon.it/s?k=' + encodeURIComponent(query);
+  }
+
+  renderVals() {
+    const lang = this.state.lang;
+    const t = STRINGS[lang];
+    const accent = this.props.accentColor ?? '#FF6F59';
+    const showBadges = this.props.showBadges ?? true;
+    const cart = this.state.cart;
+
+    const allProducts = this.state.products;
+    const raw = allProducts.find(pr => pr.slug === this.state.slug) || allProducts[0];
+    const badgeStyle = raw.badge && BADGE_STYLE[raw.badge];
+    const catLabelMap = { kids: lang === 'it' ? 'Bambini' : 'Kids', teens: lang === 'it' ? 'Adolescenti' : 'Teens', adults: lang === 'it' ? 'Adulti' : 'Adults', seasonal: lang === 'it' ? 'Stagionali' : 'Seasonal' };
+
+    const p = {
+      id: raw.id, slug: raw.slug, category: raw.category,
+      title: raw.title[lang], description: raw.description[lang],
+      coverCaption: 'COVER 1:1 — ' + raw.title[lang],
+      imageDataUrl: raw.imageDataUrl || '',
+      priceFormatted: this.formatPrice(raw.price, lang),
+      oldPriceFormatted: raw.oldPrice ? this.formatPrice(raw.oldPrice, lang) : null,
+      rating: raw.rating.toFixed(1),
+      ratingPct: (raw.rating / 5 * 100),
+      reviewsCount: raw.reviewsCount,
+      pages: raw.pages,
+      age: raw.age,
+      format: lang === 'it' ? '21 × 21 cm, copertina morbida' : '21 × 21 cm, softcover',
+      catLabel: catLabelMap[raw.category],
+      catGlyphStyle: CAT_GLYPH[raw.category],
+      badgeLabel: (showBadges && badgeStyle) ? t.badges[raw.badge] : null,
+      badgeBg: badgeStyle ? badgeStyle.bg : null,
+      badgeFg: badgeStyle ? badgeStyle.fg : null,
+      amazonUrl: this.amazonUrl(raw, lang)
+    };
+
+    const related = allProducts.filter(pr => pr.category === raw.category && pr.id !== raw.id).slice(0, 4).map(pr => ({
+      slug: pr.slug, title: pr.title[lang],
+      imageDataUrl: pr.imageDataUrl || '',
+      priceFormatted: this.formatPrice(pr.price, lang),
+      onAdd: () => this.addRelatedToCart(pr.id)
+    }));
+
+    const cartLines = cart.map(line => {
+      const pr = allProducts.find(x => x.id === line.id);
+      if (!pr) return null;
+      return {
+        id: pr.id, title: pr.title[lang], qty: line.qty,
+        priceFormatted: this.formatPrice(pr.price * line.qty, lang),
+        amazonUrl: this.amazonUrl(pr, lang),
+        onRemove: () => this.removeFromCart(pr.id),
+        onInc: () => this.changeQty(pr.id, 1),
+        onDec: () => this.changeQty(pr.id, -1)
+      };
+    }).filter(Boolean);
+
+    const cartCount = cart.reduce((s, i) => s + i.qty, 0);
+    const cartTotalValue = cart.reduce((s, i) => {
+      const pr = allProducts.find(x => x.id === i.id);
+      return pr ? s + pr.price * i.qty : s;
+    }, 0);
+
+    const isAdded = this.state.addedId === raw.id;
+    const isFav = this.state.favorites.includes(raw.id);
+    const user = this.state.user;
+
+    const realReviews = (this.state.reviews || []).map(r => ({
+      name: r.authorName || (lang === 'it' ? 'Cliente Monkey' : 'Monkey customer'),
+      quote: r.body,
+      stars: '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating)
+    }));
+
+    const promo = (this.state.siteTexts && this.state.siteTexts.promoBanner) || { active: false, code: '', text: { it: '', en: '' } };
+    const promoBannerText = promo.text ? (promo.text[lang] || '') : '';
+    const promoBannerActive = !!(promo.active && (promoBannerText || promo.code));
+
+    return {
+      lang, t, accent, p,
+      setLangIt: () => this.setLang('it'),
+      setLangEn: () => this.setLang('en'),
+      toggleCart: this.toggleCart,
+      closeCart: this.closeCart,
+      cartOpen: this.state.cartOpen,
+      cartCount, cartLines,
+      cartEmpty: cartLines.length === 0,
+      cartTotalFormatted: this.formatPrice(cartTotalValue, lang),
+      cartSearchUrl: this.cartSearchUrl(lang),
+      qty: this.state.qty,
+      incQty: this.incQty,
+      decQty: this.decQty,
+      addToCart: () => this.addCurrentToCart(raw.id, this.state.qty),
+      addLabel: isAdded ? t.product.addedToCart : t.product.addToCart,
+      addBg: isAdded ? '#FFC247' : '#FFFFFF',
+      related,
+      reviews: realReviews,
+      hasReviews: realReviews.length > 0,
+      reviewsLoading: this.state.reviewsLoading,
+      reviewFormVisible: !!user,
+      reviewLoginPrompt: lang === 'it' ? 'Accedi al tuo account per lasciare una recensione.' : 'Sign in to your account to leave a review.',
+      reviewLoginCta: lang === 'it' ? 'Accedi' : 'Sign in',
+      reviewRatingValue: this.state.reviewRating,
+      onReviewRatingChange: this.onReviewRatingChange,
+      reviewBodyValue: this.state.reviewBody,
+      onReviewBodyChange: this.onReviewBodyChange,
+      onReviewSubmit: this.onReviewSubmit,
+      reviewSending: this.state.reviewStatus === 'sending',
+      reviewDone: this.state.reviewStatus === 'done',
+      reviewError: this.state.reviewStatus === 'error',
+      reviewPlaceholder: lang === 'it' ? 'Racconta la tua esperienza con questo libro...' : 'Tell us about your experience with this book...',
+      reviewSubmitLabel: lang === 'it' ? 'Invia recensione' : 'Submit review',
+      reviewsEmptyLabel: lang === 'it' ? 'Nessuna recensione ancora. Sii il primo a lasciarne una!' : 'No reviews yet. Be the first to leave one!',
+      reviewsSectionTitle: t.reviews.title,
+      favGlyph: isFav ? '♥' : '♡',
+      favColor: isFav ? '#FF6F59' : '#6B4A30',
+      onToggleFav: () => this.toggleFavorite(raw.id),
+      accountInitial: user ? user.name.charAt(0).toUpperCase() : '?',
+      accountLabel: user ? user.name.split(' ')[0] : (lang === 'it' ? 'Accedi' : 'Sign in'),
+      promoBannerActive, promoBannerText, promoBannerCode: promo.code || '',
+      newsletterEmailValue: this.state.newsletterEmail,
+      onNewsletterEmailChange: this.onNewsletterEmailChange,
+      onNewsletterSubmit: this.onNewsletterSubmit,
+      newsletterDone: this.state.newsletterStatus === 'done',
+      newsletterError: this.state.newsletterStatus === 'error'
+    };
+  }
+}
+</script>
+</body>
+</html>

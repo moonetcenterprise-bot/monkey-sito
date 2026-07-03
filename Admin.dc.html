@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#F3ECE0; }
+    * { box-sizing: border-box; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid #FF6F59 !important;
+      outline-offset: 2px !important;
+    }
+  </style>
+</helmet>
+<div data-screen-label="Admin" style="font-family:'Nunito',system-ui,sans-serif;background:#F3ECE0;min-height:100vh;color:#3D2A1B;">
+
+  <!-- LOGIN -->
+  <sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div style="background:#fff;border-radius:24px;padding:40px;width:100%;max-width:380px;box-shadow:0 20px 50px rgba(61,42,27,0.12);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+          <img src="assets/monkey-icon.png" alt="Monkey" style="width:36px;height:36px;object-fit:contain;">
+          <div style="font:800 16px 'Baloo 2',sans-serif;color:#3D2A1B;">Monkey Admin</div>
+        </div>
+        <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFE7E1;color:#C0402C;font:600 13px 'Nunito',sans-serif;padding:11px 14px;border-radius:12px;margin-bottom:16px;">Credenziali non valide.</div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+          <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Email</label>
+          <input value="{{ usernameValue }}" onChange="{{ onUsernameChange }}" type="text" style="padding:12px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:22px;">
+          <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Password</label>
+          <input value="{{ passwordValue }}" onChange="{{ onPasswordChange }}" type="password" style="padding:12px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+        </div>
+        <button onClick="{{ onLoginSubmit }}" style="width:100%;padding:14px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">Accedi</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- DASHBOARD -->
+  <sc-if value="{{ showDashboard }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;min-height:100vh;">
+
+      <!-- SIDEBAR -->
+      <div style="width:250px;flex:none;background:#3D2A1B;padding:24px 16px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:26px;padding:0 8px;">
+          <img src="assets/monkey-icon.png" alt="Monkey" style="width:32px;height:32px;object-fit:contain;filter:brightness(0) invert(1);">
+          <div style="font:800 15px 'Baloo 2',sans-serif;color:#FFFCF7;">Monkey Admin</div>
+        </div>
+
+        <div style="font:800 10.5px 'Nunito',sans-serif;color:#8B6749;text-transform:uppercase;letter-spacing:.06em;padding:8px 12px 4px;">Generale</div>
+        <button onClick="{{ showOverviewTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ overviewTabBg }};color:{{ overviewTabFg }};">Panoramica</button>
+
+        <div style="font:800 10.5px 'Nunito',sans-serif;color:#8B6749;text-transform:uppercase;letter-spacing:.06em;padding:14px 12px 4px;">Contenuti</div>
+        <button onClick="{{ showProductsTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ productsTabBg }};color:{{ productsTabFg }};">Catalogo prodotti</button>
+        <button onClick="{{ showTextsTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ textsTabBg }};color:{{ textsTabFg }};">Testi del sito</button>
+        <button onClick="{{ showVisualTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ visualTabBg }};color:{{ visualTabFg }};">Editor visivo</button>
+
+        <div style="font:800 10.5px 'Nunito',sans-serif;color:#8B6749;text-transform:uppercase;letter-spacing:.06em;padding:14px 12px 4px;">Community</div>
+        <button onClick="{{ showUsersTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ usersTabBg }};color:{{ usersTabFg }};">Utenti registrati</button>
+        <button onClick="{{ showReviewsTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ reviewsTabBg }};color:{{ reviewsTabFg }};">Recensioni</button>
+
+        <div style="font:800 10.5px 'Nunito',sans-serif;color:#8B6749;text-transform:uppercase;letter-spacing:.06em;padding:14px 12px 4px;">Marketing</div>
+        <button onClick="{{ showBundlesTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ bundlesTabBg }};color:{{ bundlesTabFg }};">Pacchetti regalo</button>
+        <button onClick="{{ showNewsletterTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ newsletterTabBg }};color:{{ newsletterTabFg }};">Newsletter e promo</button>
+        <button onClick="{{ showBlogTab }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ blogTabBg }};color:{{ blogTabFg }};">Blog</button>
+
+        <a href="Home.dc.html" style="text-align:left;padding:11px 14px;border-radius:12px;font:700 13px 'Baloo 2',sans-serif;color:#D8C3AC;text-decoration:none;margin-top:14px;">↗ Vedi il sito</a>
+        <div style="flex:1;"></div>
+        <div style="border-top:1px solid rgba(255,255,255,0.08);margin:10px 4px;"></div>
+        <button onClick="{{ onAdminLogout }}" style="text-align:left;padding:11px 14px;border-radius:12px;border:none;cursor:pointer;font:700 13px 'Baloo 2',sans-serif;background:transparent;color:#D8C3AC;">Esci</button>
+      </div>
+
+      <!-- OVERVIEW TAB -->
+      <sc-if value="{{ isOverviewTab }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;padding:32px 40px;overflow-y:auto;min-width:0;max-width:980px;">
+          <div style="font:800 24px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:6px;">Panoramica</div>
+          <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:640px;margin:0 0 26px;">Il sito non gestisce pagamenti: gli acquisti si completano su Amazon, quindi non esistono ordini da riportare qui. Questi sono i dati realmente disponibili su utenti registrati e interesse per i prodotti.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px;">
+            <div style="background:#fff;border-radius:18px;padding:22px;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+              <div style="font:700 12.5px 'Nunito',sans-serif;color:#8B6749;margin-bottom:8px;">Utenti registrati</div>
+              <div style="font:800 32px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ statTotalUsers }}</div>
+            </div>
+            <div style="background:#fff;border-radius:18px;padding:22px;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+              <div style="font:700 12.5px 'Nunito',sans-serif;color:#8B6749;margin-bottom:8px;">Prodotti nel catalogo</div>
+              <div style="font:800 32px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ statTotalProducts }}</div>
+            </div>
+            <div style="background:#fff;border-radius:18px;padding:22px;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+              <div style="font:700 12.5px 'Nunito',sans-serif;color:#8B6749;margin-bottom:8px;">Preferiti totali salvati</div>
+              <div style="font:800 32px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ statTotalFavorites }}</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:20px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:280px;background:#fff;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+              <div style="font:800 15px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:16px;">Prodotti per categoria</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <sc-for list="{{ categoryRows }}" as="row" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font:600 13.5px 'Nunito',sans-serif;color:#6B4A30;">{{ row.label }}</span>
+                    <span style="font:800 13.5px 'Baloo 2',sans-serif;color:#3D2A1B;background:#FBEFDD;padding:4px 12px;border-radius:999px;">{{ row.count }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ hasCategoryRows }}" hint-placeholder-val="{{ true }}">
+                <div style="font:500 12.5px 'Nunito',sans-serif;color:#8B6749;">Nessun prodotto nel catalogo.</div>
+              </sc-if>
+            </div>
+
+            <div style="flex:1;min-width:280px;background:#fff;border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+              <div style="font:800 15px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:16px;">Più aggiunti ai preferiti</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <sc-for list="{{ topFavoriteRows }}" as="row" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font:600 13.5px 'Nunito',sans-serif;color:#6B4A30;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px;">{{ row.title }}</span>
+                    <span style="font:800 13.5px 'Baloo 2',sans-serif;color:#3D2A1B;background:#FBEFDD;padding:4px 12px;border-radius:999px;">{{ row.count }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ hasTopFavorites }}" hint-placeholder-val="{{ true }}">
+                <div style="font:500 12.5px 'Nunito',sans-serif;color:#8B6749;">Nessun preferito salvato ancora.</div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- PRODUCTS TAB -->
+      <sc-if value="{{ isProductsTab }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:28px 36px;overflow-y:auto;min-width:0;">
+
+          <!-- EDIT VIEW -->
+          <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+              <button onClick="{{ backToCatalog }}" style="padding:9px 16px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);background:transparent;color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">← Torna al catalogo</button>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="{{ previewUrl }}" target="_blank" rel="noopener" style="padding:9px 16px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;text-decoration:none;">Vedi sul sito ↗</a>
+                <button onClick="{{ onDuplicateProduct }}" style="padding:9px 16px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);background:transparent;color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">Duplica</button>
+                <button onClick="{{ onDeleteProduct }}" style="padding:9px 16px;border-radius:999px;border:1.5px solid #E85A47;background:transparent;color:#E85A47;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">Elimina libro</button>
+              </div>
+            </div>
+            <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:22px;">Modifica libro</div>
+
+            <div style="display:flex;gap:28px;flex-wrap:wrap;margin-bottom:24px;max-width:920px;">
+              <div style="flex:none;display:flex;flex-direction:column;gap:8px;">
+                <label onDragOver="{{ onImageDragOver }}" onDrop="{{ onImageDrop }}" style="width:180px;height:180px;border-radius:20px;border:2px dashed {{ dropZoneBorder }};background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 14px,#F6E4CB 14px,#F6E4CB 28px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;position:relative;overflow:hidden;cursor:pointer;">
+                  <input type="file" accept="image/*" onChange="{{ onImageFileSelected }}" style="display:none;">
+                  <sc-if value="{{ draftImageDataUrl }}" hint-placeholder-val="{{ false }}">
+                    <img src="{{ draftImageDataUrl }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                  </sc-if>
+                  <sc-if value="{{ !draftImageDataUrl }}" hint-placeholder-val="{{ true }}">
+                    <div style="font:600 11.5px/1.4 'Nunito',sans-serif;color:#8B6749;text-align:center;padding:0 16px;">Clicca o trascina qui un'immagine</div>
+                  </sc-if>
+                  <sc-if value="{{ imageUploading }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;inset:0;background:rgba(255,252,247,0.9);display:flex;align-items:center;justify-content:center;font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Caricamento...</div>
+                  </sc-if>
+                </label>
+                <sc-if value="{{ imageUploadError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font:600 11px/1.4 'Nunito',sans-serif;color:#C0402C;max-width:220px;">Caricamento non riuscito: {{ imageUploadErrorMessage }}</div>
+                </sc-if>
+              </div>
+              <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo (IT)</label>
+                  <input value="{{ draftTitleIt }}" onChange="{{ onTitleItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo (EN)</label>
+                  <input value="{{ draftTitleEn }}" onChange="{{ onTitleEnChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <div style="display:flex;gap:12px;">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Prezzo (€)</label>
+                    <input value="{{ draftPrice }}" onChange="{{ onPriceChange }}" type="number" step="0.01" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Categoria</label>
+                    <select value="{{ draftCategory }}" onChange="{{ onCategoryChange }}" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                      <option value="kids">Bambini</option>
+                      <option value="teens">Adolescenti</option>
+                      <option value="adults">Adulti</option>
+                      <option value="seasonal">Stagionali</option>
+                    </select>
+                  </div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Ordine catalogo</label>
+                    <input value="{{ draftOrder }}" onChange="{{ onOrderChange }}" type="number" step="1" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Badge</label>
+                  <select value="{{ draftBadge }}" onChange="{{ onBadgeChange }}" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    <option value="">Nessuno</option>
+                    <option value="bestseller">Bestseller</option>
+                    <option value="new">Novità</option>
+                    <option value="gift">Idea regalo</option>
+                    <option value="sale">Offerta</option>
+                  </select>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Link Amazon (opzionale)</label>
+                  <input value="{{ draftAmazonUrl }}" onChange="{{ onAmazonUrlChange }}" type="text" placeholder="https://www.amazon.it/dp/..." style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  <div style="font:500 11px 'Nunito',sans-serif;color:#8B6749;">Se vuoto, il sito usa un link di ricerca Amazon generato automaticamente dal titolo.</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="max-width:920px;">
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Tagline (IT)</label>
+                <input value="{{ draftTaglineIt }}" onChange="{{ onTaglineItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Tagline (EN)</label>
+                <input value="{{ draftTaglineEn }}" onChange="{{ onTaglineEnChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Descrizione (IT)</label>
+                <textarea value="{{ draftDescIt }}" onChange="{{ onDescItChange }}" rows="3" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Descrizione (EN)</label>
+                <textarea value="{{ draftDescEn }}" onChange="{{ onDescEnChange }}" rows="3" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+              </div>
+
+              <button onClick="{{ onSaveProduct }}" style="padding:14px 28px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ saveLabel }}</button>
+            </div>
+          </sc-if>
+
+          <!-- GRID VIEW -->
+          <sc-if value="{{ !hasSelection }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
+              <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;">Catalogo prodotti</div>
+              <button onClick="{{ onAddProduct }}" style="padding:10px 18px;border-radius:999px;border:none;background:#FF6F59;color:#fff;font:700 13px 'Baloo 2',sans-serif;cursor:pointer;">+ Nuovo libro</button>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+              <input value="{{ productSearchValue }}" onChange="{{ onProductSearchChange }}" type="text" placeholder="Cerca per titolo..." style="flex:1;min-width:200px;padding:10px 14px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);font:500 13px 'Nunito',sans-serif;outline:none;">
+              <select value="{{ productCategoryFilterValue }}" onChange="{{ onProductCategoryFilterChange }}" style="padding:10px 14px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);font:600 13px 'Nunito',sans-serif;outline:none;">
+                <option value="all">Tutte le categorie</option>
+                <option value="kids">Bambini</option>
+                <option value="teens">Adolescenti</option>
+                <option value="adults">Adulti</option>
+                <option value="seasonal">Stagionali</option>
+              </select>
+              <select value="{{ productBadgeFilterValue }}" onChange="{{ onProductBadgeFilterChange }}" style="padding:10px 14px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);font:600 13px 'Nunito',sans-serif;outline:none;">
+                <option value="all">Tutti i badge</option>
+                <option value="bestseller">Bestseller</option>
+                <option value="new">Novità</option>
+                <option value="gift">Idea regalo</option>
+                <option value="sale">Offerta</option>
+                <option value="none">Nessun badge</option>
+              </select>
+              <select value="{{ productSortByValue }}" onChange="{{ onProductSortChange }}" style="padding:10px 14px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);font:600 13px 'Nunito',sans-serif;outline:none;">
+                <option value="order">Ordine catalogo</option>
+                <option value="title">Nome A-Z</option>
+                <option value="price">Prezzo crescente</option>
+              </select>
+            </div>
+            <div style="font:600 12px 'Nunito',sans-serif;color:#8B6749;margin-bottom:16px;">{{ productResultsLabel }}</div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;">
+              <sc-for list="{{ productCards }}" as="row" hint-placeholder-count="8">
+                <div onClick="{{ row.onSelect }}" style="cursor:pointer;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(61,42,27,0.06);border:1.5px solid rgba(61,42,27,0.08);">
+                  <div style="position:relative;aspect-ratio:1/1;background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 10px,#F6E4CB 10px,#F6E4CB 20px);">
+                    <sc-if value="{{ row.imageDataUrl }}" hint-placeholder-val="{{ false }}">
+                      <img src="{{ row.imageDataUrl }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                    </sc-if>
+                    <sc-if value="{{ row.badgeLabel }}" hint-placeholder-val="{{ false }}">
+                      <span style="position:absolute;top:8px;left:8px;background:#FF6F59;color:#fff;font:800 10px 'Baloo 2',sans-serif;padding:4px 9px;border-radius:999px;">{{ row.badgeLabel }}</span>
+                    </sc-if>
+                  </div>
+                  <div style="padding:12px 14px;">
+                    <div style="font:700 13px 'Baloo 2',sans-serif;color:#3D2A1B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;">{{ row.title }}</div>
+                    <div style="font:600 11.5px 'Nunito',sans-serif;color:#8B6749;">{{ row.priceFormatted }} · {{ row.catLabel }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasProductResults }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:60px 0;text-align:center;font:600 13px 'Nunito',sans-serif;color:#8B6749;">Nessun libro trovato con questi filtri.</div>
+            </sc-if>
+          </sc-if>
+
+        </div>
+      </sc-if>
+
+      <!-- SITE TEXTS TAB -->
+      <sc-if value="{{ isTextsTab }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:28px 40px;max-width:760px;overflow-y:auto;">
+          <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:22px;">Testi del sito — sezione Hero</div>
+
+          <sc-if value="{{ textsLoadError }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFE7E1;border-radius:14px;padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+              <div style="font:600 13px/1.5 'Nunito',sans-serif;color:#C0402C;">Non è stato possibile caricare i testi dal server (problema di rete o backend non raggiungibile). I campi sotto sono vuoti solo per questo motivo — non hai perso nulla.</div>
+              <button onClick="{{ retryLoadTexts }}" style="padding:9px 16px;border-radius:999px;border:none;background:#C0402C;color:#fff;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;white-space:nowrap;">Riprova</button>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+            <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo riga 1 (IT)</label>
+            <input value="{{ heroTitle1It }}" onChange="{{ onHeroTitle1ItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+            <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo riga 2 (IT)</label>
+            <input value="{{ heroTitle2It }}" onChange="{{ onHeroTitle2ItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+            <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sottotitolo (IT)</label>
+            <textarea value="{{ heroSubtitleIt }}" onChange="{{ onHeroSubtitleItChange }}" rows="3" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+          </div>
+
+          <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin:32px 0 22px;">Sezione Chi siamo</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+            <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo (IT)</label>
+            <input value="{{ aboutTitleIt }}" onChange="{{ onAboutTitleItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px;">
+            <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Testo (IT)</label>
+            <textarea value="{{ aboutBodyIt }}" onChange="{{ onAboutBodyItChange }}" rows="4" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+          </div>
+
+          <button onClick="{{ onSaveTexts }}" style="padding:14px 28px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ saveTextsLabel }}</button>
+          <p style="font:500 12px 'Nunito',sans-serif;color:#8B6749;margin-top:16px;max-width:480px;">Nota: testo IT mostrato qui; la versione EN viene aggiornata automaticamente solo per i campi gestiti — per modifiche EN avanzate serve un editor dedicato in una fase successiva.</p>
+        </div>
+      </sc-if>
+
+      <!-- VISUAL EDITOR TAB -->
+      <sc-if value="{{ isVisualTab }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:28px 36px;overflow-y:auto;min-width:0;">
+          <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:6px;">Editor visivo</div>
+          <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:640px;margin:0 0 20px;">Modifica colori, font, spaziatura e testi delle sezioni di Home e Negozio, in italiano e inglese. Il riordino dei blocchi e altre pagine arriveranno in un secondo momento.</p>
+
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:22px;flex-wrap:wrap;">
+            <span style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Pagina:</span>
+            <button onClick="{{ selectLayoutPageHome }}" style="padding:8px 16px;border-radius:999px;border:none;cursor:pointer;background:{{ pageHomeBg }};color:{{ pageHomeFg }};font:700 12px 'Baloo 2',sans-serif;">Home</button>
+            <button onClick="{{ selectLayoutPageShop }}" style="padding:8px 16px;border-radius:999px;border:none;cursor:pointer;background:{{ pageShopBg }};color:{{ pageShopFg }};font:700 12px 'Baloo 2',sans-serif;">Negozio</button>
+            <span style="padding:8px 16px;border-radius:999px;background:#F6E4CB;color:#8B6749;font:700 12px 'Baloo 2',sans-serif;">Prodotto (prossimamente)</span>
+          </div>
+
+          <sc-if value="{{ layoutLoadError }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFE7E1;border-radius:14px;padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+              <div style="font:600 13px/1.5 'Nunito',sans-serif;color:#C0402C;">Non è stato possibile caricare il layout della pagina.</div>
+              <button onClick="{{ retryLoadLayout }}" style="padding:9px 16px;border-radius:999px;border:none;background:#C0402C;color:#fff;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;white-space:nowrap;">Riprova</button>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;">
+            <!-- Elenco blocchi con mini anteprima -->
+            <div style="width:220px;flex:none;display:flex;flex-direction:column;gap:10px;">
+              <sc-for list="{{ blockRows }}" as="row" hint-placeholder-count="4">
+                <div onClick="{{ row.onSelect }}" style="cursor:pointer;border-radius:14px;overflow:hidden;border:2px solid {{ row.borderColor }};box-shadow:0 2px 8px rgba(61,42,27,0.06);">
+                  <div style="padding:18px 14px;background:{{ row.bg }};">
+                    <div style="font-family:{{ row.font }};font-weight:700;font-size:12.5px;color:{{ row.textColor }};">{{ row.label }}</div>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ hasLayoutBlocks }}" hint-placeholder-val="{{ true }}">
+                <div style="font:500 12.5px 'Nunito',sans-serif;color:#8B6749;">Layout non ancora caricato.</div>
+              </sc-if>
+            </div>
+
+            <!-- Pannello di modifica -->
+            <sc-if value="{{ hasBlockSelection }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;min-width:320px;background:#fff;border-radius:18px;padding:26px;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+                <div style="font:800 16px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:18px;">{{ selectedBlockLabel }}</div>
+
+                <div style="font:800 12px 'Nunito',sans-serif;color:#6B4A30;text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px;">Stile</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:26px;">
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Colore sfondo</label>
+                    <input type="color" value="{{ draftBg }}" onChange="{{ onDraftBgChange }}" style="width:100%;height:40px;border-radius:10px;border:1.5px solid rgba(61,42,27,0.15);padding:2px;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Colore testo</label>
+                    <input type="color" value="{{ draftTextColor }}" onChange="{{ onDraftTextColorChange }}" style="width:100%;height:40px;border-radius:10px;border:1.5px solid rgba(61,42,27,0.15);padding:2px;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Colore accento</label>
+                    <input type="color" value="{{ draftAccent }}" onChange="{{ onDraftAccentChange }}" style="width:100%;height:40px;border-radius:10px;border:1.5px solid rgba(61,42,27,0.15);padding:2px;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Font titoli</label>
+                    <select value="{{ draftFont }}" onChange="{{ onDraftFontChange }}" style="padding:10px;border-radius:10px;border:1.5px solid rgba(61,42,27,0.15);font:600 13px 'Nunito',sans-serif;">
+                      <option value="baloo">Baloo 2 (predefinito)</option>
+                      <option value="nunito">Nunito</option>
+                      <option value="poppins">Poppins</option>
+                      <option value="quicksand">Quicksand</option>
+                      <option value="fredoka">Fredoka</option>
+                    </select>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Spaziatura verticale</label>
+                    <select value="{{ draftPaddingY }}" onChange="{{ onDraftPaddingYChange }}" style="padding:10px;border-radius:10px;border:1.5px solid rgba(61,42,27,0.15);font:600 13px 'Nunito',sans-serif;">
+                      <option value="small">Compatta</option>
+                      <option value="medium">Media</option>
+                      <option value="large">Ampia</option>
+                    </select>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Larghezza contenuto</label>
+                    <select value="{{ draftWidth }}" onChange="{{ onDraftWidthChange }}" style="padding:10px;border-radius:10px;border:1.5px solid rgba(61,42,27,0.15);font:600 13px 'Nunito',sans-serif;">
+                      <option value="narrow">Stretta</option>
+                      <option value="medium">Media</option>
+                      <option value="wide">Larga</option>
+                    </select>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Angoli arrotondati ({{ draftRadius }}px)</label>
+                    <input type="range" min="0" max="48" value="{{ draftRadius }}" onChange="{{ onDraftRadiusChange }}" style="width:100%;margin-top:8px;">
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+                  <div style="font:800 12px 'Nunito',sans-serif;color:#6B4A30;text-transform:uppercase;letter-spacing:.04em;">Contenuti</div>
+                  <div style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
+                    <button onClick="{{ setBlockLangIt }}" style="border:none;cursor:pointer;padding:6px 14px;border-radius:999px;font:800 11.5px 'Baloo 2',sans-serif;background:{{ blockLangItBg }};color:{{ blockLangItFg }};">IT</button>
+                    <button onClick="{{ setBlockLangEn }}" style="border:none;cursor:pointer;padding:6px 14px;border-radius:999px;font:800 11.5px 'Baloo 2',sans-serif;background:{{ blockLangEnBg }};color:{{ blockLangEnFg }};">EN</button>
+                  </div>
+                </div>
+
+                <!-- PAGE HEADER (Negozio) -->
+                <sc-if value="{{ isPageHeaderSelected }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo</label>
+                    <input value="{{ draftHeaderTitle }}" onChange="{{ onDraftHeaderTitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sottotitolo</label>
+                    <textarea value="{{ draftHeaderSubtitle }}" onChange="{{ onDraftHeaderSubtitleChange }}" rows="2" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+                  </div>
+                </sc-if>
+
+                <!-- HERO -->
+                <sc-if value="{{ isHeroSelected }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sopratitolo</label>
+                    <input value="{{ draftHeroKicker }}" onChange="{{ onDraftHeroKickerChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo riga 1</label>
+                    <input value="{{ draftHeroTitle1 }}" onChange="{{ onDraftHeroTitle1Change }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo riga 2</label>
+                    <input value="{{ draftHeroTitle2 }}" onChange="{{ onDraftHeroTitle2Change }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sottotitolo</label>
+                    <textarea value="{{ draftHeroSubtitle }}" onChange="{{ onDraftHeroSubtitleChange }}" rows="3" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+                  </div>
+                  <div style="display:flex;gap:12px;margin-bottom:14px;">
+                    <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Bottone principale</label>
+                      <input value="{{ draftHeroCtaPrimary }}" onChange="{{ onDraftHeroCtaPrimaryChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Bottone secondario</label>
+                      <input value="{{ draftHeroCtaSecondary }}" onChange="{{ onDraftHeroCtaSecondaryChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Badge (es. spedizione)</label>
+                    <input value="{{ draftHeroBadge }}" onChange="{{ onDraftHeroBadgeChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                </sc-if>
+
+                <!-- VALUE PROPS -->
+                <sc-if value="{{ isValuePropsSelected }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:8px;">
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo punto 1</label>
+                      <input value="{{ draftVp1Title }}" onChange="{{ onDraftVp1TitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Descrizione punto 1</label>
+                      <input value="{{ draftVp1Desc }}" onChange="{{ onDraftVp1DescChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo punto 2</label>
+                      <input value="{{ draftVp2Title }}" onChange="{{ onDraftVp2TitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Descrizione punto 2</label>
+                      <input value="{{ draftVp2Desc }}" onChange="{{ onDraftVp2DescChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo punto 3</label>
+                      <input value="{{ draftVp3Title }}" onChange="{{ onDraftVp3TitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Descrizione punto 3</label>
+                      <input value="{{ draftVp3Desc }}" onChange="{{ onDraftVp3DescChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo punto 4</label>
+                      <input value="{{ draftVp4Title }}" onChange="{{ onDraftVp4TitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Descrizione punto 4</label>
+                      <input value="{{ draftVp4Desc }}" onChange="{{ onDraftVp4DescChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- ABOUT -->
+                <sc-if value="{{ isAboutSelected }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Immagine (sostituisce il riquadro decorativo)</label>
+                    <label onDragOver="{{ onAboutImageDragOver }}" onDrop="{{ onAboutImageDrop }}" style="width:180px;height:180px;border-radius:20px;border:2px dashed rgba(61,42,27,0.25);background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 14px,#F6E4CB 14px,#F6E4CB 28px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;position:relative;overflow:hidden;cursor:pointer;">
+                      <input type="file" accept="image/*" onChange="{{ onAboutImageFileSelected }}" style="display:none;">
+                      <sc-if value="{{ draftAboutImageUrl }}" hint-placeholder-val="{{ false }}">
+                        <img src="{{ draftAboutImageUrl }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                      </sc-if>
+                      <sc-if value="{{ !draftAboutImageUrl }}" hint-placeholder-val="{{ true }}">
+                        <div style="font:600 11.5px/1.4 'Nunito',sans-serif;color:#8B6749;text-align:center;padding:0 16px;">Clicca o trascina qui un'immagine</div>
+                      </sc-if>
+                      <sc-if value="{{ layoutImageUploading }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:absolute;inset:0;background:rgba(255,252,247,0.9);display:flex;align-items:center;justify-content:center;font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Caricamento...</div>
+                      </sc-if>
+                    </label>
+                    <sc-if value="{{ layoutImageUploadError }}" hint-placeholder-val="{{ false }}">
+                      <div style="font:600 11px/1.4 'Nunito',sans-serif;color:#C0402C;max-width:280px;">Caricamento non riuscito: {{ layoutImageUploadErrorMessage }}</div>
+                    </sc-if>
+                    <div style="font:500 11px 'Nunito',sans-serif;color:#8B6749;max-width:280px;">Se non carichi un'immagine resta visibile il riquadro decorativo di riempimento.</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sopratitolo</label>
+                    <input value="{{ draftAboutKicker }}" onChange="{{ onDraftAboutKickerChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo</label>
+                    <input value="{{ draftAboutTitle }}" onChange="{{ onDraftAboutTitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Testo</label>
+                    <textarea value="{{ draftAboutBody }}" onChange="{{ onDraftAboutBodyChange }}" rows="4" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+                  </div>
+                  <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:6px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Statistica 2 — numero</label>
+                      <input value="{{ draftAboutStat2n }}" onChange="{{ onDraftAboutStat2nChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                    <div style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:6px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Statistica 2 — etichetta</label>
+                      <input value="{{ draftAboutStat2l }}" onChange="{{ onDraftAboutStat2lChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:6px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Statistica 3 — numero</label>
+                      <input value="{{ draftAboutStat3n }}" onChange="{{ onDraftAboutStat3nChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                    <div style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:6px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Statistica 3 — etichetta</label>
+                      <input value="{{ draftAboutStat3l }}" onChange="{{ onDraftAboutStat3lChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- REVIEWS -->
+                <sc-if value="{{ isReviewsSelected }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo</label>
+                    <input value="{{ draftReviewsTitle }}" onChange="{{ onDraftReviewsTitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sottotitolo</label>
+                    <input value="{{ draftReviewsSubtitle }}" onChange="{{ onDraftReviewsSubtitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                </sc-if>
+
+                <button onClick="{{ onSaveBlock }}" style="margin-top:8px;padding:14px 28px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ saveBlockLabel }}</button>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- USERS TAB -->
+      <sc-if value="{{ isUsersTab }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:28px 40px;overflow-y:auto;">
+          <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:6px;">Utenti registrati</div>
+          <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:640px;margin:0 0 22px;">Da qui puoi promuovere un cliente ad amministratore o rimuovergli i permessi, senza dover eseguire query manuali su Supabase.</p>
+
+          <div style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+            <div style="display:flex;padding:14px 20px;background:#FBEFDD;font:800 11.5px 'Nunito',sans-serif;color:#6B4A30;text-transform:uppercase;letter-spacing:.04em;">
+              <div style="flex:1.4;">Nome</div>
+              <div style="flex:2;">Email</div>
+              <div style="flex:1;">Registrato il</div>
+              <div style="flex:0.8;">Ruolo</div>
+              <div style="flex:1;text-align:right;">Azione</div>
+            </div>
+            <sc-for list="{{ userRows }}" as="row" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;padding:14px 20px;border-top:1px solid rgba(61,42,27,0.06);">
+                <div style="flex:1.4;font:700 13px 'Baloo 2',sans-serif;color:#3D2A1B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ row.name }}</div>
+                <div style="flex:2;font:500 13px 'Nunito',sans-serif;color:#6B4A30;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ row.email }}</div>
+                <div style="flex:1;font:500 12.5px 'Nunito',sans-serif;color:#8B6749;">{{ row.createdAtFormatted }}</div>
+                <div style="flex:0.8;">
+                  <span style="font:800 11px 'Baloo 2',sans-serif;padding:5px 12px;border-radius:999px;background:{{ row.roleBg }};color:{{ row.roleFg }};">{{ row.roleLabel }}</span>
+                </div>
+                <div style="flex:1;text-align:right;">
+                  <button onClick="{{ row.onToggleAdmin }}" style="padding:8px 14px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);background:transparent;color:#3D2A1B;font:700 11.5px 'Baloo 2',sans-serif;cursor:pointer;">{{ row.toggleLabel }}</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasUsers }}" hint-placeholder-val="{{ true }}">
+            <div style="font:500 12.5px 'Nunito',sans-serif;color:#8B6749;margin-top:16px;">Nessun utente registrato ancora.</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- REVIEWS TAB -->
+      <sc-if value="{{ isReviewsTab }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:28px 40px;overflow-y:auto;">
+          <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:6px;">Recensioni</div>
+          <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:640px;margin:0 0 18px;">Le recensioni inviate dai clienti restano nascoste sul sito finché non le approvi qui.</p>
+
+          <select value="{{ reviewFilterValue }}" onChange="{{ onReviewFilterChange }}" style="padding:10px 14px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);font:600 13px 'Nunito',sans-serif;outline:none;margin-bottom:18px;">
+            <option value="pending">In attesa di approvazione</option>
+            <option value="approved">Approvate</option>
+            <option value="all">Tutte</option>
+          </select>
+
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <sc-for list="{{ reviewRows }}" as="row" hint-placeholder-count="3">
+              <div style="background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 4px 14px rgba(61,42,27,0.06);">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font:700 13.5px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ row.authorName }}</span>
+                    <span style="color:#FF6F59;font-size:12.5px;letter-spacing:1px;">{{ row.ratingStars }}</span>
+                    <span style="font:800 10.5px 'Baloo 2',sans-serif;padding:4px 10px;border-radius:999px;background:{{ row.statusBg }};color:{{ row.statusFg }};">{{ row.statusLabel }}</span>
+                  </div>
+                  <div style="font:500 11.5px 'Nunito',sans-serif;color:#8B6749;">{{ row.productTitle }} · {{ row.createdAtFormatted }}</div>
+                </div>
+                <p style="font:400 13.5px/1.55 'Nunito',sans-serif;color:#4A3322;margin:0 0 12px;">{{ row.body }}</p>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <sc-if value="{{ row.showApprove }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ row.onApprove }}" style="padding:8px 16px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 12px 'Baloo 2',sans-serif;cursor:pointer;">Approva</button>
+                  </sc-if>
+                  <sc-if value="{{ row.showReject }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ row.onReject }}" style="padding:8px 16px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);background:transparent;color:#3D2A1B;font:700 12px 'Baloo 2',sans-serif;cursor:pointer;">Rimetti in attesa</button>
+                  </sc-if>
+                  <button onClick="{{ row.onDelete }}" style="padding:8px 16px;border-radius:999px;border:1.5px solid #E85A47;background:transparent;color:#E85A47;font:700 12px 'Baloo 2',sans-serif;cursor:pointer;">Elimina</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasNoReviews }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:50px 0;text-align:center;font:600 13px 'Nunito',sans-serif;color:#8B6749;">Nessuna recensione in questa vista.</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- BUNDLES TAB -->
+      <sc-if value="{{ isBundlesTab }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:28px 36px;overflow-y:auto;min-width:0;">
+
+          <!-- EDIT VIEW -->
+          <sc-if value="{{ hasBundleSelection }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+              <button onClick="{{ backToBundles }}" style="padding:9px 16px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);background:transparent;color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">← Torna ai pacchetti</button>
+              <sc-if value="{{ isEditingBundle }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ onDeleteBundle }}" style="padding:9px 16px;border-radius:999px;border:1.5px solid #E85A47;background:transparent;color:#E85A47;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">Elimina pacchetto</button>
+              </sc-if>
+            </div>
+            <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:22px;">{{ bundleEditTitle }}</div>
+
+            <div style="display:flex;gap:28px;flex-wrap:wrap;margin-bottom:24px;max-width:920px;">
+              <div style="flex:none;display:flex;flex-direction:column;gap:8px;">
+                <label onDragOver="{{ onBundleImageDragOver }}" onDrop="{{ onBundleImageDrop }}" style="width:180px;height:180px;border-radius:20px;border:2px dashed rgba(61,42,27,0.25);background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 14px,#F6E4CB 14px,#F6E4CB 28px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;position:relative;overflow:hidden;cursor:pointer;">
+                  <input type="file" accept="image/*" onChange="{{ onBundleImageFileSelected }}" style="display:none;">
+                  <sc-if value="{{ draftBundleImageUrl }}" hint-placeholder-val="{{ false }}">
+                    <img src="{{ draftBundleImageUrl }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                  </sc-if>
+                  <sc-if value="{{ !draftBundleImageUrl }}" hint-placeholder-val="{{ true }}">
+                    <div style="font:600 11.5px/1.4 'Nunito',sans-serif;color:#8B6749;text-align:center;padding:0 16px;">Clicca o trascina qui un'immagine</div>
+                  </sc-if>
+                  <sc-if value="{{ bundleImageUploading }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;inset:0;background:rgba(255,252,247,0.9);display:flex;align-items:center;justify-content:center;font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Caricamento...</div>
+                  </sc-if>
+                </label>
+                <sc-if value="{{ bundleImageUploadError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font:600 11px/1.4 'Nunito',sans-serif;color:#C0402C;max-width:220px;">Caricamento non riuscito: {{ bundleImageUploadErrorMessage }}</div>
+                </sc-if>
+              </div>
+              <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Slug (per URL, es. pacco-avventura)</label>
+                  <input value="{{ draftBundleSlug }}" onChange="{{ onBundleSlugChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo (IT)</label>
+                  <input value="{{ draftBundleTitleIt }}" onChange="{{ onBundleTitleItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo (EN)</label>
+                  <input value="{{ draftBundleTitleEn }}" onChange="{{ onBundleTitleEnChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <div style="display:flex;gap:12px;">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sconto (%)</label>
+                    <input value="{{ draftBundleDiscount }}" onChange="{{ onBundleDiscountChange }}" type="number" step="1" min="0" max="90" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Ordine</label>
+                    <input value="{{ draftBundleOrder }}" onChange="{{ onBundleOrderChange }}" type="number" step="1" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;font:700 12px 'Nunito',sans-serif;color:#6B4A30;">
+                  <input type="checkbox" checked="{{ draftBundleActive }}" onChange="{{ onBundleActiveChange }}">
+                  Pacchetto attivo e visibile sul sito
+                </label>
+              </div>
+            </div>
+
+            <div style="max-width:640px;">
+              <div style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;margin-bottom:10px;">Libri inclusi nel pacchetto</div>
+              <div style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;background:#fff;border-radius:14px;padding:12px 16px;margin-bottom:22px;">
+                <sc-for list="{{ bundleProductChecklist }}" as="row" hint-placeholder-count="6">
+                  <label style="display:flex;align-items:center;gap:10px;font:500 13px 'Nunito',sans-serif;color:#3D2A1B;">
+                    <input type="checkbox" checked="{{ row.checked }}" onChange="{{ row.onToggle }}">
+                    {{ row.title }} — {{ row.priceFormatted }}
+                  </label>
+                </sc-for>
+              </div>
+              <button onClick="{{ onSaveBundle }}" style="padding:14px 28px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ saveBundleLabel }}</button>
+            </div>
+          </sc-if>
+
+          <!-- GRID VIEW -->
+          <sc-if value="{{ !hasBundleSelection }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
+              <div>
+                <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;">Pacchetti regalo</div>
+                <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:560px;margin:6px 0 0;">Crea pacchetti sconto che raggruppano più libri. Compariranno nella sezione dedicata del Negozio.</p>
+              </div>
+              <button onClick="{{ onAddBundle }}" style="padding:10px 18px;border-radius:999px;border:none;background:#FF6F59;color:#fff;font:700 13px 'Baloo 2',sans-serif;cursor:pointer;white-space:nowrap;">+ Nuovo pacchetto</button>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;">
+              <sc-for list="{{ bundleCards }}" as="row" hint-placeholder-count="3">
+                <div onClick="{{ row.onSelect }}" style="cursor:pointer;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(61,42,27,0.06);border:1.5px solid rgba(61,42,27,0.08);">
+                  <div style="padding:14px 16px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                      <div style="font:700 14px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ row.title }}</div>
+                      <span style="font:800 10.5px 'Baloo 2',sans-serif;padding:4px 9px;border-radius:999px;background:{{ row.activeBg }};color:{{ row.activeFg }};">{{ row.activeLabel }}</span>
+                    </div>
+                    <div style="font:600 12px 'Nunito',sans-serif;color:#8B6749;">{{ row.countLabel }} · {{ row.discountLabel }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasNoBundles }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:60px 0;text-align:center;font:600 13px 'Nunito',sans-serif;color:#8B6749;">Non hai ancora creato nessun pacchetto regalo.</div>
+            </sc-if>
+          </sc-if>
+
+        </div>
+      </sc-if>
+
+      <!-- NEWSLETTER TAB -->
+      <sc-if value="{{ isNewsletterTab }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:28px 40px;overflow-y:auto;max-width:820px;">
+          <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:6px;">Newsletter e promozioni</div>
+          <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:640px;margin:0 0 24px;">Il codice sconto va creato manualmente in Amazon Seller Central: qui puoi solo mostrarlo sul sito, il banner non applica alcuno sconto in automatico.</p>
+
+          <div style="background:#fff;border-radius:18px;padding:24px 26px;margin-bottom:32px;">
+            <div style="font:800 15px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:16px;">Banner promozionale</div>
+            <label style="display:flex;align-items:center;gap:8px;font:700 12px 'Nunito',sans-serif;color:#6B4A30;margin-bottom:16px;">
+              <input type="checkbox" checked="{{ promoActive }}" onChange="{{ onPromoActiveChange }}">
+              Mostra il banner sul sito
+            </label>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+              <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Codice sconto (opzionale, creato in Amazon Seller Central)</label>
+              <input value="{{ promoCode }}" onChange="{{ onPromoCodeChange }}" type="text" placeholder="es. MONKEY10" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;max-width:280px;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+              <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Testo del banner (IT)</label>
+              <input value="{{ promoTextIt }}" onChange="{{ onPromoTextItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px;">
+              <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Testo del banner (EN)</label>
+              <input value="{{ promoTextEn }}" onChange="{{ onPromoTextEnChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+            </div>
+            <button onClick="{{ onSaveTexts }}" style="padding:13px 26px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 13.5px 'Baloo 2',sans-serif;cursor:pointer;">{{ saveTextsLabel }}</button>
+          </div>
+
+          <div style="font:800 15px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:6px;">Iscritti alla newsletter — {{ newsletterCountLabel }}</div>
+          <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;margin:0 0 16px;">Nessun invio automatico è collegato: usa questo elenco per creare campagne email dal tuo strumento preferito.</p>
+          <div style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+            <div style="display:flex;padding:14px 20px;background:#FBEFDD;font:800 11.5px 'Nunito',sans-serif;color:#6B4A30;text-transform:uppercase;letter-spacing:.04em;">
+              <div style="flex:2;">Email</div>
+              <div style="flex:1;">Lingua</div>
+              <div style="flex:1;">Iscritto il</div>
+            </div>
+            <sc-for list="{{ newsletterRows }}" as="row" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;padding:12px 20px;border-top:1px solid rgba(61,42,27,0.06);">
+                <div style="flex:2;font:500 13px 'Nunito',sans-serif;color:#3D2A1B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ row.email }}</div>
+                <div style="flex:1;font:600 12.5px 'Nunito',sans-serif;color:#8B6749;">{{ row.localeLabel }}</div>
+                <div style="flex:1;font:500 12.5px 'Nunito',sans-serif;color:#8B6749;">{{ row.createdAtFormatted }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasNoSubscribers }}" hint-placeholder-val="{{ true }}">
+            <div style="font:500 12.5px 'Nunito',sans-serif;color:#8B6749;margin-top:16px;">Nessun iscritto ancora.</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- BLOG TAB -->
+      <sc-if value="{{ isBlogTab }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:28px 36px;overflow-y:auto;min-width:0;">
+
+          <!-- EDIT VIEW -->
+          <sc-if value="{{ hasPostSelection }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+              <button onClick="{{ backToPosts }}" style="padding:9px 16px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);background:transparent;color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">← Torna al blog</button>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="{{ postPreviewUrl }}" target="_blank" rel="noopener" style="padding:9px 16px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);color:#3D2A1B;font:700 12.5px 'Baloo 2',sans-serif;text-decoration:none;">Vedi sul sito ↗</a>
+                <sc-if value="{{ isEditingPost }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ onDeletePost }}" style="padding:9px 16px;border-radius:999px;border:1.5px solid #E85A47;background:transparent;color:#E85A47;font:700 12.5px 'Baloo 2',sans-serif;cursor:pointer;">Elimina articolo</button>
+                </sc-if>
+              </div>
+            </div>
+            <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:22px;">{{ postEditTitle }}</div>
+
+            <div style="display:flex;gap:28px;flex-wrap:wrap;margin-bottom:24px;max-width:920px;">
+              <div style="flex:none;display:flex;flex-direction:column;gap:8px;">
+                <label onDragOver="{{ onPostImageDragOver }}" onDrop="{{ onPostImageDrop }}" style="width:180px;height:180px;border-radius:20px;border:2px dashed rgba(61,42,27,0.25);background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 14px,#F6E4CB 14px,#F6E4CB 28px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;position:relative;overflow:hidden;cursor:pointer;">
+                  <input type="file" accept="image/*" onChange="{{ onPostImageFileSelected }}" style="display:none;">
+                  <sc-if value="{{ draftPostCoverImage }}" hint-placeholder-val="{{ false }}">
+                    <img src="{{ draftPostCoverImage }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                  </sc-if>
+                  <sc-if value="{{ !draftPostCoverImage }}" hint-placeholder-val="{{ true }}">
+                    <div style="font:600 11.5px/1.4 'Nunito',sans-serif;color:#8B6749;text-align:center;padding:0 16px;">Clicca o trascina qui un'immagine</div>
+                  </sc-if>
+                  <sc-if value="{{ postImageUploading }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;inset:0;background:rgba(255,252,247,0.9);display:flex;align-items:center;justify-content:center;font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Caricamento...</div>
+                  </sc-if>
+                </label>
+                <sc-if value="{{ postImageUploadError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font:600 11px/1.4 'Nunito',sans-serif;color:#C0402C;max-width:220px;">Caricamento non riuscito: {{ postImageUploadErrorMessage }}</div>
+                </sc-if>
+              </div>
+              <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Slug (per URL)</label>
+                  <input value="{{ draftPostSlug }}" onChange="{{ onPostSlugChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo (IT)</label>
+                  <input value="{{ draftPostTitleIt }}" onChange="{{ onPostTitleItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo (EN)</label>
+                  <input value="{{ draftPostTitleEn }}" onChange="{{ onPostTitleEnChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;font:700 12px 'Nunito',sans-serif;color:#6B4A30;">
+                  <input type="checkbox" checked="{{ draftPostPublished }}" onChange="{{ onPostPublishedChange }}">
+                  Pubblicato (visibile sul blog)
+                </label>
+              </div>
+            </div>
+
+            <div style="max-width:920px;">
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Anteprima (IT)</label>
+                <input value="{{ draftPostExcerptIt }}" onChange="{{ onPostExcerptItChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Anteprima (EN)</label>
+                <input value="{{ draftPostExcerptEn }}" onChange="{{ onPostExcerptEnChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Testo articolo (IT) — un paragrafo per riga</label>
+                <textarea value="{{ draftPostBodyIt }}" onChange="{{ onPostBodyItChange }}" rows="8" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Testo articolo (EN) — un paragrafo per riga</label>
+                <textarea value="{{ draftPostBodyEn }}" onChange="{{ onPostBodyEnChange }}" rows="8" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
+              </div>
+
+              <button onClick="{{ onSavePost }}" style="padding:14px 28px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ savePostLabel }}</button>
+            </div>
+          </sc-if>
+
+          <!-- LIST VIEW -->
+          <sc-if value="{{ !hasPostSelection }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
+              <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;">Blog</div>
+              <button onClick="{{ onAddPost }}" style="padding:10px 18px;border-radius:999px;border:none;background:#FF6F59;color:#fff;font:700 13px 'Baloo 2',sans-serif;cursor:pointer;">+ Nuovo articolo</button>
+            </div>
+            <div style="background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(61,42,27,0.06);">
+              <sc-for list="{{ postRows }}" as="row" hint-placeholder-count="3">
+                <div onClick="{{ row.onSelect }}" style="cursor:pointer;display:flex;align-items:center;padding:14px 20px;border-top:1px solid rgba(61,42,27,0.06);">
+                  <div style="flex:2;font:700 13px 'Baloo 2',sans-serif;color:#3D2A1B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ row.title }}</div>
+                  <div style="flex:1;">
+                    <span style="font:800 10.5px 'Baloo 2',sans-serif;padding:4px 10px;border-radius:999px;background:{{ row.statusBg }};color:{{ row.statusFg }};">{{ row.statusLabel }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasNoPosts }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:60px 0;text-align:center;font:600 13px 'Nunito',sans-serif;color:#8B6749;">Non hai ancora scritto nessun articolo.</div>
+            </sc-if>
+          </sc-if>
+
+        </div>
+      </sc-if>
+
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+function blankProduct() {
+  return {
+    id: null, slug: '', category: 'kids', price: 0, badge: '',
+    title: { it: '', en: '' }, tagline: { it: '', en: '' }, description: { it: '', en: '' },
+    imageDataUrl: null, amazonUrl: null
+  };
+}
+
+const CAT_LABEL = { kids: 'Bambini', teens: 'Adolescenti', adults: 'Adulti', seasonal: 'Stagionali' };
+const BADGE_LABEL = { bestseller: 'Bestseller', new: 'Novità', gift: 'Idea regalo', sale: 'Offerta' };
+
+const BLOCK_LABEL = { hero: 'Hero (sezione iniziale)', valueProps: 'Punti di forza', about: 'Chi siamo', reviews: 'Recensioni', pageHeader: 'Intestazione pagina' };
+const EDITOR_FONT_FAMILY = {
+  baloo: "'Baloo 2', sans-serif",
+  nunito: "'Nunito', sans-serif",
+  poppins: "'Poppins', sans-serif",
+  quicksand: "'Quicksand', sans-serif",
+  fredoka: "'Fredoka', sans-serif"
+};
+
+class Component extends DCLogic {
+  state = {
+    adminLoggedIn: false,
+    username: '', password: '', loginError: false,
+    activeTab: 'overview',
+    products: [],
+    selectedId: null,
+    draft: blankProduct(),
+    saveFlash: false,
+    siteTexts: null,
+    saveTextsFlash: false,
+    textsLoadError: false,
+    users: [],
+    stats: null,
+    productSearch: '',
+    productCategoryFilter: 'all',
+    productBadgeFilter: 'all',
+    productSortBy: 'order',
+    imageUploading: false,
+    imageUploadError: false,
+    imageUploadErrorMessage: '',
+    layoutBlocks: [],
+    selectedBlockId: null,
+    blockDraft: null,
+    layoutLoadError: false,
+    saveLayoutFlash: false,
+    layoutImageUploading: false,
+    layoutImageUploadError: false,
+    layoutImageUploadErrorMessage: '',
+    blockEditLang: 'it',
+    layoutPage: 'home',
+
+    reviews: [],
+    reviewFilter: 'pending',
+
+    bundles: [],
+    bundleSelectedId: null,
+    bundleDraft: null,
+    bundleSaveFlash: false,
+    bundleImageUploading: false,
+    bundleImageUploadError: false,
+    bundleImageUploadErrorMessage: '',
+
+    newsletterSubscribers: [],
+    newsletterCount: 0,
+
+    posts: [],
+    postSelectedId: null,
+    postDraft: null,
+    postSaveFlash: false,
+    postImageUploading: false,
+    postImageUploadError: false,
+    postImageUploadErrorMessage: ''
+  };
+
+  componentDidMount() {
+    import('./data.js').then(mod => {
+      this.dataApi = mod;
+      const loggedIn = mod.isAdminLoggedIn();
+      this.setState({ adminLoggedIn: loggedIn });
+      if (loggedIn) this.loadAll();
+    });
+  }
+
+  loadAll() {
+    this.dataApi.getProducts().then(products => this.setState({ products })).catch((e) => console.error('[Admin] getProducts', e));
+    this.setState({ textsLoadError: false });
+    this.dataApi.getSiteTexts()
+      .then(siteTexts => this.setState({ siteTexts, textsLoadError: false }))
+      .catch((e) => { console.error('[Admin] getSiteTexts', e); this.setState({ textsLoadError: true }); });
+    this.dataApi.listUsers().then(users => this.setState({ users })).catch((e) => console.error('[Admin] listUsers', e));
+    this.dataApi.getAdminStats().then(stats => this.setState({ stats })).catch((e) => console.error('[Admin] getAdminStats', e));
+    this.loadLayout();
+    this.loadReviews();
+    this.loadBundles();
+    this.loadNewsletter();
+    this.loadPosts();
+  }
+
+  loadReviews() {
+    if (!this.dataApi) return;
+    this.dataApi.adminListReviews().then(reviews => this.setState({ reviews })).catch((e) => console.error('[Admin] adminListReviews', e));
+  }
+
+  loadBundles() {
+    if (!this.dataApi) return;
+    this.dataApi.adminListBundles().then(bundles => this.setState({ bundles })).catch((e) => console.error('[Admin] adminListBundles', e));
+  }
+
+  loadNewsletter() {
+    if (!this.dataApi) return;
+    this.dataApi.adminGetNewsletter()
+      .then(data => this.setState({ newsletterSubscribers: data.subscribers || [], newsletterCount: data.count || 0 }))
+      .catch((e) => console.error('[Admin] adminGetNewsletter', e));
+  }
+
+  loadPosts() {
+    if (!this.dataApi) return;
+    this.dataApi.adminListPosts().then(posts => this.setState({ posts })).catch((e) => console.error('[Admin] adminListPosts', e));
+  }
+
+  retryLoadTexts = () => {
+    if (!this.dataApi) return;
+    this.setState({ textsLoadError: false });
+    this.dataApi.getSiteTexts()
+      .then(siteTexts => this.setState({ siteTexts, textsLoadError: false }))
+      .catch((e) => { console.error('[Admin] getSiteTexts', e); this.setState({ textsLoadError: true }); });
+  };
+
+  loadLayout() {
+    if (!this.dataApi) return;
+    this.setState({ layoutLoadError: false });
+    this.dataApi.getPageLayout(this.state.layoutPage)
+      .then(layout => {
+        const blocks = (layout && layout.blocks) || [];
+        this.setState({ layoutBlocks: blocks, layoutLoadError: false, selectedBlockId: null, blockDraft: null });
+        if (blocks.length) this.selectBlock(blocks[0].id, blocks);
+      })
+      .catch((e) => { console.error('[Admin] getPageLayout', e); this.setState({ layoutLoadError: true }); });
+  }
+
+  retryLoadLayout = () => this.loadLayout();
+
+  selectLayoutPage = (page) => {
+    if (page === this.state.layoutPage) return;
+    this.setState({ layoutPage: page });
+    this.loadLayout();
+  };
+
+  setBlockEditLang = (lang) => this.setState({ blockEditLang: lang });
+
+  onUsernameChange = (e) => this.setState({ username: e.target.value });
+  onPasswordChange = (e) => this.setState({ password: e.target.value });
+
+  onLoginSubmit = () => {
+    if (!this.dataApi) return;
+    this.dataApi.adminLogin(this.state.username, this.state.password).then((ok) => {
+      if (ok) { this.setState({ adminLoggedIn: true, loginError: false }); this.loadAll(); }
+      else this.setState({ loginError: true });
+    });
+  };
+
+  onAdminLogout = () => {
+    if (this.dataApi) this.dataApi.adminLogout();
+    this.setState({ adminLoggedIn: false, username: '', password: '' });
+  };
+
+  showOverviewTab = () => this.setState({ activeTab: 'overview' });
+  showProductsTab = () => this.setState({ activeTab: 'products' });
+  showTextsTab = () => this.setState({ activeTab: 'texts' });
+  showVisualTab = () => this.setState({ activeTab: 'visual' });
+  showUsersTab = () => this.setState({ activeTab: 'users' });
+  showReviewsTab = () => this.setState({ activeTab: 'reviews' });
+  showBundlesTab = () => this.setState({ activeTab: 'bundles' });
+  showNewsletterTab = () => this.setState({ activeTab: 'newsletter' });
+  showBlogTab = () => this.setState({ activeTab: 'blog' });
+
+  selectBlock = (id, blocksOverride) => {
+    const blocks = blocksOverride || this.state.layoutBlocks;
+    const block = blocks.find(b => b.id === id);
+    if (!block) return;
+    this.setState({
+      selectedBlockId: id,
+      blockDraft: {
+        style: Object.assign({}, block.style),
+        content: JSON.parse(JSON.stringify(block.content || {}))
+      },
+      saveLayoutFlash: false,
+      layoutImageUploading: false,
+      layoutImageUploadError: false,
+      layoutImageUploadErrorMessage: ''
+    });
+  };
+
+  updateBlockStyle(patch) {
+    this.setState(s => ({ blockDraft: Object.assign({}, s.blockDraft, { style: Object.assign({}, s.blockDraft.style, patch) }) }));
+  }
+  updateBlockContentField(field, value) {
+    const lang = this.state.blockEditLang;
+    this.setState(s => ({
+      blockDraft: Object.assign({}, s.blockDraft, {
+        content: Object.assign({}, s.blockDraft.content, {
+          [field]: Object.assign({}, s.blockDraft.content[field], { [lang]: value })
+        })
+      })
+    }));
+  }
+  updateBlockContentPlain(field, value) {
+    this.setState(s => ({
+      blockDraft: Object.assign({}, s.blockDraft, {
+        content: Object.assign({}, s.blockDraft.content, { [field]: value })
+      })
+    }));
+  }
+
+  uploadAboutImage(file) {
+    if (!file || !this.dataApi) return;
+    this.setState({ layoutImageUploading: true, layoutImageUploadError: false, layoutImageUploadErrorMessage: '' });
+    this.dataApi.uploadLayoutImage(file)
+      .then((imageUrl) => this.updateBlockContentPlain('imageUrl', imageUrl))
+      .catch((e) => {
+        console.error('[Admin] uploadLayoutImage', e);
+        this.setState({ layoutImageUploadError: true, layoutImageUploadErrorMessage: (e && e.message) || 'errore sconosciuto' });
+      })
+      .finally(() => this.setState({ layoutImageUploading: false }));
+  }
+  onAboutImageDragOver = (e) => { e.preventDefault(); };
+  onAboutImageDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    this.uploadAboutImage(file);
+  };
+  onAboutImageFileSelected = (e) => {
+    const file = e.target.files && e.target.files[0];
+    this.uploadAboutImage(file);
+    e.target.value = '';
+  };
+
+  onDraftBgChange = (e) => this.updateBlockStyle({ bg: e.target.value });
+  onDraftTextColorChange = (e) => this.updateBlockStyle({ textColor: e.target.value });
+  onDraftAccentChange = (e) => this.updateBlockStyle({ accentColor: e.target.value });
+  onDraftFontChange = (e) => this.updateBlockStyle({ font: e.target.value });
+  onDraftPaddingYChange = (e) => this.updateBlockStyle({ paddingY: e.target.value });
+  onDraftWidthChange = (e) => this.updateBlockStyle({ width: e.target.value });
+  onDraftRadiusChange = (e) => this.updateBlockStyle({ radius: parseInt(e.target.value, 10) || 0 });
+
+  onSaveBlock = () => {
+    if (!this.dataApi || !this.state.selectedBlockId || !this.state.blockDraft) return;
+    const blocks = this.state.layoutBlocks.map(b => b.id === this.state.selectedBlockId
+      ? Object.assign({}, b, { style: this.state.blockDraft.style, content: this.state.blockDraft.content })
+      : b);
+    this.dataApi.savePageLayout(this.state.layoutPage, { blocks }).then(layout => {
+      const newBlocks = (layout && layout.blocks) || blocks;
+      this.setState({ layoutBlocks: newBlocks, saveLayoutFlash: true });
+      clearTimeout(this._layoutFlashTimer);
+      this._layoutFlashTimer = setTimeout(() => this.setState({ saveLayoutFlash: false }), 1600);
+    }).catch((e) => {
+      console.error('[Admin] savePageLayout', e);
+      window.alert('Salvataggio non riuscito: ' + ((e && e.message) || 'errore sconosciuto'));
+    });
+  };
+
+  selectProduct = (id) => {
+    const p = this.state.products.find(x => x.id === id);
+    if (!p) return;
+    this.setState({
+      selectedId: id,
+      draft: {
+        id: p.id, slug: p.slug, category: p.category, price: p.price, badge: p.badge || '',
+        title: Object.assign({}, p.title), tagline: Object.assign({}, p.tagline), description: Object.assign({}, p.description),
+        imageDataUrl: p.imageDataUrl || null, amazonUrl: p.amazonUrl || null,
+        order: p.order, rating: p.rating, reviewsCount: p.reviewsCount, pages: p.pages, age: p.age, oldPrice: p.oldPrice
+      },
+      saveFlash: false,
+      imageUploading: false,
+      imageUploadError: false,
+      imageUploadErrorMessage: ''
+    });
+  };
+
+  backToCatalog = () => {
+    this.setState({ selectedId: null, draft: blankProduct() });
+  };
+
+  updateDraft(patch) {
+    this.setState(s => ({ draft: Object.assign({}, s.draft, patch) }));
+  }
+  updateDraftNested(field, lang, value) {
+    this.setState(s => ({ draft: Object.assign({}, s.draft, { [field]: Object.assign({}, s.draft[field], { [lang]: value }) }) }));
+  }
+
+  onTitleItChange = (e) => this.updateDraftNested('title', 'it', e.target.value);
+  onTitleEnChange = (e) => this.updateDraftNested('title', 'en', e.target.value);
+  onTaglineItChange = (e) => this.updateDraftNested('tagline', 'it', e.target.value);
+  onTaglineEnChange = (e) => this.updateDraftNested('tagline', 'en', e.target.value);
+  onDescItChange = (e) => this.updateDraftNested('description', 'it', e.target.value);
+  onDescEnChange = (e) => this.updateDraftNested('description', 'en', e.target.value);
+  onPriceChange = (e) => this.updateDraft({ price: parseFloat(e.target.value) || 0 });
+  onCategoryChange = (e) => this.updateDraft({ category: e.target.value });
+  onOrderChange = (e) => this.updateDraft({ order: parseInt(e.target.value, 10) || 0 });
+  onBadgeChange = (e) => this.updateDraft({ badge: e.target.value || null });
+  onAmazonUrlChange = (e) => this.updateDraft({ amazonUrl: e.target.value || null });
+
+  uploadImage(file) {
+    if (!file || !this.dataApi) return;
+    this.setState({ imageUploading: true, imageUploadError: false, imageUploadErrorMessage: '' });
+    this.dataApi.uploadProductImage(file)
+      .then((imageUrl) => this.updateDraft({ imageDataUrl: imageUrl }))
+      .catch((e) => {
+        console.error('[Admin] uploadProductImage', e);
+        this.setState({ imageUploadError: true, imageUploadErrorMessage: (e && e.message) || 'errore sconosciuto' });
+      })
+      .finally(() => this.setState({ imageUploading: false }));
+  }
+
+  onImageDragOver = (e) => { e.preventDefault(); };
+  onImageDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    this.uploadImage(file);
+  };
+  onImageFileSelected = (e) => {
+    const file = e.target.files && e.target.files[0];
+    this.uploadImage(file);
+    e.target.value = '';
+  };
+
+  onProductSearchChange = (e) => this.setState({ productSearch: e.target.value });
+  onProductCategoryFilterChange = (e) => this.setState({ productCategoryFilter: e.target.value });
+  onProductBadgeFilterChange = (e) => this.setState({ productBadgeFilter: e.target.value });
+  onProductSortChange = (e) => this.setState({ productSortBy: e.target.value });
+
+  onSaveProduct = () => {
+    if (!this.dataApi) return;
+    this.dataApi.saveProduct(this.state.draft).then(products => {
+      this.setState({ products, saveFlash: true });
+      clearTimeout(this._flashTimer);
+      this._flashTimer = setTimeout(() => this.setState({ saveFlash: false }), 1600);
+    }).catch((e) => {
+      console.error('[Admin] saveProduct', e);
+      window.alert('Salvataggio non riuscito: ' + ((e && e.message) || 'errore sconosciuto'));
+    });
+  };
+
+  onAddProduct = () => {
+    if (!this.dataApi) return;
+    this.dataApi.addProduct({}).then(newProduct => {
+      this.dataApi.getProducts().then(products => {
+        this.setState({ products });
+        this.selectProduct(newProduct.id);
+      });
+    });
+  };
+
+  onDuplicateProduct = () => {
+    if (!this.dataApi || !this.state.selectedId) return;
+    const src = this.state.draft;
+    const partial = {
+      category: src.category, price: src.price, badge: src.badge || null,
+      title: { it: (src.title.it || '') + ' (copia)', en: (src.title.en || '') + ' (copy)' },
+      tagline: Object.assign({}, src.tagline),
+      description: Object.assign({}, src.description),
+      imageDataUrl: src.imageDataUrl || null,
+      amazonUrl: null,
+      slug: 'copia-' + Date.now()
+    };
+    this.dataApi.addProduct(partial).then(newProduct => {
+      this.dataApi.getProducts().then(products => {
+        this.setState({ products });
+        this.selectProduct(newProduct.id);
+      });
+    });
+  };
+
+  onDeleteProduct = () => {
+    if (!this.dataApi || !this.state.selectedId) return;
+    if (!window.confirm('Eliminare definitivamente questo libro dal catalogo? L\'operazione non è reversibile.')) return;
+    this.dataApi.deleteProduct(this.state.selectedId).then(products => {
+      this.setState({ products, selectedId: null, draft: blankProduct() });
+    });
+  };
+
+  updateSiteText(section, field, lang, value) {
+    this.setState(s => {
+      const siteTexts = Object.assign({}, s.siteTexts);
+      siteTexts[section] = Object.assign({}, siteTexts[section]);
+      siteTexts[section][field] = Object.assign({}, siteTexts[section][field], { [lang]: value });
+      return { siteTexts };
+    });
+  }
+
+  onHeroTitle1ItChange = (e) => this.updateSiteText('hero', 'title1', 'it', e.target.value);
+  onHeroTitle2ItChange = (e) => this.updateSiteText('hero', 'title2', 'it', e.target.value);
+  onHeroSubtitleItChange = (e) => this.updateSiteText('hero', 'subtitle', 'it', e.target.value);
+  onAboutTitleItChange = (e) => this.updateSiteText('about', 'title', 'it', e.target.value);
+  onAboutBodyItChange = (e) => this.updateSiteText('about', 'body', 'it', e.target.value);
+
+  onSaveTexts = () => {
+    if (!this.dataApi) return;
+    this.dataApi.saveSiteTexts(this.state.siteTexts).then(() => {
+      this.setState({ saveTextsFlash: true });
+      clearTimeout(this._textsFlashTimer);
+      this._textsFlashTimer = setTimeout(() => this.setState({ saveTextsFlash: false }), 1600);
+    }).catch((e) => {
+      console.error('[Admin] saveSiteTexts', e);
+      window.alert('Salvataggio non riuscito: ' + ((e && e.message) || 'errore sconosciuto'));
+    });
+  };
+
+  toggleUserAdmin = (userId, currentIsAdmin) => {
+    if (!this.dataApi) return;
+    this.dataApi.setUserAdmin(userId, !currentIsAdmin).then(() => {
+      this.dataApi.listUsers().then(users => this.setState({ users }));
+    });
+  };
+
+  // ---------------- RECENSIONI ----------------
+
+  onReviewFilterChange = (e) => this.setState({ reviewFilter: e.target.value });
+
+  onApproveReview = (id) => {
+    if (!this.dataApi) return;
+    this.dataApi.adminModerateReview(id, true).then(() => this.loadReviews());
+  };
+  onRejectReview = (id) => {
+    if (!this.dataApi) return;
+    this.dataApi.adminModerateReview(id, false).then(() => this.loadReviews());
+  };
+  onDeleteReview = (id) => {
+    if (!this.dataApi) return;
+    if (!window.confirm('Eliminare definitivamente questa recensione?')) return;
+    this.dataApi.adminDeleteReview(id).then(() => this.loadReviews());
+  };
+
+  // ---------------- PACCHETTI REGALO (BUNDLE) ----------------
+
+  blankBundle() {
+    return { id: null, slug: '', title: { it: '', en: '' }, productIds: [], discountPct: 0, imageUrl: null, active: true, order: 0 };
+  }
+
+  selectBundle = (id) => {
+    const b = this.state.bundles.find(x => x.id === id);
+    if (!b) return;
+    this.setState({
+      bundleSelectedId: id,
+      bundleDraft: {
+        id: b.id, slug: b.slug, title: Object.assign({}, b.title), productIds: (b.productIds || []).slice(),
+        discountPct: b.discountPct || 0, imageUrl: b.imageUrl || null, active: !!b.active, order: b.order || 0
+      },
+      bundleSaveFlash: false, bundleImageUploading: false, bundleImageUploadError: false, bundleImageUploadErrorMessage: ''
+    });
+  };
+
+  onAddBundle = () => {
+    this.setState({ bundleSelectedId: 'new', bundleDraft: this.blankBundle(), bundleSaveFlash: false });
+  };
+
+  backToBundles = () => this.setState({ bundleSelectedId: null, bundleDraft: null });
+
+  updateBundleDraft(patch) {
+    this.setState(s => ({ bundleDraft: Object.assign({}, s.bundleDraft, patch) }));
+  }
+
+  onBundleSlugChange = (e) => this.updateBundleDraft({ slug: e.target.value });
+  onBundleTitleItChange = (e) => this.setState(s => ({ bundleDraft: Object.assign({}, s.bundleDraft, { title: Object.assign({}, s.bundleDraft.title, { it: e.target.value }) }) }));
+  onBundleTitleEnChange = (e) => this.setState(s => ({ bundleDraft: Object.assign({}, s.bundleDraft, { title: Object.assign({}, s.bundleDraft.title, { en: e.target.value }) }) }));
+  onBundleDiscountChange = (e) => this.updateBundleDraft({ discountPct: parseFloat(e.target.value) || 0 });
+  onBundleOrderChange = (e) => this.updateBundleDraft({ order: parseInt(e.target.value, 10) || 0 });
+  onBundleActiveChange = (e) => this.updateBundleDraft({ active: !!e.target.checked });
+
+  onToggleBundleProduct = (productId) => {
+    const cur = this.state.bundleDraft.productIds || [];
+    const next = cur.includes(productId) ? cur.filter(id => id !== productId) : cur.concat([productId]);
+    this.updateBundleDraft({ productIds: next });
+  };
+
+  uploadBundleImageFile(file) {
+    if (!file || !this.dataApi) return;
+    this.setState({ bundleImageUploading: true, bundleImageUploadError: false, bundleImageUploadErrorMessage: '' });
+    this.dataApi.uploadBundleImage(file)
+      .then((imageUrl) => this.updateBundleDraft({ imageUrl }))
+      .catch((e) => {
+        console.error('[Admin] uploadBundleImage', e);
+        this.setState({ bundleImageUploadError: true, bundleImageUploadErrorMessage: (e && e.message) || 'errore sconosciuto' });
+      })
+      .finally(() => this.setState({ bundleImageUploading: false }));
+  }
+  onBundleImageDragOver = (e) => { e.preventDefault(); };
+  onBundleImageDrop = (e) => { e.preventDefault(); const file = e.dataTransfer.files && e.dataTransfer.files[0]; this.uploadBundleImageFile(file); };
+  onBundleImageFileSelected = (e) => { const file = e.target.files && e.target.files[0]; this.uploadBundleImageFile(file); e.target.value = ''; };
+
+  onSaveBundle = () => {
+    if (!this.dataApi || !this.state.bundleDraft) return;
+    const d = this.state.bundleDraft;
+    if (!d.slug || !d.title.it || !d.productIds.length) {
+      window.alert('Compila almeno slug, titolo (IT) e seleziona almeno un libro incluso nel pacchetto.');
+      return;
+    }
+    const payload = { slug: d.slug, title: d.title, productIds: d.productIds, discountPct: d.discountPct, imageUrl: d.imageUrl, active: d.active, order: d.order };
+    const req = d.id ? this.dataApi.adminUpdateBundle(d.id, payload) : this.dataApi.adminCreateBundle(payload);
+    req.then(() => {
+      this.loadBundles();
+      this.setState({ bundleSaveFlash: true });
+      clearTimeout(this._bundleFlashTimer);
+      this._bundleFlashTimer = setTimeout(() => this.setState({ bundleSaveFlash: false }), 1600);
+    }).catch((e) => { console.error('[Admin] saveBundle', e); window.alert('Salvataggio non riuscito: ' + ((e && e.message) || 'errore sconosciuto')); });
+  };
+
+  onDeleteBundle = () => {
+    if (!this.dataApi || !this.state.bundleDraft || !this.state.bundleDraft.id) return;
+    if (!window.confirm('Eliminare definitivamente questo pacchetto regalo?')) return;
+    this.dataApi.adminDeleteBundle(this.state.bundleDraft.id).then(() => {
+      this.loadBundles();
+      this.backToBundles();
+    });
+  };
+
+  // ---------------- BLOG ----------------
+
+  blankPost() {
+    return { id: null, slug: '', title: { it: '', en: '' }, excerpt: { it: '', en: '' }, body: { it: '', en: '' }, coverImage: null, published: false };
+  }
+
+  selectPost = (id) => {
+    const p = this.state.posts.find(x => x.id === id);
+    if (!p) return;
+    this.setState({
+      postSelectedId: id,
+      postDraft: {
+        id: p.id, slug: p.slug,
+        title: Object.assign({}, p.title), excerpt: Object.assign({}, p.excerpt || { it: '', en: '' }), body: Object.assign({}, p.body),
+        coverImage: p.coverImage || null, published: !!p.published
+      },
+      postSaveFlash: false, postImageUploading: false, postImageUploadError: false, postImageUploadErrorMessage: ''
+    });
+  };
+
+  onAddPost = () => {
+    this.setState({ postSelectedId: 'new', postDraft: this.blankPost(), postSaveFlash: false });
+  };
+
+  backToPosts = () => this.setState({ postSelectedId: null, postDraft: null });
+
+  updatePostDraft(patch) {
+    this.setState(s => ({ postDraft: Object.assign({}, s.postDraft, patch) }));
+  }
+  updatePostDraftNested(field, lang, value) {
+    this.setState(s => ({ postDraft: Object.assign({}, s.postDraft, { [field]: Object.assign({}, s.postDraft[field], { [lang]: value }) }) }));
+  }
+
+  onPostSlugChange = (e) => this.updatePostDraft({ slug: e.target.value });
+  onPostTitleItChange = (e) => this.updatePostDraftNested('title', 'it', e.target.value);
+  onPostTitleEnChange = (e) => this.updatePostDraftNested('title', 'en', e.target.value);
+  onPostExcerptItChange = (e) => this.updatePostDraftNested('excerpt', 'it', e.target.value);
+  onPostExcerptEnChange = (e) => this.updatePostDraftNested('excerpt', 'en', e.target.value);
+  onPostBodyItChange = (e) => this.updatePostDraftNested('body', 'it', e.target.value);
+  onPostBodyEnChange = (e) => this.updatePostDraftNested('body', 'en', e.target.value);
+  onPostPublishedChange = (e) => this.updatePostDraft({ published: !!e.target.checked });
+
+  uploadPostImageFile(file) {
+    if (!file || !this.dataApi) return;
+    this.setState({ postImageUploading: true, postImageUploadError: false, postImageUploadErrorMessage: '' });
+    this.dataApi.uploadPostImage(file)
+      .then((imageUrl) => this.updatePostDraft({ coverImage: imageUrl }))
+      .catch((e) => {
+        console.error('[Admin] uploadPostImage', e);
+        this.setState({ postImageUploadError: true, postImageUploadErrorMessage: (e && e.message) || 'errore sconosciuto' });
+      })
+      .finally(() => this.setState({ postImageUploading: false }));
+  }
+  onPostImageDragOver = (e) => { e.preventDefault(); };
+  onPostImageDrop = (e) => { e.preventDefault(); const file = e.dataTransfer.files && e.dataTransfer.files[0]; this.uploadPostImageFile(file); };
+  onPostImageFileSelected = (e) => { const file = e.target.files && e.target.files[0]; this.uploadPostImageFile(file); e.target.value = ''; };
+
+  onSavePost = () => {
+    if (!this.dataApi || !this.state.postDraft) return;
+    const d = this.state.postDraft;
+    if (!d.slug || !d.title.it || !d.body.it) {
+      window.alert('Compila almeno slug, titolo (IT) e testo (IT) prima di salvare.');
+      return;
+    }
+    const payload = { slug: d.slug, title: d.title, excerpt: d.excerpt, body: d.body, coverImage: d.coverImage, published: d.published };
+    const req = d.id ? this.dataApi.adminUpdatePost(d.id, payload) : this.dataApi.adminCreatePost(payload);
+    req.then(() => {
+      this.loadPosts();
+      this.setState({ postSaveFlash: true });
+      clearTimeout(this._postFlashTimer);
+      this._postFlashTimer = setTimeout(() => this.setState({ postSaveFlash: false }), 1600);
+    }).catch((e) => { console.error('[Admin] savePost', e); window.alert('Salvataggio non riuscito: ' + ((e && e.message) || 'errore sconosciuto')); });
+  };
+
+  onDeletePost = () => {
+    if (!this.dataApi || !this.state.postDraft || !this.state.postDraft.id) return;
+    if (!window.confirm('Eliminare definitivamente questo articolo?')) return;
+    this.dataApi.adminDeletePost(this.state.postDraft.id).then(() => {
+      this.loadPosts();
+      this.backToPosts();
+    });
+  };
+
+  // ---------------- NEWSLETTER E PROMOZIONI ----------------
+
+  updatePromoBanner(patch) {
+    this.setState(s => {
+      const siteTexts = Object.assign({}, s.siteTexts);
+      siteTexts.promoBanner = Object.assign({}, siteTexts.promoBanner, patch);
+      return { siteTexts };
+    });
+  }
+
+  onPromoActiveChange = (e) => this.updatePromoBanner({ active: !!e.target.checked });
+  onPromoCodeChange = (e) => this.updatePromoBanner({ code: e.target.value });
+  onPromoTextItChange = (e) => this.setState(s => {
+    const siteTexts = Object.assign({}, s.siteTexts);
+    siteTexts.promoBanner = Object.assign({}, siteTexts.promoBanner, { text: Object.assign({}, siteTexts.promoBanner.text, { it: e.target.value }) });
+    return { siteTexts };
+  });
+  onPromoTextEnChange = (e) => this.setState(s => {
+    const siteTexts = Object.assign({}, s.siteTexts);
+    siteTexts.promoBanner = Object.assign({}, siteTexts.promoBanner, { text: Object.assign({}, siteTexts.promoBanner.text, { en: e.target.value }) });
+    return { siteTexts };
+  });
+
+  formatPrice(value) {
+    return (value || 0).toFixed(2).replace('.', ',') + ' €';
+  }
+
+  formatDate(iso) {
+    if (!iso) return '—';
+    try {
+      return new Date(iso).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    } catch (e) {
+      return '—';
+    }
+  }
+
+  renderVals() {
+    const isOverviewTab = this.state.activeTab === 'overview';
+    const isProductsTab = this.state.activeTab === 'products';
+    const isTextsTab = this.state.activeTab === 'texts';
+    const isVisualTab = this.state.activeTab === 'visual';
+    const isUsersTab = this.state.activeTab === 'users';
+    const isReviewsTab = this.state.activeTab === 'reviews';
+    const isBundlesTab = this.state.activeTab === 'bundles';
+    const isNewsletterTab = this.state.activeTab === 'newsletter';
+    const isBlogTab = this.state.activeTab === 'blog';
+    const products = this.state.products;
+    const selectedId = this.state.selectedId;
+    const draft = this.state.draft;
+
+    let filteredProducts = products.slice();
+    const q = (this.state.productSearch || '').trim().toLowerCase();
+    if (q) {
+      filteredProducts = filteredProducts.filter(p =>
+        ((p.title.it || '').toLowerCase().includes(q)) || ((p.title.en || '').toLowerCase().includes(q))
+      );
+    }
+    if (this.state.productCategoryFilter !== 'all') {
+      filteredProducts = filteredProducts.filter(p => p.category === this.state.productCategoryFilter);
+    }
+    if (this.state.productBadgeFilter !== 'all') {
+      if (this.state.productBadgeFilter === 'none') filteredProducts = filteredProducts.filter(p => !p.badge);
+      else filteredProducts = filteredProducts.filter(p => p.badge === this.state.productBadgeFilter);
+    }
+    const sortBy = this.state.productSortBy;
+    filteredProducts = filteredProducts.slice().sort((a, b) => {
+      if (sortBy === 'title') return (a.title.it || '').localeCompare(b.title.it || '');
+      if (sortBy === 'price') return a.price - b.price;
+      return (a.order || 0) - (b.order || 0);
+    });
+
+    const productCards = filteredProducts.map(p => ({
+      id: p.id,
+      title: p.title.it,
+      priceFormatted: this.formatPrice(p.price),
+      catLabel: CAT_LABEL[p.category] || p.category,
+      imageDataUrl: p.imageDataUrl || null,
+      badgeLabel: p.badge ? (BADGE_LABEL[p.badge] || p.badge) : null,
+      onSelect: () => this.selectProduct(p.id)
+    }));
+
+    const st = this.state.siteTexts || { hero: { title1: {}, title2: {}, subtitle: {} }, about: { title: {}, body: {} } };
+
+    const stats = this.state.stats;
+    const categoryRows = stats
+      ? Object.entries(stats.productsByCategory).map(([cat, count]) => ({ label: CAT_LABEL[cat] || cat, count }))
+      : [];
+    const topFavoriteRows = stats
+      ? stats.topFavorites.map(f => ({ title: f.title, count: f.count }))
+      : [];
+    const totalFavorites = topFavoriteRows.reduce((s, r) => s + r.count, 0);
+
+    const userRows = this.state.users.map(u => ({
+      id: u.id,
+      name: u.name || '—',
+      email: u.email,
+      createdAtFormatted: this.formatDate(u.createdAt),
+      roleLabel: u.isAdmin ? 'Admin' : 'Cliente',
+      roleBg: u.isAdmin ? '#FF6F59' : '#F6E4CB',
+      roleFg: u.isAdmin ? '#fff' : '#6B4A30',
+      toggleLabel: u.isAdmin ? 'Rimuovi admin' : 'Rendi admin',
+      onToggleAdmin: () => this.toggleUserAdmin(u.id, u.isAdmin)
+    }));
+
+    // ---- Recensioni ----
+    const reviewFilter = this.state.reviewFilter;
+    let filteredReviews = this.state.reviews.slice();
+    if (reviewFilter === 'pending') filteredReviews = filteredReviews.filter(r => !r.approved);
+    else if (reviewFilter === 'approved') filteredReviews = filteredReviews.filter(r => r.approved);
+    const reviewRows = filteredReviews.map(r => {
+      const product = this.state.products.find(p => p.id === r.productId);
+      return {
+        id: r.id,
+        authorName: r.authorName || 'Cliente',
+        ratingStars: '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating),
+        body: r.body,
+        productTitle: product ? product.title.it : ('Libro #' + r.productId),
+        createdAtFormatted: this.formatDate(r.createdAt),
+        statusLabel: r.approved ? 'Approvata' : 'In attesa',
+        statusBg: r.approved ? '#DCEEDB' : '#FDEBC8',
+        statusFg: r.approved ? '#2F7A4D' : '#946017',
+        showApprove: !r.approved,
+        showReject: r.approved,
+        onApprove: () => this.onApproveReview(r.id),
+        onReject: () => this.onRejectReview(r.id),
+        onDelete: () => this.onDeleteReview(r.id)
+      };
+    });
+
+    // ---- Pacchetti regalo (bundle) ----
+    const bundleDraft = this.state.bundleDraft;
+    const bundleCards = this.state.bundles.map(b => {
+      const count = (b.productIds || []).length;
+      return {
+        id: b.id,
+        title: b.title.it,
+        countLabel: count + (count === 1 ? ' libro' : ' libri'),
+        discountLabel: b.discountPct ? ('-' + b.discountPct + '%') : 'Nessuno sconto',
+        activeLabel: b.active ? 'Attivo' : 'Bozza',
+        activeBg: b.active ? '#DCEEDB' : '#F6E4CB',
+        activeFg: b.active ? '#2F7A4D' : '#8B6749',
+        onSelect: () => this.selectBundle(b.id)
+      };
+    });
+    const bundleProductChecklist = bundleDraft ? this.state.products.map(p => ({
+      id: p.id,
+      title: p.title.it,
+      priceFormatted: this.formatPrice(p.price),
+      checked: (bundleDraft.productIds || []).includes(p.id),
+      onToggle: () => this.onToggleBundleProduct(p.id)
+    })) : [];
+
+    // ---- Newsletter ----
+    const localeLabelMap = { it: 'Italiano', en: 'Inglese' };
+    const newsletterRows = this.state.newsletterSubscribers.map(s => ({
+      email: s.email,
+      localeLabel: localeLabelMap[s.locale] || '—',
+      createdAtFormatted: this.formatDate(s.createdAt)
+    }));
+
+    // ---- Blog ----
+    const postDraft = this.state.postDraft;
+    const postRows = this.state.posts.map(p => ({
+      id: p.id,
+      title: p.title.it,
+      statusLabel: p.published ? 'Pubblicato' : 'Bozza',
+      statusBg: p.published ? '#DCEEDB' : '#F6E4CB',
+      statusFg: p.published ? '#2F7A4D' : '#8B6749',
+      onSelect: () => this.selectPost(p.id)
+    }));
+
+    // ---- Editor visivo ----
+    const layoutBlocks = this.state.layoutBlocks.slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+    const selectedBlockId = this.state.selectedBlockId;
+    const selectedBlockRaw = layoutBlocks.find(b => b.id === selectedBlockId) || null;
+    const selectedType = selectedBlockRaw ? selectedBlockRaw.type : null;
+    const bDraft = this.state.blockDraft || { style: {}, content: {} };
+    const bStyle = bDraft.style || {};
+    const bContent = bDraft.content || {};
+    const blockEditLang = this.state.blockEditLang;
+    const cIt = (field) => (bContent[field] && bContent[field][blockEditLang]) || '';
+
+    const blockRows = layoutBlocks.map(b => ({
+      id: b.id,
+      label: BLOCK_LABEL[b.type] || b.type,
+      bg: (b.style && b.style.bg) || '#FFFCF7',
+      textColor: (b.style && b.style.textColor) || '#3D2A1B',
+      font: EDITOR_FONT_FAMILY[b.style && b.style.font] || EDITOR_FONT_FAMILY.baloo,
+      borderColor: b.id === selectedBlockId ? '#FF6F59' : 'transparent',
+      onSelect: () => this.selectBlock(b.id)
+    }));
+
+    return {
+      showLogin: !this.state.adminLoggedIn,
+      showDashboard: this.state.adminLoggedIn,
+      usernameValue: this.state.username,
+      passwordValue: this.state.password,
+      onUsernameChange: this.onUsernameChange,
+      onPasswordChange: this.onPasswordChange,
+      onLoginSubmit: this.onLoginSubmit,
+      loginError: this.state.loginError,
+      onAdminLogout: this.onAdminLogout,
+      isOverviewTab, isProductsTab, isTextsTab, isUsersTab,
+      isReviewsTab, isBundlesTab, isNewsletterTab, isBlogTab,
+      showOverviewTab: this.showOverviewTab,
+      showProductsTab: this.showProductsTab,
+      showTextsTab: this.showTextsTab,
+      showUsersTab: this.showUsersTab,
+      showReviewsTab: this.showReviewsTab,
+      showBundlesTab: this.showBundlesTab,
+      showNewsletterTab: this.showNewsletterTab,
+      showBlogTab: this.showBlogTab,
+      overviewTabBg: isOverviewTab ? '#FF6F59' : 'transparent',
+      overviewTabFg: isOverviewTab ? '#FFFCF7' : '#D8C3AC',
+      productsTabBg: isProductsTab ? '#FF6F59' : 'transparent',
+      productsTabFg: isProductsTab ? '#FFFCF7' : '#D8C3AC',
+      textsTabBg: isTextsTab ? '#FF6F59' : 'transparent',
+      textsTabFg: isTextsTab ? '#FFFCF7' : '#D8C3AC',
+      usersTabBg: isUsersTab ? '#FF6F59' : 'transparent',
+      usersTabFg: isUsersTab ? '#FFFCF7' : '#D8C3AC',
+      reviewsTabBg: isReviewsTab ? '#FF6F59' : 'transparent',
+      reviewsTabFg: isReviewsTab ? '#FFFCF7' : '#D8C3AC',
+      bundlesTabBg: isBundlesTab ? '#FF6F59' : 'transparent',
+      bundlesTabFg: isBundlesTab ? '#FFFCF7' : '#D8C3AC',
+      newsletterTabBg: isNewsletterTab ? '#FF6F59' : 'transparent',
+      newsletterTabFg: isNewsletterTab ? '#FFFCF7' : '#D8C3AC',
+      blogTabBg: isBlogTab ? '#FF6F59' : 'transparent',
+      blogTabFg: isBlogTab ? '#FFFCF7' : '#D8C3AC',
+
+      // Recensioni
+      reviewFilterValue: this.state.reviewFilter,
+      onReviewFilterChange: this.onReviewFilterChange,
+      reviewRows,
+      hasNoReviews: reviewRows.length === 0,
+
+      // Pacchetti regalo
+      hasBundleSelection: !!bundleDraft,
+      isEditingBundle: !!(bundleDraft && bundleDraft.id),
+      bundleEditTitle: (bundleDraft && bundleDraft.id) ? 'Modifica pacchetto' : 'Nuovo pacchetto',
+      bundleCards,
+      hasNoBundles: bundleCards.length === 0,
+      draftBundleSlug: bundleDraft ? bundleDraft.slug : '',
+      draftBundleTitleIt: bundleDraft ? bundleDraft.title.it : '',
+      draftBundleTitleEn: bundleDraft ? bundleDraft.title.en : '',
+      draftBundleDiscount: bundleDraft ? bundleDraft.discountPct : 0,
+      draftBundleOrder: bundleDraft ? bundleDraft.order : 0,
+      draftBundleActive: bundleDraft ? bundleDraft.active : true,
+      draftBundleImageUrl: bundleDraft ? bundleDraft.imageUrl : null,
+      bundleProductChecklist,
+      onBundleSlugChange: this.onBundleSlugChange,
+      onBundleTitleItChange: this.onBundleTitleItChange,
+      onBundleTitleEnChange: this.onBundleTitleEnChange,
+      onBundleDiscountChange: this.onBundleDiscountChange,
+      onBundleOrderChange: this.onBundleOrderChange,
+      onBundleActiveChange: this.onBundleActiveChange,
+      onBundleImageDragOver: this.onBundleImageDragOver,
+      onBundleImageDrop: this.onBundleImageDrop,
+      onBundleImageFileSelected: this.onBundleImageFileSelected,
+      bundleImageUploading: this.state.bundleImageUploading,
+      bundleImageUploadError: this.state.bundleImageUploadError,
+      bundleImageUploadErrorMessage: this.state.bundleImageUploadErrorMessage,
+      onAddBundle: this.onAddBundle,
+      backToBundles: this.backToBundles,
+      onSaveBundle: this.onSaveBundle,
+      onDeleteBundle: this.onDeleteBundle,
+      saveBundleLabel: this.state.bundleSaveFlash ? 'Salvato ✓' : 'Salva pacchetto',
+
+      // Newsletter e promozioni
+      promoActive: st.promoBanner ? !!st.promoBanner.active : false,
+      promoCode: st.promoBanner ? (st.promoBanner.code || '') : '',
+      promoTextIt: st.promoBanner && st.promoBanner.text ? (st.promoBanner.text.it || '') : '',
+      promoTextEn: st.promoBanner && st.promoBanner.text ? (st.promoBanner.text.en || '') : '',
+      onPromoActiveChange: this.onPromoActiveChange,
+      onPromoCodeChange: this.onPromoCodeChange,
+      onPromoTextItChange: this.onPromoTextItChange,
+      onPromoTextEnChange: this.onPromoTextEnChange,
+      newsletterCountLabel: this.state.newsletterCount + (this.state.newsletterCount === 1 ? ' iscritto' : ' iscritti'),
+      newsletterRows,
+      hasNoSubscribers: newsletterRows.length === 0,
+
+      // Blog
+      hasPostSelection: !!postDraft,
+      isEditingPost: !!(postDraft && postDraft.id),
+      postEditTitle: (postDraft && postDraft.id) ? 'Modifica articolo' : 'Nuovo articolo',
+      postRows,
+      hasNoPosts: postRows.length === 0,
+      postPreviewUrl: 'BlogPost.dc.html?slug=' + encodeURIComponent(postDraft ? postDraft.slug : ''),
+      draftPostSlug: postDraft ? postDraft.slug : '',
+      draftPostTitleIt: postDraft ? postDraft.title.it : '',
+      draftPostTitleEn: postDraft ? postDraft.title.en : '',
+      draftPostExcerptIt: postDraft ? postDraft.excerpt.it : '',
+      draftPostExcerptEn: postDraft ? postDraft.excerpt.en : '',
+      draftPostBodyIt: postDraft ? postDraft.body.it : '',
+      draftPostBodyEn: postDraft ? postDraft.body.en : '',
+      draftPostPublished: postDraft ? postDraft.published : false,
+      draftPostCoverImage: postDraft ? postDraft.coverImage : null,
+      onPostSlugChange: this.onPostSlugChange,
+      onPostTitleItChange: this.onPostTitleItChange,
+      onPostTitleEnChange: this.onPostTitleEnChange,
+      onPostExcerptItChange: this.onPostExcerptItChange,
+      onPostExcerptEnChange: this.onPostExcerptEnChange,
+      onPostBodyItChange: this.onPostBodyItChange,
+      onPostBodyEnChange: this.onPostBodyEnChange,
+      onPostPublishedChange: this.onPostPublishedChange,
+      onPostImageDragOver: this.onPostImageDragOver,
+      onPostImageDrop: this.onPostImageDrop,
+      onPostImageFileSelected: this.onPostImageFileSelected,
+      postImageUploading: this.state.postImageUploading,
+      postImageUploadError: this.state.postImageUploadError,
+      postImageUploadErrorMessage: this.state.postImageUploadErrorMessage,
+      onAddPost: this.onAddPost,
+      backToPosts: this.backToPosts,
+      onSavePost: this.onSavePost,
+      onDeletePost: this.onDeletePost,
+      savePostLabel: this.state.postSaveFlash ? 'Salvato ✓' : 'Salva articolo',
+      statTotalUsers: stats ? stats.totalUsers : '—',
+      statTotalProducts: stats ? stats.totalProducts : '—',
+      statTotalFavorites: stats ? totalFavorites : '—',
+      categoryRows,
+      hasCategoryRows: categoryRows.length === 0,
+      topFavoriteRows,
+      hasTopFavorites: topFavoriteRows.length === 0,
+      userRows,
+      hasUsers: userRows.length === 0,
+      onAddProduct: this.onAddProduct,
+      hasSelection: !!selectedId,
+      productCards,
+      hasProductResults: productCards.length === 0,
+      productResultsLabel: filteredProducts.length + (filteredProducts.length === 1 ? ' libro trovato' : ' libri trovati') + ' su ' + products.length,
+      productSearchValue: this.state.productSearch,
+      productCategoryFilterValue: this.state.productCategoryFilter,
+      productBadgeFilterValue: this.state.productBadgeFilter,
+      productSortByValue: this.state.productSortBy,
+      onProductSearchChange: this.onProductSearchChange,
+      onProductCategoryFilterChange: this.onProductCategoryFilterChange,
+      onProductBadgeFilterChange: this.onProductBadgeFilterChange,
+      onProductSortChange: this.onProductSortChange,
+      backToCatalog: this.backToCatalog,
+      onDuplicateProduct: this.onDuplicateProduct,
+      previewUrl: 'Product.dc.html?slug=' + encodeURIComponent(draft.slug || ''),
+      draftTitleIt: draft.title.it, draftTitleEn: draft.title.en,
+      draftTaglineIt: draft.tagline.it, draftTaglineEn: draft.tagline.en,
+      draftDescIt: draft.description.it, draftDescEn: draft.description.en,
+      draftPrice: draft.price, draftCategory: draft.category, draftBadge: draft.badge || '',
+      draftOrder: draft.order || 0,
+      draftImageDataUrl: draft.imageDataUrl,
+      draftAmazonUrl: draft.amazonUrl || '',
+      onTitleItChange: this.onTitleItChange, onTitleEnChange: this.onTitleEnChange,
+      onTaglineItChange: this.onTaglineItChange, onTaglineEnChange: this.onTaglineEnChange,
+      onDescItChange: this.onDescItChange, onDescEnChange: this.onDescEnChange,
+      onPriceChange: this.onPriceChange, onCategoryChange: this.onCategoryChange, onBadgeChange: this.onBadgeChange,
+      onOrderChange: this.onOrderChange,
+      onAmazonUrlChange: this.onAmazonUrlChange,
+      onImageDragOver: this.onImageDragOver, onImageDrop: this.onImageDrop, onImageFileSelected: this.onImageFileSelected,
+      imageUploading: this.state.imageUploading, imageUploadError: this.state.imageUploadError,
+      imageUploadErrorMessage: this.state.imageUploadErrorMessage,
+      dropZoneBorder: 'rgba(61,42,27,0.25)',
+      onSaveProduct: this.onSaveProduct,
+      saveLabel: this.state.saveFlash ? 'Salvato ✓' : 'Salva modifiche',
+      onDeleteProduct: this.onDeleteProduct,
+      heroTitle1It: st.hero.title1.it, heroTitle2It: st.hero.title2.it, heroSubtitleIt: st.hero.subtitle.it,
+      aboutTitleIt: st.about.title.it, aboutBodyIt: st.about.body.it,
+      onHeroTitle1ItChange: this.onHeroTitle1ItChange, onHeroTitle2ItChange: this.onHeroTitle2ItChange, onHeroSubtitleItChange: this.onHeroSubtitleItChange,
+      onAboutTitleItChange: this.onAboutTitleItChange, onAboutBodyItChange: this.onAboutBodyItChange,
+      onSaveTexts: this.onSaveTexts,
+      saveTextsLabel: this.state.saveTextsFlash ? 'Salvato ✓' : 'Salva testi',
+      textsLoadError: this.state.textsLoadError,
+      retryLoadTexts: this.retryLoadTexts,
+
+      isVisualTab,
+      showVisualTab: this.showVisualTab,
+      visualTabBg: isVisualTab ? '#FF6F59' : 'transparent',
+      visualTabFg: isVisualTab ? '#FFFCF7' : '#D8C3AC',
+      layoutLoadError: this.state.layoutLoadError,
+      retryLoadLayout: this.retryLoadLayout,
+      hasLayoutBlocks: layoutBlocks.length === 0,
+      blockRows,
+      hasBlockSelection: !!selectedBlockRaw,
+      selectedBlockLabel: selectedBlockRaw ? (BLOCK_LABEL[selectedType] || selectedType) : '',
+      isHeroSelected: selectedType === 'hero',
+      isValuePropsSelected: selectedType === 'valueProps',
+      isAboutSelected: selectedType === 'about',
+      isReviewsSelected: selectedType === 'reviews',
+      isPageHeaderSelected: selectedType === 'pageHeader',
+      selectLayoutPageHome: () => this.selectLayoutPage('home'),
+      selectLayoutPageShop: () => this.selectLayoutPage('shop'),
+      pageHomeBg: this.state.layoutPage === 'home' ? '#3D2A1B' : '#F6E4CB',
+      pageHomeFg: this.state.layoutPage === 'home' ? '#fff' : '#8B6749',
+      pageShopBg: this.state.layoutPage === 'shop' ? '#3D2A1B' : '#F6E4CB',
+      pageShopFg: this.state.layoutPage === 'shop' ? '#fff' : '#8B6749',
+      setBlockLangIt: () => this.setBlockEditLang('it'),
+      setBlockLangEn: () => this.setBlockEditLang('en'),
+      blockLangItBg: blockEditLang === 'it' ? '#3D2A1B' : 'transparent',
+      blockLangItFg: blockEditLang === 'it' ? '#fff' : '#8B6749',
+      blockLangEnBg: blockEditLang === 'en' ? '#3D2A1B' : 'transparent',
+      blockLangEnFg: blockEditLang === 'en' ? '#fff' : '#8B6749',
+      draftHeaderTitle: cIt('title'), draftHeaderSubtitle: cIt('subtitle'),
+      onDraftHeaderTitleChange: (e) => this.updateBlockContentField('title', e.target.value),
+      onDraftHeaderSubtitleChange: (e) => this.updateBlockContentField('subtitle', e.target.value),
+      draftBg: bStyle.bg || '#FFFCF7',
+      draftTextColor: bStyle.textColor || '#3D2A1B',
+      draftAccent: bStyle.accentColor || '#FF6F59',
+      draftFont: bStyle.font || 'baloo',
+      draftPaddingY: bStyle.paddingY || 'medium',
+      draftWidth: bStyle.width || 'wide',
+      draftRadius: bStyle.radius != null ? bStyle.radius : 20,
+      onDraftBgChange: this.onDraftBgChange,
+      onDraftTextColorChange: this.onDraftTextColorChange,
+      onDraftAccentChange: this.onDraftAccentChange,
+      onDraftFontChange: this.onDraftFontChange,
+      onDraftPaddingYChange: this.onDraftPaddingYChange,
+      onDraftWidthChange: this.onDraftWidthChange,
+      onDraftRadiusChange: this.onDraftRadiusChange,
+      // contenuti Hero
+      draftHeroKicker: cIt('kicker'), draftHeroTitle1: cIt('title1'), draftHeroTitle2: cIt('title2'),
+      draftHeroSubtitle: cIt('subtitle'), draftHeroCtaPrimary: cIt('ctaPrimary'), draftHeroCtaSecondary: cIt('ctaSecondary'),
+      draftHeroBadge: cIt('badge'),
+      onDraftHeroKickerChange: (e) => this.updateBlockContentField('kicker', e.target.value),
+      onDraftHeroTitle1Change: (e) => this.updateBlockContentField('title1', e.target.value),
+      onDraftHeroTitle2Change: (e) => this.updateBlockContentField('title2', e.target.value),
+      onDraftHeroSubtitleChange: (e) => this.updateBlockContentField('subtitle', e.target.value),
+      onDraftHeroCtaPrimaryChange: (e) => this.updateBlockContentField('ctaPrimary', e.target.value),
+      onDraftHeroCtaSecondaryChange: (e) => this.updateBlockContentField('ctaSecondary', e.target.value),
+      onDraftHeroBadgeChange: (e) => this.updateBlockContentField('badge', e.target.value),
+      // contenuti Punti di forza
+      draftVp1Title: cIt('v1t'), draftVp1Desc: cIt('v1d'),
+      draftVp2Title: cIt('v2t'), draftVp2Desc: cIt('v2d'),
+      draftVp3Title: cIt('v3t'), draftVp3Desc: cIt('v3d'),
+      draftVp4Title: cIt('v4t'), draftVp4Desc: cIt('v4d'),
+      onDraftVp1TitleChange: (e) => this.updateBlockContentField('v1t', e.target.value),
+      onDraftVp1DescChange: (e) => this.updateBlockContentField('v1d', e.target.value),
+      onDraftVp2TitleChange: (e) => this.updateBlockContentField('v2t', e.target.value),
+      onDraftVp2DescChange: (e) => this.updateBlockContentField('v2d', e.target.value),
+      onDraftVp3TitleChange: (e) => this.updateBlockContentField('v3t', e.target.value),
+      onDraftVp3DescChange: (e) => this.updateBlockContentField('v3d', e.target.value),
+      onDraftVp4TitleChange: (e) => this.updateBlockContentField('v4t', e.target.value),
+      onDraftVp4DescChange: (e) => this.updateBlockContentField('v4d', e.target.value),
+      // contenuti Chi siamo
+      draftAboutImageUrl: bContent.imageUrl || null,
+      onAboutImageDragOver: this.onAboutImageDragOver,
+      onAboutImageDrop: this.onAboutImageDrop,
+      onAboutImageFileSelected: this.onAboutImageFileSelected,
+      layoutImageUploading: this.state.layoutImageUploading,
+      layoutImageUploadError: this.state.layoutImageUploadError,
+      layoutImageUploadErrorMessage: this.state.layoutImageUploadErrorMessage,
+      draftAboutKicker: cIt('kicker'), draftAboutTitle: cIt('title'), draftAboutBody: cIt('body'),
+      draftAboutStat2n: cIt('stat2n'), draftAboutStat2l: cIt('stat2l'),
+      draftAboutStat3n: cIt('stat3n'), draftAboutStat3l: cIt('stat3l'),
+      onDraftAboutKickerChange: (e) => this.updateBlockContentField('kicker', e.target.value),
+      onDraftAboutTitleChange: (e) => this.updateBlockContentField('title', e.target.value),
+      onDraftAboutBodyChange: (e) => this.updateBlockContentField('body', e.target.value),
+      onDraftAboutStat2nChange: (e) => this.updateBlockContentField('stat2n', e.target.value),
+      onDraftAboutStat2lChange: (e) => this.updateBlockContentField('stat2l', e.target.value),
+      onDraftAboutStat3nChange: (e) => this.updateBlockContentField('stat3n', e.target.value),
+      onDraftAboutStat3lChange: (e) => this.updateBlockContentField('stat3l', e.target.value),
+      // contenuti Recensioni
+      draftReviewsTitle: cIt('title'), draftReviewsSubtitle: cIt('subtitle'),
+      onDraftReviewsTitleChange: (e) => this.updateBlockContentField('title', e.target.value),
+      onDraftReviewsSubtitleChange: (e) => this.updateBlockContentField('subtitle', e.target.value),
+      onSaveBlock: this.onSaveBlock,
+      saveBlockLabel: this.state.saveLayoutFlash ? 'Salvato ✓' : 'Salva blocco'
+    };
+  }
+}
+</script>
+</body>
+</html>
