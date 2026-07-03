@@ -31,7 +31,15 @@ const env = {
   SMTP_USER: process.env.SMTP_USER || '',
   SMTP_PASS: process.env.SMTP_PASS || '',
   CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL || '',
-  CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL || ''
+  CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL || '',
+
+  // Invio email via API HTTP di Resend (https://resend.com/docs/api-reference/emails/send-email),
+  // usata al posto del relay SMTP: alcuni hosting cloud gratuiti (es. Render free
+  // tier) bloccano le connessioni SMTP in uscita, causando "Connection timeout"
+  // indipendentemente dal provider SMTP configurato. L'API HTTP passa per HTTPS
+  // (porta 443), che resta sempre raggiungibile. Se RESEND_API_KEY non è
+  // impostata, mailer.js ripiega sul vecchio invio via Nodemailer/SMTP.
+  RESEND_API_KEY: process.env.RESEND_API_KEY || ''
 };
 
 module.exports = env;
