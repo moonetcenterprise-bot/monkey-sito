@@ -5,6 +5,8 @@ backend/coverage/
 backend/*.log
 backend/npm-install.log
 backend/jest-output.log
+backend/test_output.txt
+test_output.txt
 
 # === Generico ===
 node_modules/
