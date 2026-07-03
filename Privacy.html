@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Informativa Privacy — Monkey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#FFFCF7; font-family:'Nunito',system-ui,sans-serif; color:#3D2A1B; }
+  * { box-sizing: border-box; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 48px clamp(20px,5vw,48px) 100px; }
+  header { position: sticky; top:0; z-index:50; background: rgba(255,252,247,0.96); backdrop-filter: blur(6px); border-bottom: 1px solid rgba(61,42,27,0.1); }
+  header .inner { max-width:1280px; margin:0 auto; padding:14px clamp(20px,5vw,48px); display:flex; align-items:center; gap:10px; }
+  header img.icon { width:36px; height:36px; object-fit:contain; }
+  header img.word { height:16px; object-fit:contain; }
+  header a { text-decoration:none; display:flex; align-items:center; gap:10px; }
+  h1 { font: 800 clamp(28px,4vw,38px) 'Baloo 2',sans-serif; margin: 0 0 8px; }
+  .updated { font: 600 13px 'Nunito',sans-serif; color:#8B6749; margin-bottom: 32px; }
+  h2 { font: 700 20px 'Baloo 2',sans-serif; margin: 36px 0 12px; color:#3D2A1B; }
+  p, li { font: 400 15.5px/1.7 'Nunito',sans-serif; color:#4A3322; }
+  ul { padding-left: 22px; }
+  .notice { background:#FBEFDD; border-radius:16px; padding:18px 22px; font:600 14px/1.6 'Nunito',sans-serif; color:#6B4A30; margin-bottom: 36px; }
+  a.link { color:#FF6F59; font-weight:700; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <a href="Home.dc.html">
+        <img class="icon" src="assets/monkey-icon.png" alt="Monkey">
+        <img class="word" src="assets/monkey-wordmark.png" alt="Monkey">
+      </a>
+    </div>
+  </header>
+  <div class="wrap">
+    <h1>Informativa sulla Privacy</h1>
+    <div class="updated">Ultimo aggiornamento: 3 luglio 2026</div>
+
+    <div class="notice">
+      Questa è una bozza standard, redatta per coprire il trattamento dati minimo effettuato dal sito Monkey (registrazione utenti, newsletter, preferiti, form di contatto). Non sostituisce una consulenza legale: prima di considerarla definitiva, fai revisionare questo testo da un professionista legale o da un consulente privacy, in particolare se raccogli in futuro nuove categorie di dati o attivi nuovi strumenti di tracciamento.
+    </div>
+
+    <h2>1. Titolare del trattamento</h2>
+    <p>Il titolare del trattamento dei dati raccolti tramite questo sito è Francesco, contattabile all'indirizzo email <a class="link" href="mailto:moonetc.enterprise@gmail.com">moonetc.enterprise@gmail.com</a>.</p>
+
+    <h2>2. Quali dati raccogliamo</h2>
+    <p>A seconda di come utilizzi il sito, possiamo raccogliere:</p>
+    <ul>
+      <li>Dati di registrazione account: nome ed email, forniti volontariamente al momento dell'iscrizione.</li>
+      <li>Dati di iscrizione alla newsletter: indirizzo email e lingua preferita.</li>
+      <li>Dati del form di contatto: nome, email e contenuto del messaggio inviato.</li>
+      <li>Preferenze prodotto: i libri aggiunti ai "preferiti", associati al tuo account.</li>
+      <li>Dati tecnici minimi salvati localmente sul tuo dispositivo (localStorage del browser), come lingua selezionata e contenuto del carrello, che non vengono trasmessi ai nostri server se non quando effettivamente necessario (es. login).</li>
+    </ul>
+
+    <h2>3. Perché trattiamo i tuoi dati (finalità e base giuridica)</h2>
+    <ul>
+      <li><strong>Gestione dell'account e dei preferiti</strong>: per fornirti il servizio richiesto (esecuzione di un contratto/misure precontrattuali, art. 6.1.b GDPR).</li>
+      <li><strong>Invio della newsletter</strong>: solo se ti iscrivi volontariamente (consenso, art. 6.1.a GDPR). Puoi revocarlo in qualsiasi momento.</li>
+      <li><strong>Risposta ai messaggi di contatto</strong>: per gestire la tua richiesta (legittimo interesse, art. 6.1.f GDPR).</li>
+    </ul>
+
+    <h2>4. Come vengono conservati i dati</h2>
+    <p>I dati sono conservati su Supabase (infrastruttura cloud con server nell'Unione Europea, salvo diversa configurazione) e vengono protetti tramite meccanismi di sicurezza a livello di database (Row Level Security). Le email inviate tramite il form di contatto vengono recapitate tramite il servizio Resend.</p>
+
+    <h2>5. Per quanto tempo conserviamo i dati</h2>
+    <p>I dati dell'account e dei preferiti vengono conservati finché l'account resta attivo. Puoi richiedere la cancellazione del tuo account e dei dati collegati in qualsiasi momento, scrivendo all'indirizzo email indicato al punto 1. Le email iscritte alla newsletter vengono conservate finché non richiedi la cancellazione.</p>
+
+    <h2>6. Con chi condividiamo i tuoi dati</h2>
+    <p>I tuoi dati non vengono venduti o condivisi con terze parti a fini di marketing. Vengono trattati dai seguenti fornitori di servizi, in qualità di responsabili del trattamento, esclusivamente per erogare le funzionalità del sito:</p>
+    <ul>
+      <li><strong>Supabase</strong> (database, autenticazione, storage immagini)</li>
+      <li><strong>Resend</strong> (invio email)</li>
+      <li><strong>Render</strong> e <strong>Vercel</strong> (hosting del backend e del sito)</li>
+    </ul>
+
+    <h2>7. I tuoi diritti</h2>
+    <p>In qualità di interessato, hai il diritto di accedere ai tuoi dati, richiederne la rettifica, la cancellazione, la limitazione del trattamento, la portabilità, nonché di opporti al trattamento, contattandoci all'indirizzo indicato al punto 1. Hai inoltre il diritto di proporre reclamo al Garante per la Protezione dei Dati Personali qualora ritenessi che il trattamento avvenga in violazione della normativa vigente.</p>
+
+    <h2>8. Cookie</h2>
+    <p>Per informazioni sui cookie e sulle tecnologie simili utilizzate dal sito, consulta la nostra <a class="link" href="Cookie.html">Cookie Policy</a>.</p>
+
+    <h2>9. Modifiche a questa informativa</h2>
+    <p>Questa informativa può essere aggiornata periodicamente. Ti invitiamo a consultarla di tanto in tanto per rimanere informato su eventuali cambiamenti.</p>
+  </div>
+</body>
+</html>
