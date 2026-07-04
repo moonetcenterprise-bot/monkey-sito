@@ -720,7 +720,31 @@ class Component extends DCLogic {
       mod.getPageLayout('home').then(pageLayout => this.setState({ pageLayout })).catch(() => {});
       mod.getSiteTexts().then(siteTexts => this.setState({ siteTexts })).catch(() => {});
     });
+    this.scrollToHashWhenReady();
   }
+
+  // Quando si arriva su questa pagina da un link tipo "Home.dc.html#contact"
+  // (da un'altra pagina, es. Spedizioni.html), il browser tenta lo scroll
+  // automatico all'ancora PRIMA che React abbia finito di montare la sezione
+  // corrispondente (la pagina è renderizzata via JS, non è HTML statico), e
+  // quindi lo scroll fallisce silenziosamente. Qui ripetiamo il tentativo di
+  // scroll finché l'elemento non compare davvero nel DOM.
+  scrollToHashWhenReady = () => {
+    const hash = window.location.hash;
+    if (!hash || hash.length < 2) return;
+    const id = hash.slice(1);
+    let attempts = 0;
+    const tryScroll = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      attempts += 1;
+      if (attempts < 40) setTimeout(tryScroll, 100);
+    };
+    tryScroll();
+  };
 
   onNewsletterEmailChange = (e) => this.setState({ newsletterEmail: e.target.value });
   onNewsletterSubmit = () => {
