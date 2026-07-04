@@ -903,11 +903,11 @@ class Component extends DCLogic {
     const bestsellers = picked.concat(rest).slice(0, 8).map(p => this.enrich(p, lang, t, showBadges));
 
     const reviews = lang === 'it' ? [
-      { name: 'Giulia, mamma di 2', quote: 'I miei figli litigano solo per chi colora la pagina giusta! Qualità ottima della carta.' },
+      { name: 'Giulia', quote: 'I miei figli litigano solo per chi colora la pagina giusta! Qualità ottima della carta.' },
       { name: 'Marco, 34 anni', quote: 'Coloro la sera per staccare dal telefono: il mandala zen è diventato un rito.' },
       { name: 'Sara, 16 anni', quote: 'I disegni di Creature Fantastiche sono pazzeschi, li regalo a tutte le mie amiche.' }
     ] : [
-      { name: 'Giulia, mom of 2', quote: 'My kids only fight over who gets to color which page! The paper quality is great.' },
+      { name: 'Giulia', quote: 'My kids only fight over who gets to color which page! The paper quality is great.' },
       { name: 'Marco, 34', quote: 'I color in the evening to unplug from my phone: the zen mandala book became a ritual.' },
       { name: 'Sara, 16', quote: 'The Fantastic Creatures illustrations are amazing, I gift them to all my friends.' }
     ];
