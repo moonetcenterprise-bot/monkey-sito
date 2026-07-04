@@ -23,6 +23,7 @@
     @media (max-width: 900px) {
       .monkey-nav-desktop { display:none !important; }
       .monkey-hamburger-btn { display:flex !important; }
+      .monkey-product-grid { grid-template-columns: repeat(2, 1fr) !important; gap:14px !important; }
     }
     @media (max-width: 600px) {
       .monkey-bottom-nav { display:flex !important; }
@@ -96,7 +97,7 @@
       </div>
     </sc-if>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;">
+    <div class="monkey-product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;">
       <sc-for list="{{ items }}" as="item" hint-placeholder-count="0">
         <div style="background:#fff;border-radius:22px;border:1px solid rgba(61,42,27,0.1);padding:16px;display:flex;flex-direction:column;gap:10px;position:relative;">
           <a href="Product.dc.html?slug={{ item.slug }}" style="text-decoration:none;display:block;">
@@ -155,7 +156,7 @@
       <span style="font:700 10px 'Baloo 2',sans-serif;">{{ t.nav.favorites }}</span>
     </a>
     <a href="Shop.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:#6B4A30;padding:6px 10px;min-width:56px;position:relative;">
-      <span style="font-size:20px;line-height:1;">🛍</span>
+      <span style="display:block;line-height:1;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></span>
       <span style="font:700 10px 'Baloo 2',sans-serif;">Carrello</span>
     </a>
     <a href="Account.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:{{ bottomNavAccountColor }};padding:6px 10px;min-width:56px;">
