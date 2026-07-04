@@ -59,34 +59,68 @@
       <h1 style="font:800 clamp(26px,3.4vw,32px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 8px;text-align:center;">{{ formTitle }}</h1>
       <p style="font:400 14.5px/1.5 'Nunito',sans-serif;color:#6B4A30;margin:0 0 32px;text-align:center;">{{ formSubtitle }}</p>
 
-      <div style="display:flex;background:#FBEFDD;border-radius:999px;padding:4px;margin-bottom:28px;">
-        <button onClick="{{ showLogin }}" style="flex:1;padding:11px;border-radius:999px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ loginTabBg }};color:{{ loginTabFg }};">{{ t.account.loginTab }}</button>
-        <button onClick="{{ showRegister }}" style="flex:1;padding:11px;border-radius:999px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ registerTabBg }};color:{{ registerTabFg }};">{{ t.account.registerTab }}</button>
-      </div>
-
-      <sc-if value="{{ errorMessage }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#FFE7E1;color:#C0402C;font:600 13px 'Nunito',sans-serif;padding:12px 16px;border-radius:14px;margin-bottom:18px;">{{ errorMessage }}</div>
+      <sc-if value="{{ isForgotMode }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ forgotDone }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FBEFDD;border-radius:16px;padding:20px;margin-bottom:18px;">
+            <div style="font:700 14px 'Nunito',sans-serif;color:#3D2A1B;margin-bottom:6px;">{{ t.account.forgotDoneTitle }}</div>
+            <div style="font:400 13.5px/1.5 'Nunito',sans-serif;color:#6B4A30;">{{ t.account.forgotDoneBody }}</div>
+          </div>
+          <button onClick="{{ showLogin }}" style="width:100%;padding:15px;border-radius:999px;border:2px solid #3D2A1B;background:transparent;color:#3D2A1B;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ t.account.backToLogin }}</button>
+        </sc-if>
+        <sc-if value="{{ !forgotDone }}" hint-placeholder-val="{{ true }}">
+          <p style="font:400 13.5px/1.55 'Nunito',sans-serif;color:#6B4A30;margin:0 0 18px;">{{ t.account.forgotIntro }}</p>
+          <sc-if value="{{ errorMessage }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FFE7E1;color:#C0402C;font:600 13px 'Nunito',sans-serif;padding:12px 16px;border-radius:14px;margin-bottom:18px;">{{ errorMessage }}</div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px;">
+            <label style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">{{ t.account.emailLabel }}</label>
+            <input value="{{ emailValue }}" onChange="{{ onEmailChange }}" type="email" placeholder="{{ t.account.emailPlaceholder }}" style="padding:13px 16px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;color:#3D2A1B;outline:none;">
+          </div>
+          <button onClick="{{ onForgotSubmit }}" style="width:100%;padding:15px;border-radius:999px;border:2px solid #3D2A1B;background:#FF6F59;color:#fff;font:700 15px 'Baloo 2',sans-serif;cursor:pointer;">{{ t.account.forgotSubmit }}</button>
+          <button onClick="{{ showLogin }}" style="width:100%;padding:13px;border-radius:999px;border:none;background:transparent;color:#6B4A30;font:700 13.5px 'Baloo 2',sans-serif;cursor:pointer;margin-top:6px;">{{ t.account.backToLogin }}</button>
+          <p style="font:400 12.5px/1.5 'Nunito',sans-serif;color:#8B6749;margin:18px 0 0;text-align:center;">{{ t.account.forgotEmailAlsoLost }} <a href="Home.dc.html#contact" style="color:#6B4A30;font-weight:700;">{{ t.account.forgotContactLink }}</a></p>
+        </sc-if>
       </sc-if>
 
-      <sc-if value="{{ isRegisterMode }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
-          <label style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">{{ t.account.nameLabel }}</label>
-          <input value="{{ nameValue }}" onChange="{{ onNameChange }}" type="text" placeholder="{{ t.account.namePlaceholder }}" style="padding:13px 16px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;color:#3D2A1B;outline:none;">
+      <sc-if value="{{ !isForgotMode }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;background:#FBEFDD;border-radius:999px;padding:4px;margin-bottom:28px;">
+          <button onClick="{{ showLogin }}" style="flex:1;padding:11px;border-radius:999px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ loginTabBg }};color:{{ loginTabFg }};">{{ t.account.loginTab }}</button>
+          <button onClick="{{ showRegister }}" style="flex:1;padding:11px;border-radius:999px;border:none;cursor:pointer;font:700 13.5px 'Baloo 2',sans-serif;background:{{ registerTabBg }};color:{{ registerTabFg }};">{{ t.account.registerTab }}</button>
         </div>
+
+        <sc-if value="{{ errorMessage }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FFE7E1;color:#C0402C;font:600 13px 'Nunito',sans-serif;padding:12px 16px;border-radius:14px;margin-bottom:18px;">{{ errorMessage }}</div>
+        </sc-if>
+
+        <sc-if value="{{ isRegisterMode }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+            <label style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">{{ t.account.nameLabel }}</label>
+            <input value="{{ nameValue }}" onChange="{{ onNameChange }}" type="text" placeholder="{{ t.account.namePlaceholder }}" style="padding:13px 16px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;color:#3D2A1B;outline:none;">
+          </div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+          <label style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">{{ t.account.emailLabel }}</label>
+          <input value="{{ emailValue }}" onChange="{{ onEmailChange }}" type="email" placeholder="{{ t.account.emailPlaceholder }}" style="padding:13px 16px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;color:#3D2A1B;outline:none;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+          <label style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">{{ t.account.passwordLabel }}</label>
+          <input value="{{ passwordValue }}" onChange="{{ onPasswordChange }}" type="password" placeholder="{{ t.account.passwordPlaceholder }}" style="padding:13px 16px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;color:#3D2A1B;outline:none;">
+        </div>
+
+        <sc-if value="{{ isLoginMode }}" hint-placeholder-val="{{ true }}">
+          <div style="text-align:right;margin-bottom:14px;">
+            <button onClick="{{ showForgot }}" style="border:none;background:transparent;cursor:pointer;font:700 12.5px 'Nunito',sans-serif;color:#8B6749;padding:0;text-decoration:underline;">{{ t.account.forgotLink }}</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ !isLoginMode }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-bottom:14px;"></div>
+        </sc-if>
+
+        <button onClick="{{ onSubmit }}" style="width:100%;padding:15px;border-radius:999px;border:2px solid #3D2A1B;background:#FF6F59;color:#fff;font:700 15px 'Baloo 2',sans-serif;cursor:pointer;">{{ submitLabel }}</button>
+
+        <p style="font:400 12.5px/1.5 'Nunito',sans-serif;color:#8B6749;margin:18px 0 0;text-align:center;">{{ t.account.demoNote }}</p>
       </sc-if>
-
-      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
-        <label style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">{{ t.account.emailLabel }}</label>
-        <input value="{{ emailValue }}" onChange="{{ onEmailChange }}" type="email" placeholder="{{ t.account.emailPlaceholder }}" style="padding:13px 16px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;color:#3D2A1B;outline:none;">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px;">
-        <label style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">{{ t.account.passwordLabel }}</label>
-        <input value="{{ passwordValue }}" onChange="{{ onPasswordChange }}" type="password" placeholder="{{ t.account.passwordPlaceholder }}" style="padding:13px 16px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;color:#3D2A1B;outline:none;">
-      </div>
-
-      <button onClick="{{ onSubmit }}" style="width:100%;padding:15px;border-radius:999px;border:2px solid #3D2A1B;background:#FF6F59;color:#fff;font:700 15px 'Baloo 2',sans-serif;cursor:pointer;">{{ submitLabel }}</button>
-
-      <p style="font:400 12.5px/1.5 'Nunito',sans-serif;color:#8B6749;margin:18px 0 0;text-align:center;">{{ t.account.demoNote }}</p>
     </section>
   </sc-if>
 
@@ -156,7 +190,13 @@ const STRINGS = {
       logout: 'Esci',
       errorExists: 'Esiste già un account con questa email.',
       errorInvalid: 'Email o password non corretti.',
-      errorFields: 'Compila tutti i campi.'
+      errorFields: 'Compila tutti i campi.',
+      forgotLink: 'Password dimenticata?',
+      forgotTitle: 'Recupera la password', forgotSubtitle: 'Ti invieremo un link per impostarne una nuova',
+      forgotIntro: 'Inserisci l\'email con cui ti sei registrato: se corrisponde a un account, riceverai un link per reimpostare la password.',
+      forgotSubmit: 'Invia il link', backToLogin: '← Torna al login',
+      forgotDoneTitle: 'Controlla la tua email', forgotDoneBody: 'Se l\'indirizzo corrisponde a un account esistente, hai ricevuto un\'email con il link per impostare una nuova password.',
+      forgotEmailAlsoLost: 'Non ricordi neanche l\'email associata all\'account?', forgotContactLink: 'Scrivici'
     }
   },
   en: {
@@ -174,7 +214,13 @@ const STRINGS = {
       logout: 'Log out',
       errorExists: 'An account with this email already exists.',
       errorInvalid: 'Incorrect email or password.',
-      errorFields: 'Please fill in all fields.'
+      errorFields: 'Please fill in all fields.',
+      forgotLink: 'Forgot your password?',
+      forgotTitle: 'Reset your password', forgotSubtitle: 'We\'ll send you a link to set a new one',
+      forgotIntro: 'Enter the email you registered with: if it matches an account, you\'ll receive a link to reset your password.',
+      forgotSubmit: 'Send the link', backToLogin: '← Back to sign in',
+      forgotDoneTitle: 'Check your email', forgotDoneBody: 'If that address matches an existing account, you\'ve received an email with a link to set a new password.',
+      forgotEmailAlsoLost: 'Don\'t remember the email on your account either?', forgotContactLink: 'Contact us'
     }
   }
 };
@@ -198,7 +244,8 @@ class Component extends DCLogic {
     cart: [],
     siteTexts: null,
     newsletterEmail: '',
-    newsletterStatus: 'idle'
+    newsletterStatus: 'idle',
+    forgotStatus: 'idle'
   };
 
   componentDidMount() {
@@ -230,11 +277,25 @@ class Component extends DCLogic {
   };
 
   setLang = (lang) => { try { localStorage.setItem('monkey_lang', lang); } catch (e) {} this.setState({ lang }); };
-  showLogin = () => this.setState({ mode: 'login', errorKey: null });
+  showLogin = () => this.setState({ mode: 'login', errorKey: null, forgotStatus: 'idle' });
   showRegister = () => this.setState({ mode: 'register', errorKey: null });
+  showForgot = () => this.setState({ mode: 'forgot', errorKey: null, forgotStatus: 'idle' });
   onNameChange = (e) => this.setState({ name: e.target.value });
   onEmailChange = (e) => this.setState({ email: e.target.value });
   onPasswordChange = (e) => this.setState({ password: e.target.value });
+
+  onForgotSubmit = () => {
+    if (!this.dataApi) return;
+    const email = (this.state.email || '').trim();
+    if (!email) { this.setState({ errorKey: 'errorFields' }); return; }
+    this.setState({ errorKey: null });
+    this.dataApi.requestPasswordReset(email)
+      .then(() => this.setState({ forgotStatus: 'done' }))
+      // Rispondiamo comunque "fatto" anche in caso di errore di rete: non
+      // vogliamo rivelare se l'email esiste o no, né bloccare l'utente su un
+      // dettaglio tecnico che non può risolvere da qui.
+      .catch(() => this.setState({ forgotStatus: 'done' }));
+  };
 
   onSubmit = () => {
     if (!this.dataApi) return;
@@ -263,6 +324,8 @@ class Component extends DCLogic {
     const lang = this.state.lang;
     const t = STRINGS[lang];
     const isRegisterMode = this.state.mode === 'register';
+    const isLoginMode = this.state.mode === 'login';
+    const isForgotMode = this.state.mode === 'forgot';
     const user = this.state.user;
     const cartCount = this.state.cart.reduce((s, i) => s + i.qty, 0);
 
@@ -277,10 +340,15 @@ class Component extends DCLogic {
       loggedOut: !user,
       loggedIn: !!user,
       isRegisterMode,
-      formTitle: isRegisterMode ? t.account.registerTitle : t.account.loginTitle,
-      formSubtitle: isRegisterMode ? t.account.registerSubtitle : t.account.loginSubtitle,
+      isLoginMode,
+      isForgotMode,
+      formTitle: isForgotMode ? t.account.forgotTitle : (isRegisterMode ? t.account.registerTitle : t.account.loginTitle),
+      formSubtitle: isForgotMode ? t.account.forgotSubtitle : (isRegisterMode ? t.account.registerSubtitle : t.account.loginSubtitle),
       showLogin: this.showLogin,
       showRegister: this.showRegister,
+      showForgot: this.showForgot,
+      onForgotSubmit: this.onForgotSubmit,
+      forgotDone: this.state.forgotStatus === 'done',
       loginTabBg: isRegisterMode ? 'transparent' : '#3D2A1B',
       loginTabFg: isRegisterMode ? '#6B4A30' : '#FFFCF7',
       registerTabBg: isRegisterMode ? '#3D2A1B' : 'transparent',

@@ -292,6 +292,19 @@ export async function loginUser({ email, password }) {
   return user;
 }
 
+// ---------- RECUPERO PASSWORD ----------
+
+export async function requestPasswordReset(email) {
+  return apiFetch('/auth/forgot-password', { method: 'POST', body: { email } });
+}
+
+// token: il valore access_token che Supabase mette nell'URL della pagina
+// ResetPassword.dc.html dopo che il cliente ha cliccato il link ricevuto via
+// email. Non è la password: è un JWT temporaneo che identifica l'utente.
+export async function confirmPasswordReset(token, password) {
+  return apiFetch('/auth/reset-password', { method: 'POST', body: { password }, token });
+}
+
 export function logoutUser() {
   const session = getSession();
   if (session && session.token) {

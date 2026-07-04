@@ -1,7 +1,8 @@
-const { authClient } = require('../config/supabaseClient');
+const { authClient, dbClient } = require('../config/supabaseClient');
 const profilesModel = require('../models/profiles.model');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
+const env = require('../config/env');
 
 function toClientUser(user, profile) {
   return {
@@ -99,4 +100,32 @@ const me = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { register, login, adminLogin, logout, me };
+// POST /api/auth/forgot-password — pubblico
+// Chiede a Supabase Auth di inviare l'email con il link di recupero. Risponde
+// sempre con successo (anche se l'email non esiste) per non rivelare a chi
+// prova a indovinare se un indirizzo è registrato o no sul sito.
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const redirectTo = `${env.SITE_URL}/ResetPassword.dc.html`;
+  await authClient.auth.resetPasswordForEmail(email, { redirectTo }).catch((e) => {
+    console.error('[auth] resetPasswordForEmail', e);
+  });
+  res.status(204).send();
+});
+
+// POST /api/auth/reset-password — richiede requireAuth con il token di
+// recupero che Supabase mette nel link dell'email (non una password, un JWT):
+// requireAuth verifica quel token e popola req.user con l'id dell'utente.
+// Usiamo dbClient (service role, Admin API) invece del client anon condiviso:
+// authClient non mantiene sessioni per richiesta (persistSession: false ed è
+// condiviso tra tutte le richieste concorrenti), quindi "updateUser" su di
+// esso non avrebbe un contesto utente affidabile. updateUserById è invece
+// mirato esplicitamente all'id verificato da requireAuth.
+const resetPassword = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+  const { error } = await dbClient.auth.admin.updateUserById(req.user.id, { password });
+  if (error) throw new ApiError(400, error.message);
+  res.status(204).send();
+});
+
+module.exports = { register, login, adminLogin, logout, me, forgotPassword, resetPassword };

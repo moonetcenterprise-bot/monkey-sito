@@ -25,6 +25,11 @@ const env = {
   SUPABASE_SERVICE_ROLE_KEY: required('SUPABASE_SERVICE_ROLE_KEY', { allowEmptyInTest: true }),
   SUPABASE_STORAGE_BUCKET: process.env.SUPABASE_STORAGE_BUCKET || 'product-images',
 
+  // URL pubblico del sito (front end), usato per costruire il link dentro
+  // l'email di reset password che Supabase invia al cliente: deve puntare
+  // alla pagina ResetPassword.dc.html del sito pubblicato, non al backend.
+  SITE_URL: process.env.SITE_URL || 'http://localhost:3000',
+
   SMTP_HOST: process.env.SMTP_HOST || '',
   SMTP_PORT: parseInt(process.env.SMTP_PORT || '465', 10),
   SMTP_SECURE: (process.env.SMTP_SECURE || 'true') === 'true',
