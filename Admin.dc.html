@@ -339,14 +339,17 @@
       <sc-if value="{{ isVisualTab }}" hint-placeholder-val="{{ false }}">
         <div style="flex:1;padding:28px 36px;overflow-y:auto;min-width:0;">
           <div style="font:800 22px 'Baloo 2',sans-serif;color:#3D2A1B;margin-bottom:6px;">Editor visivo</div>
-          <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:640px;margin:0 0 20px;">Modifica colori, font, spaziatura e testi delle sezioni di Home e Negozio, in italiano e inglese. Il riordino dei blocchi e altre pagine arriveranno in un secondo momento.</p>
+          <p style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:640px;margin:0 0 20px;">Modifica colori, font, spaziatura e testi delle sezioni di Home, Negozio e Prodotto, in italiano e inglese. Il riordino dei blocchi arriverà in un secondo momento.</p>
 
           <div style="display:flex;gap:10px;align-items:center;margin-bottom:22px;flex-wrap:wrap;">
             <span style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Pagina:</span>
             <button onClick="{{ selectLayoutPageHome }}" style="padding:8px 16px;border-radius:999px;border:none;cursor:pointer;background:{{ pageHomeBg }};color:{{ pageHomeFg }};font:700 12px 'Baloo 2',sans-serif;">Home</button>
             <button onClick="{{ selectLayoutPageShop }}" style="padding:8px 16px;border-radius:999px;border:none;cursor:pointer;background:{{ pageShopBg }};color:{{ pageShopFg }};font:700 12px 'Baloo 2',sans-serif;">Negozio</button>
-            <span style="padding:8px 16px;border-radius:999px;background:#F6E4CB;color:#8B6749;font:700 12px 'Baloo 2',sans-serif;">Prodotto (prossimamente)</span>
+            <button onClick="{{ selectLayoutPageProduct }}" style="padding:8px 16px;border-radius:999px;border:none;cursor:pointer;background:{{ pageProductBg }};color:{{ pageProductFg }};font:700 12px 'Baloo 2',sans-serif;">Prodotto</button>
           </div>
+          <sc-if value="{{ isProductPage }}" hint-placeholder-val="{{ false }}">
+            <p style="font:500 12.5px/1.6 'Nunito',sans-serif;color:#8B6749;max-width:640px;margin:-8px 0 20px;">I testi di ogni singolo libro (titolo, prezzo, descrizione, immagine) si modificano da "Catalogo prodotti". Qui controlli solo l'aspetto delle sezioni della pagina Prodotto.</p>
+          </sc-if>
 
           <sc-if value="{{ layoutLoadError }}" hint-placeholder-val="{{ false }}">
             <div style="background:#FFE7E1;border-radius:14px;padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
@@ -566,9 +569,30 @@
                     <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo</label>
                     <input value="{{ draftReviewsTitle }}" onChange="{{ onDraftReviewsTitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
                   </div>
+                  <sc-if value="{{ isHomePage }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sottotitolo</label>
+                      <input value="{{ draftReviewsSubtitle }}" onChange="{{ onDraftReviewsSubtitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ isProductPage }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+                      <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Testo quando non ci sono ancora recensioni</label>
+                      <input value="{{ draftReviewsEmptyLabel }}" onChange="{{ onDraftReviewsEmptyLabelChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    </div>
+                  </sc-if>
+                </sc-if>
+
+                <!-- PRODUCT DETAIL (solo stile, nessun testo: i contenuti del libro vengono dal Catalogo prodotti) -->
+                <sc-if value="{{ isProductDetailSelected }}" hint-placeholder-val="{{ false }}">
+                  <div style="font:500 13px/1.6 'Nunito',sans-serif;color:#8B6749;">Questo blocco controlla solo l'aspetto della sezione di dettaglio del libro (sfondo, font, angoli, spaziatura). Titolo, prezzo, descrizione e immagine si modificano dal Catalogo prodotti, libro per libro.</div>
+                </sc-if>
+
+                <!-- RELATED -->
+                <sc-if value="{{ isRelatedSelected }}" hint-placeholder-val="{{ false }}">
                   <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Sottotitolo</label>
-                    <input value="{{ draftReviewsSubtitle }}" onChange="{{ onDraftReviewsSubtitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Titolo sezione ("Potrebbero piacerti anche")</label>
+                    <input value="{{ draftRelatedTitle }}" onChange="{{ onDraftRelatedTitleChange }}" type="text" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
                   </div>
                 </sc-if>
 
@@ -929,7 +953,7 @@ function blankProduct() {
 const CAT_LABEL = { kids: 'Bambini', teens: 'Adolescenti', adults: 'Adulti', seasonal: 'Stagionali' };
 const BADGE_LABEL = { bestseller: 'Bestseller', new: 'Novità', gift: 'Idea regalo', sale: 'Offerta' };
 
-const BLOCK_LABEL = { hero: 'Hero (sezione iniziale)', valueProps: 'Punti di forza', about: 'Chi siamo', reviews: 'Recensioni', pageHeader: 'Intestazione pagina' };
+const BLOCK_LABEL = { hero: 'Hero (sezione iniziale)', valueProps: 'Punti di forza', about: 'Chi siamo', reviews: 'Recensioni', pageHeader: 'Intestazione pagina', productDetail: 'Dettaglio libro', related: 'Potrebbero piacerti anche' };
 const EDITOR_FONT_FAMILY = {
   baloo: "'Baloo 2', sans-serif",
   nunito: "'Nunito', sans-serif",
@@ -1902,12 +1926,19 @@ class Component extends DCLogic {
       isAboutSelected: selectedType === 'about',
       isReviewsSelected: selectedType === 'reviews',
       isPageHeaderSelected: selectedType === 'pageHeader',
+      isProductDetailSelected: selectedType === 'productDetail',
+      isRelatedSelected: selectedType === 'related',
+      isHomePage: this.state.layoutPage === 'home',
+      isProductPage: this.state.layoutPage === 'product',
       selectLayoutPageHome: () => this.selectLayoutPage('home'),
       selectLayoutPageShop: () => this.selectLayoutPage('shop'),
+      selectLayoutPageProduct: () => this.selectLayoutPage('product'),
       pageHomeBg: this.state.layoutPage === 'home' ? '#3D2A1B' : '#F6E4CB',
       pageHomeFg: this.state.layoutPage === 'home' ? '#fff' : '#8B6749',
       pageShopBg: this.state.layoutPage === 'shop' ? '#3D2A1B' : '#F6E4CB',
       pageShopFg: this.state.layoutPage === 'shop' ? '#fff' : '#8B6749',
+      pageProductBg: this.state.layoutPage === 'product' ? '#3D2A1B' : '#F6E4CB',
+      pageProductFg: this.state.layoutPage === 'product' ? '#fff' : '#8B6749',
       setBlockLangIt: () => this.setBlockEditLang('it'),
       setBlockLangEn: () => this.setBlockEditLang('en'),
       blockLangItBg: blockEditLang === 'it' ? '#3D2A1B' : 'transparent',
@@ -1974,9 +2005,13 @@ class Component extends DCLogic {
       onDraftAboutStat3nChange: (e) => this.updateBlockContentField('stat3n', e.target.value),
       onDraftAboutStat3lChange: (e) => this.updateBlockContentField('stat3l', e.target.value),
       // contenuti Recensioni
-      draftReviewsTitle: cIt('title'), draftReviewsSubtitle: cIt('subtitle'),
+      draftReviewsTitle: cIt('title'), draftReviewsSubtitle: cIt('subtitle'), draftReviewsEmptyLabel: cIt('emptyLabel'),
       onDraftReviewsTitleChange: (e) => this.updateBlockContentField('title', e.target.value),
       onDraftReviewsSubtitleChange: (e) => this.updateBlockContentField('subtitle', e.target.value),
+      onDraftReviewsEmptyLabelChange: (e) => this.updateBlockContentField('emptyLabel', e.target.value),
+      // contenuti "Potrebbero piacerti anche" (pagina Prodotto)
+      draftRelatedTitle: cIt('title'),
+      onDraftRelatedTitleChange: (e) => this.updateBlockContentField('title', e.target.value),
       onSaveBlock: this.onSaveBlock,
       saveBlockLabel: this.state.saveLayoutFlash ? 'Salvato ✓' : 'Salva blocco'
     };

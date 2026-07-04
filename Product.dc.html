@@ -82,7 +82,7 @@
   </div>
 
   <!-- DETAIL -->
-  <section style="max-width:1280px;margin:0 auto;padding:clamp(24px,4vw,40px) clamp(20px,5vw,48px) clamp(60px,8vw,90px);display:flex;gap:48px;flex-wrap:wrap;">
+  <section style="max-width:{{ detailMaxWidth }}px;margin:0 auto;padding:{{ detailPaddingY }}px clamp(20px,5vw,48px) clamp(60px,8vw,90px);display:flex;gap:48px;flex-wrap:wrap;background:{{ detailBg }};border-radius:{{ detailRadius }}px;color:{{ detailTextColor }};font-family:{{ detailFont }};">
     <div style="flex:1 1 380px;min-width:300px;max-width:480px;">
       <div style="position:relative;width:100%;aspect-ratio:1/1;border-radius:28px;overflow:hidden;background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 18px,#F6E4CB 18px,#F6E4CB 36px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
         <sc-if value="{{ p.imageDataUrl }}" hint-placeholder-val="{{ false }}">
@@ -150,8 +150,8 @@
   </section>
 
   <!-- RELATED -->
-  <section style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,48px) clamp(60px,8vw,90px);">
-    <h2 style="font:800 clamp(24px,3.2vw,30px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 24px;">{{ t.product.related }}</h2>
+  <section style="max-width:{{ relatedMaxWidth }}px;margin:0 auto;padding:{{ relatedPaddingY }}px clamp(20px,5vw,48px);background:{{ relatedBg }};border-radius:{{ relatedRadius }}px;color:{{ relatedTextColor }};font-family:{{ relatedFont }};">
+    <h2 style="font:800 clamp(24px,3.2vw,30px) 'Baloo 2',sans-serif;color:{{ relatedTextColor }};margin:0 0 24px;font-family:{{ relatedFont }};">{{ relatedTitle }}</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;">
       <sc-for list="{{ related }}" as="item" hint-placeholder-count="4">
         <div style="background:#fff;border-radius:22px;border:1px solid rgba(61,42,27,0.1);padding:16px;display:flex;flex-direction:column;gap:10px;" style-hover="transform:translateY(-5px);box-shadow:0 16px 32px rgba(61,42,27,0.12);">
@@ -174,8 +174,8 @@
   </section>
 
   <!-- REVIEWS -->
-  <section id="reviews" style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,48px) clamp(60px,8vw,90px);">
-    <h2 style="font:800 clamp(24px,3.2vw,30px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 24px;">{{ reviewsSectionTitle }}</h2>
+  <section id="reviews" style="max-width:{{ reviewsMaxWidth }}px;margin:0 auto;padding:{{ reviewsPaddingY }}px clamp(20px,5vw,48px);background:{{ reviewsBg }};border-radius:{{ reviewsRadius }}px;color:{{ reviewsTextColor }};font-family:{{ reviewsFont }};">
+    <h2 style="font:800 clamp(24px,3.2vw,30px) 'Baloo 2',sans-serif;color:{{ reviewsTextColor }};margin:0 0 24px;font-family:{{ reviewsFont }};">{{ reviewsSectionTitle }}</h2>
 
     <sc-if value="{{ hasReviews }}" hint-placeholder-val="{{ true }}">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-bottom:32px;">
@@ -207,7 +207,7 @@
               <option value="1">★☆☆☆☆ (1)</option>
             </select>
             <textarea value="{{ reviewBodyValue }}" onChange="{{ onReviewBodyChange }}" placeholder="{{ reviewPlaceholder }}" rows="3" style="padding:12px 14px;border-radius:14px;border:1.5px solid rgba(61,42,27,0.15);font:400 13.5px/1.5 'Nunito',sans-serif;color:#3D2A1B;resize:vertical;"></textarea>
-            <button onClick="{{ onReviewSubmit }}" style="padding:12px;border-radius:999px;border:none;background:{{ accent }};color:#fff;font:700 13.5px 'Baloo 2',sans-serif;cursor:pointer;">{{ reviewSubmitLabel }}</button>
+            <button onClick="{{ onReviewSubmit }}" style="padding:12px;border-radius:999px;border:none;background:{{ reviewsAccent }};color:#fff;font:700 13.5px 'Baloo 2',sans-serif;cursor:pointer;">{{ reviewSubmitLabel }}</button>
             <sc-if value="{{ reviewError }}" hint-placeholder-val="{{ false }}">
               <div style="font:600 12px 'Nunito',sans-serif;color:#E85A47;">Qualcosa è andato storto, riprova.</div>
             </sc-if>
@@ -437,6 +437,42 @@ function detectInitialLang() {
   return 'it';
 }
 
+// Stessi helper usati in Home.dc.html/Shop.dc.html per applicare lo stile
+// (colori, font, spaziatura, larghezza) salvato dall'Editor visivo ai blocchi
+// di questa pagina. I contenuti testuali del singolo libro restano quelli
+// gestiti dal Catalogo prodotti: qui si legge solo lo stile e, per i blocchi
+// che ne hanno, testi generali di sezione (es. titolo "Recensioni dei clienti").
+const FONT_FAMILY = {
+  baloo: "'Baloo 2', sans-serif", nunito: "'Nunito', sans-serif", poppins: "'Poppins', sans-serif",
+  quicksand: "'Quicksand', sans-serif", fredoka: "'Fredoka', sans-serif"
+};
+const PADDING_PX = { small: 40, medium: 64, large: 88 };
+const WIDTH_PX = { narrow: 760, medium: 980, wide: 1280 };
+
+function findBlock(layout, id) {
+  return (layout && Array.isArray(layout.blocks) && layout.blocks.find(b => b.id === id)) || null;
+}
+function blockStyle(layout, id, defaults) {
+  const block = findBlock(layout, id);
+  const s = (block && block.style) || {};
+  return {
+    bg: s.bg || defaults.bg,
+    textColor: s.textColor || defaults.textColor,
+    accent: s.accentColor || defaults.accentColor,
+    font: FONT_FAMILY[s.font] || FONT_FAMILY.baloo,
+    paddingY: PADDING_PX[s.paddingY] || PADDING_PX.medium,
+    radius: (s.radius != null ? s.radius : defaults.radius),
+    maxWidth: WIDTH_PX[s.width] || WIDTH_PX.wide
+  };
+}
+function blockContent(layout, id) {
+  const block = findBlock(layout, id);
+  return (block && block.content) || {};
+}
+function txt(contentField, lang) {
+  return (contentField && contentField[lang]) || '';
+}
+
 class Component extends DCLogic {
   state = {
     lang: detectInitialLang(),
@@ -455,7 +491,8 @@ class Component extends DCLogic {
     reviewStatus: 'idle',
     siteTexts: null,
     newsletterEmail: '',
-    newsletterStatus: 'idle'
+    newsletterStatus: 'idle',
+    pageLayout: null
   };
 
   componentDidMount() {
@@ -483,6 +520,7 @@ class Component extends DCLogic {
         .then(reviews => this.setState({ reviews, reviewsLoading: false }))
         .catch(() => this.setState({ reviews: [], reviewsLoading: false }));
       mod.getSiteTexts().then(siteTexts => this.setState({ siteTexts })).catch(() => {});
+      mod.getPageLayout('product').then(pageLayout => this.setState({ pageLayout })).catch(() => {});
     });
     this.scrollToHashWhenReady();
   }
@@ -677,8 +715,25 @@ class Component extends DCLogic {
     const promoBannerText = promo.text ? (promo.text[lang] || '') : '';
     const promoBannerActive = !!(promo.active && (promoBannerText || promo.code));
 
+    const layout = this.state.pageLayout;
+    const detailSt = blockStyle(layout, 'productDetail', { bg: '#FFFCF7', textColor: '#3D2A1B', accentColor: '#FF6F59', radius: 28 });
+    const relatedSt = blockStyle(layout, 'related', { bg: '#FFFCF7', textColor: '#3D2A1B', accentColor: '#FF6F59', radius: 22 });
+    const relatedC = blockContent(layout, 'related');
+    const reviewsSt = blockStyle(layout, 'reviews', { bg: '#FFFCF7', textColor: '#3D2A1B', accentColor: '#FF6F59', radius: 22 });
+    const reviewsC = blockContent(layout, 'reviews');
+    const reviewsTitleOverride = txt(reviewsC.title, lang);
+    const reviewsEmptyOverride = txt(reviewsC.emptyLabel, lang);
+    const relatedTitleOverride = txt(relatedC.title, lang);
+
     return {
       lang, t, accent, p,
+      detailBg: detailSt.bg, detailTextColor: detailSt.textColor, detailFont: detailSt.font,
+      detailRadius: detailSt.radius, detailMaxWidth: detailSt.maxWidth, detailPaddingY: detailSt.paddingY,
+      relatedBg: relatedSt.bg, relatedTextColor: relatedSt.textColor, relatedFont: relatedSt.font,
+      relatedRadius: relatedSt.radius, relatedMaxWidth: relatedSt.maxWidth, relatedPaddingY: relatedSt.paddingY,
+      relatedTitle: relatedTitleOverride || t.product.related,
+      reviewsBg: reviewsSt.bg, reviewsTextColor: reviewsSt.textColor, reviewsAccent: reviewsSt.accent, reviewsFont: reviewsSt.font,
+      reviewsRadius: reviewsSt.radius, reviewsMaxWidth: reviewsSt.maxWidth, reviewsPaddingY: reviewsSt.paddingY,
       setLangIt: () => this.setLang('it'),
       setLangEn: () => this.setLang('en'),
       toggleCart: this.toggleCart,
@@ -711,8 +766,8 @@ class Component extends DCLogic {
       reviewError: this.state.reviewStatus === 'error',
       reviewPlaceholder: lang === 'it' ? 'Racconta la tua esperienza con questo libro...' : 'Tell us about your experience with this book...',
       reviewSubmitLabel: lang === 'it' ? 'Invia recensione' : 'Submit review',
-      reviewsEmptyLabel: lang === 'it' ? 'Nessuna recensione ancora. Sii il primo a lasciarne una!' : 'No reviews yet. Be the first to leave one!',
-      reviewsSectionTitle: t.reviews.title,
+      reviewsEmptyLabel: reviewsEmptyOverride || (lang === 'it' ? 'Nessuna recensione ancora. Sii il primo a lasciarne una!' : 'No reviews yet. Be the first to leave one!'),
+      reviewsSectionTitle: reviewsTitleOverride || t.reviews.title,
       favGlyph: isFav ? '♥' : '♡',
       favColor: isFav ? '#FF6F59' : '#6B4A30',
       onToggleFav: () => this.toggleFavorite(raw.id),

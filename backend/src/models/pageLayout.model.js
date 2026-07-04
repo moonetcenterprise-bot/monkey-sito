@@ -87,6 +87,39 @@ const DEFAULT_LAYOUTS = {
         }
       }
     ]
+  },
+  product: {
+    blocks: [
+      {
+        id: 'productDetail',
+        type: 'productDetail',
+        order: 0,
+        // I testi (titolo, prezzo, descrizione...) restano quelli del singolo
+        // libro, gestiti dal Catalogo prodotti: qui si controlla solo
+        // l'aspetto della sezione di dettaglio (sfondo, font, spaziatura).
+        style: { bg: '#FFFCF7', textColor: '#3D2A1B', accentColor: '#FF6F59', font: 'baloo', paddingY: 'medium', radius: 28, width: 'wide' },
+        content: {}
+      },
+      {
+        id: 'related',
+        type: 'related',
+        order: 1,
+        style: { bg: '#FFFCF7', textColor: '#3D2A1B', accentColor: '#FF6F59', font: 'baloo', paddingY: 'medium', radius: 22, width: 'wide' },
+        content: {
+          title: { it: 'Potrebbero piacerti anche', en: 'You might also like' }
+        }
+      },
+      {
+        id: 'reviews',
+        type: 'reviews',
+        order: 2,
+        style: { bg: '#FFFCF7', textColor: '#3D2A1B', accentColor: '#FF6F59', font: 'baloo', paddingY: 'medium', radius: 22, width: 'wide' },
+        content: {
+          title: { it: 'Recensioni dei clienti', en: 'Customer reviews' },
+          emptyLabel: { it: 'Nessuna recensione ancora. Sii il primo a lasciarne una!', en: 'No reviews yet. Be the first to leave one!' }
+        }
+      }
+    ]
   }
 };
 
