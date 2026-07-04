@@ -174,7 +174,7 @@
   </section>
 
   <!-- REVIEWS -->
-  <section style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,48px) clamp(60px,8vw,90px);">
+  <section id="reviews" style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,48px) clamp(60px,8vw,90px);">
     <h2 style="font:800 clamp(24px,3.2vw,30px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 24px;">{{ reviewsSectionTitle }}</h2>
 
     <sc-if value="{{ hasReviews }}" hint-placeholder-val="{{ true }}">
@@ -484,7 +484,31 @@ class Component extends DCLogic {
         .catch(() => this.setState({ reviews: [], reviewsLoading: false }));
       mod.getSiteTexts().then(siteTexts => this.setState({ siteTexts })).catch(() => {});
     });
+    this.scrollToHashWhenReady();
   }
+
+  // Quando si arriva su questa pagina da un link tipo
+  // "Product.dc.html?slug=...#reviews" (es. cliccando sul numero di
+  // recensioni di una card prodotto in Home/Shop), il browser tenta lo
+  // scroll automatico all'ancora PRIMA che React abbia finito di montare la
+  // sezione recensioni (la pagina è renderizzata via JS). Ripetiamo il
+  // tentativo di scroll finché l'elemento non compare davvero nel DOM.
+  scrollToHashWhenReady = () => {
+    const hash = window.location.hash;
+    if (!hash || hash.length < 2) return;
+    const id = hash.slice(1);
+    let attempts = 0;
+    const tryScroll = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      attempts += 1;
+      if (attempts < 40) setTimeout(tryScroll, 100);
+    };
+    tryScroll();
+  };
 
   onReviewRatingChange = (e) => this.setState({ reviewRating: Number(e.target.value) });
   onReviewBodyChange = (e) => this.setState({ reviewBody: e.target.value });
@@ -599,9 +623,9 @@ class Component extends DCLogic {
       imageDataUrl: raw.imageDataUrl || '',
       priceFormatted: this.formatPrice(raw.price, lang),
       oldPriceFormatted: raw.oldPrice ? this.formatPrice(raw.oldPrice, lang) : null,
-      rating: raw.rating.toFixed(1),
-      ratingPct: (raw.rating / 5 * 100),
-      reviewsCount: raw.reviewsCount,
+      rating: raw.rating != null ? raw.rating.toFixed(1) : (lang === 'it' ? 'Nuovo' : 'New'),
+      ratingPct: raw.rating != null ? (raw.rating / 5 * 100) : 0,
+      reviewsCount: raw.reviewsCount || 0,
       pages: raw.pages,
       age: raw.age,
       format: lang === 'it' ? '21 × 21 cm, copertina morbida' : '21 × 21 cm, softcover',

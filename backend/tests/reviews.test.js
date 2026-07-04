@@ -44,7 +44,11 @@ beforeEach(() => {
 describe('GET /api/products/:slug/reviews', () => {
   it('ritorna solo le recensioni approvate', async () => {
     dbClient.table('products').__queueResult({ data: sampleProductRow, error: null });
-    dbClient.table('reviews').__queueResult({ data: [sampleReviewRow], error: null });
+    // listForProduct chiama findBySlug (1a query su reviews: fetchReviewStats)
+    // e poi findApprovedByProductId (2a query su reviews): la coda FIFO va
+    // rispettata nello stesso ordine in cui il codice le esegue.
+    dbClient.table('reviews').__queueResult({ data: [sampleReviewRow], error: null }); // fetchReviewStats
+    dbClient.table('reviews').__queueResult({ data: [sampleReviewRow], error: null }); // findApprovedByProductId
 
     const app = createApp();
     const res = await request(app).get('/api/products/amici-della-giungla/reviews');
@@ -81,8 +85,12 @@ describe('POST /api/products/:slug/reviews', () => {
   it('201 crea la recensione in attesa di approvazione', async () => {
     authClient.auth.getUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'cliente@example.com' } }, error: null });
     dbClient.table('products').__queueResult({ data: sampleProductRow, error: null });
+    // createForProduct chiama findBySlug, che a sua volta chiama
+    // fetchReviewStats (1a query su reviews) prima ancora di creare la
+    // recensione vera e propria (2a query su reviews, l'insert).
+    dbClient.table('reviews').__queueResult({ data: [], error: null }); // fetchReviewStats
     dbClient.table('profiles').__queueResult({ data: { name: 'Cliente Test' }, error: null });
-    dbClient.table('reviews').__queueResult({ data: Object.assign({}, sampleReviewRow, { approved: false, author_name: 'Cliente Test' }), error: null });
+    dbClient.table('reviews').__queueResult({ data: Object.assign({}, sampleReviewRow, { approved: false, author_name: 'Cliente Test' }), error: null }); // insert
 
     const app = createApp();
     const res = await request(app)

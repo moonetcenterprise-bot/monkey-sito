@@ -38,8 +38,16 @@ beforeEach(() => {
 });
 
 describe('GET /api/products', () => {
-  it('ritorna la lista pubblica dei prodotti', async () => {
+  it('ritorna la lista pubblica dei prodotti, con rating calcolato dalle recensioni approvate', async () => {
     dbClient.table('products').__queueResult({ data: [sampleRow], error: null });
+    dbClient.table('reviews').__queueResult({
+      data: [
+        { product_id: 1, rating: 5 },
+        { product_id: 1, rating: 4 },
+        { product_id: 1, rating: 5 }
+      ],
+      error: null
+    });
     const app = createApp();
     const res = await request(app).get('/api/products');
     expect(res.status).toBe(200);
@@ -47,8 +55,21 @@ describe('GET /api/products', () => {
     expect(res.body[0]).toMatchObject({
       id: 1,
       slug: 'amici-della-giungla',
-      title: { it: 'Amici della Giungla', en: 'Jungle Friends' }
+      title: { it: 'Amici della Giungla', en: 'Jungle Friends' },
+      rating: 4.7,
+      reviewsCount: 3
     });
+  });
+
+  it('un prodotto senza recensioni approvate non mostra rating/badge bestseller', async () => {
+    dbClient.table('products').__queueResult({ data: [sampleRow], error: null });
+    dbClient.table('reviews').__queueResult({ data: [], error: null });
+    const app = createApp();
+    const res = await request(app).get('/api/products');
+    expect(res.status).toBe(200);
+    expect(res.body[0].rating).toBeNull();
+    expect(res.body[0].reviewsCount).toBe(0);
+    expect(res.body[0].badge).not.toBe('bestseller');
   });
 });
 
@@ -62,6 +83,7 @@ describe('GET /api/products/:slug', () => {
 
   it('200 se il prodotto esiste', async () => {
     dbClient.table('products').__queueResult({ data: sampleRow, error: null });
+    dbClient.table('reviews').__queueResult({ data: [], error: null });
     const app = createApp();
     const res = await request(app).get('/api/products/amici-della-giungla');
     expect(res.status).toBe(200);

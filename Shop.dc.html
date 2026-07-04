@@ -147,7 +147,7 @@
               <div style="position:absolute;inset:0;overflow:hidden;width:{{ item.ratingPct }}%;color:#FF6F59;">★★★★★</div>
             </div>
             <span style="font:700 12.5px 'Nunito',sans-serif;color:#3D2A1B;">{{ item.rating }}</span>
-            <span style="font:400 11.5px 'Nunito',sans-serif;color:#8B6749;">({{ item.reviewsCount }})</span>
+            <a href="{{ item.reviewsUrl }}" style="font:400 11.5px 'Nunito',sans-serif;color:#8B6749;text-decoration:underline;">({{ item.reviewsCount }})</a>
           </div>
           <div style="display:flex;align-items:baseline;gap:8px;">
             <span style="font:800 19px 'Baloo 2',sans-serif;color:#3D2A1B;">{{ item.priceFormatted }}</span>
@@ -530,9 +530,10 @@ class Component extends DCLogic {
       imageDataUrl: p.imageDataUrl || '',
       priceFormatted: this.formatPrice(p.price, lang),
       oldPriceFormatted: p.oldPrice ? this.formatPrice(p.oldPrice, lang) : null,
-      rating: p.rating.toFixed(1),
-      ratingPct: (p.rating / 5 * 100),
-      reviewsCount: p.reviewsCount,
+      rating: p.rating != null ? p.rating.toFixed(1) : (lang === 'it' ? 'Nuovo' : 'New'),
+      ratingPct: p.rating != null ? (p.rating / 5 * 100) : 0,
+      reviewsCount: p.reviewsCount || 0,
+      reviewsUrl: 'Product.dc.html?slug=' + encodeURIComponent(p.slug) + '#reviews',
       catLabel: ({ kids: lang === 'it' ? 'Bambini' : 'Kids', teens: lang === 'it' ? 'Adolescenti' : 'Teens', adults: lang === 'it' ? 'Adulti' : 'Adults', seasonal: lang === 'it' ? 'Stagionali' : 'Seasonal' })[p.category],
       catGlyphStyle: CAT_GLYPH[p.category],
       badgeLabel: (showBadges && badgeStyle) ? t.badges[p.badge] : null,

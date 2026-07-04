@@ -130,6 +130,8 @@ describe('GET /api/admin/stats', () => {
     dbClient.table('profiles').__queueResult({ count: 12, error: null });
     // productsModel.findAll(): select('*').order(...)
     dbClient.table('products').__queueResult({ data: [sampleProductRow], error: null });
+    // fetchReviewStats() chiamata da findAll(): select('product_id, rating').eq('approved', true).in(...)
+    dbClient.table('reviews').__queueResult({ data: [], error: null });
     // favoritesModel.countsByProduct(): select('product_id')
     dbClient.table('favorites').__queueResult({ data: [{ product_id: 1 }, { product_id: 1 }], error: null });
 

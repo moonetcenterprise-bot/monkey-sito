@@ -7,7 +7,7 @@
 function createQueryBuilder() {
   let queue = [];
   const builder = {};
-  const chainMethods = ['select', 'eq', 'order', 'insert', 'update', 'delete', 'upsert', 'limit'];
+  const chainMethods = ['select', 'eq', 'in', 'order', 'insert', 'update', 'delete', 'upsert', 'limit'];
   chainMethods.forEach((name) => {
     builder[name] = jest.fn(() => builder);
   });

@@ -64,22 +64,111 @@ function toRow(product) {
   return row;
 }
 
+// Numero minimo di recensioni approvate perché un prodotto sia considerato
+// per il badge "bestseller" automatico: evita che un solo voto a 5 stelle
+// batta prodotti con uno storico di recensioni più solido.
+const BESTSELLER_MIN_REVIEWS = 3;
+// Numero massimo di prodotti che possono mostrare il badge bestseller
+// contemporaneamente (stesso comportamento del vecchio flag manuale).
+const BESTSELLER_MAX_COUNT = 4;
+
+// Calcola rating medio e conteggio recensioni APPROVATE per uno o più
+// prodotti, in una sola query. Il voto/conteggio mostrato sul sito riflette
+// sempre le recensioni reali lasciate dagli utenti: un prodotto senza
+// recensioni approvate non mostra più stelle né conteggio, anche se in
+// passato aveva un valore impostato manualmente su Supabase.
+async function fetchReviewStats(productIds) {
+  if (!productIds.length) return new Map();
+  const { data, error } = await dbClient
+    .from('reviews')
+    .select('product_id, rating')
+    .eq('approved', true)
+    .in('product_id', productIds);
+  if (error) throw error;
+
+  const byProduct = new Map();
+  for (const row of data) {
+    const entry = byProduct.get(row.product_id) || { sum: 0, count: 0 };
+    entry.sum += row.rating;
+    entry.count += 1;
+    byProduct.set(row.product_id, entry);
+  }
+
+  const stats = new Map();
+  for (const [productId, { sum, count }] of byProduct.entries()) {
+    stats.set(productId, { rating: sum / count, reviewsCount: count });
+  }
+  return stats;
+}
+
+// Sovrascrive rating/reviewsCount di un prodotto con i dati reali (o li
+// azzera se non ci sono ancora recensioni approvate). Il campo "badge" viene
+// gestito separatamente da assignBestsellerBadges, che ha bisogno di vedere
+// tutti i prodotti insieme per stabilire una classifica.
+function applyReviewStats(product, stats) {
+  const s = stats.get(product.id);
+  if (!s) return { ...product, rating: null, reviewsCount: 0 };
+  return { ...product, rating: Math.round(s.rating * 10) / 10, reviewsCount: s.reviewsCount };
+}
+
+// Assegna automaticamente il badge "bestseller" ai migliori prodotti in
+// classifica (tra quelli con almeno BESTSELLER_MIN_REVIEWS recensioni
+// approvate, ordinati per rating medio decrescente), fino a un massimo di
+// BESTSELLER_MAX_COUNT. Se un prodotto ha già un badge diverso e più
+// specifico (es. "sale" per un'offerta attiva, "gift" per idea regalo),
+// quel badge viene mantenuto e il prodotto non viene toccato: il bestseller
+// automatico si applica solo dove non c'è già un badge manuale prioritario.
+const MANUAL_PRIORITY_BADGES = new Set(['sale', 'gift']);
+
+function assignBestsellerBadges(products) {
+  const eligible = products
+    .filter((p) => p.reviewsCount >= BESTSELLER_MIN_REVIEWS && !MANUAL_PRIORITY_BADGES.has(p.badge))
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, BESTSELLER_MAX_COUNT);
+  const bestsellerIds = new Set(eligible.map((p) => p.id));
+
+  return products.map((p) => {
+    if (MANUAL_PRIORITY_BADGES.has(p.badge)) return p; // badge manuale prioritario intoccato
+    if (bestsellerIds.has(p.id)) return { ...p, badge: 'bestseller' };
+    if (p.badge === 'bestseller') return { ...p, badge: null }; // non più in classifica: rimuove il vecchio badge statico
+    return p;
+  });
+}
+
 async function findAll() {
   const { data, error } = await dbClient.from(TABLE).select('*').order('sort_order', { ascending: true });
   if (error) throw error;
-  return data.map(toApi);
+  const products = data.map(toApi);
+  const stats = await fetchReviewStats(products.map((p) => p.id));
+  const withStats = products.map((p) => applyReviewStats(p, stats));
+  return assignBestsellerBadges(withStats);
 }
 
 async function findBySlug(slug) {
   const { data, error } = await dbClient.from(TABLE).select('*').eq('slug', slug).maybeSingle();
   if (error) throw error;
-  return toApi(data);
+  const product = toApi(data);
+  if (!product) return null;
+  const stats = await fetchReviewStats([product.id]);
+  const withStats = applyReviewStats(product, stats);
+  // Un singolo prodotto non può calcolare da solo la classifica bestseller
+  // (serve confrontarlo con gli altri): mostra "bestseller" solo se era già
+  // eleggibile secondo lo stesso criterio di soglia minima recensioni,
+  // altrimenti nessun badge speciale su questa vista puntuale.
+  if (MANUAL_PRIORITY_BADGES.has(withStats.badge)) return withStats;
+  if (withStats.reviewsCount < BESTSELLER_MIN_REVIEWS && withStats.badge === 'bestseller') {
+    return { ...withStats, badge: null };
+  }
+  return withStats;
 }
 
 async function findById(id) {
   const { data, error } = await dbClient.from(TABLE).select('*').eq('id', id).maybeSingle();
   if (error) throw error;
-  return toApi(data);
+  const product = toApi(data);
+  if (!product) return null;
+  const stats = await fetchReviewStats([product.id]);
+  return applyReviewStats(product, stats);
 }
 
 async function create(product) {
