@@ -18,6 +18,23 @@
       outline: 3px solid #FF6F59 !important;
       outline-offset: 2px !important;
     }
+    html { scroll-behavior: smooth; }
+    .monkey-hamburger-btn { display:none; }
+    @media (max-width: 900px) {
+      .monkey-nav-desktop { display:none !important; }
+      .monkey-hamburger-btn { display:flex !important; }
+    }
+    @media (max-width: 600px) {
+      .monkey-wordmark-text { display:none !important; }
+      .monkey-lang-switcher-header { display:none !important; }
+    }
+    .monkey-hamburger-btn {
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+    .monkey-hamburger-btn:active {
+      transform: scale(0.92);
+      opacity: 0.7;
+    }
   </style>
 </helmet>
 <div data-screen-label="Blog" style="font-family:'Nunito',system-ui,sans-serif;background:#FFFCF7;min-height:100vh;color:#3D2A1B;">
@@ -37,15 +54,15 @@
     <div style="max-width:1280px;margin:0 auto;padding:14px clamp(20px,5vw,48px);display:flex;align-items:center;justify-content:space-between;gap:20px;">
       <a href="Home.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;">
         <img src="assets/monkey-icon.png" alt="Monkey" style="width:40px;height:40px;object-fit:contain;">
-        <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
+        <img class="monkey-wordmark-text" src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
       </a>
-      <nav style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
+      <nav class="monkey-nav-desktop" style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
         <a href="Home.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.home }}</a>
         <a href="Shop.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.shop }}</a>
         <a href="Blog.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#3D2A1B;text-decoration:none;">{{ t.nav.blog }}</a>
       </nav>
       <div style="display:flex;align-items:center;gap:12px;flex:none;">
-        <div style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
+        <div class="monkey-lang-switcher-header" style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
           <button onClick="{{ setLangIt }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">IT</button>
           <button onClick="{{ setLangEn }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">EN</button>
         </div>
@@ -53,8 +70,20 @@
           <span style="width:34px;height:34px;border-radius:50%;background:#F6E4CB;display:flex;align-items:center;justify-content:center;font:800 13px 'Baloo 2',sans-serif;color:#6B4A30;">{{ accountInitial }}</span>
           <span>{{ accountLabel }}</span>
         </a>
+        <button class="monkey-hamburger-btn" onClick="{{ toggleMobileMenu }}" aria-label="Menu" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(61,42,27,0.15);background:#fff;cursor:pointer;align-items:center;justify-content:center;font-size:20px;color:#3D2A1B;">☰</button>
       </div>
     </div>
+    <sc-if value="{{ mobileMenuOpen }}" hint-placeholder-val="{{ false }}">
+      <nav style="display:flex;flex-direction:column;padding:8px clamp(20px,5vw,48px) 18px;border-top:1px solid rgba(61,42,27,0.1);background:#FFFCF7;">
+        <a href="Home.dc.html" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.home }}</a>
+        <a href="Shop.dc.html" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.shop }}</a>
+        <a href="Blog.dc.html" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#3D2A1B;text-decoration:none;">{{ t.nav.blog }}</a>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onClick="{{ setLangIt }}" style="flex:1;border:1.5px solid rgba(61,42,27,0.15);cursor:pointer;padding:9px 12px;border-radius:999px;font:800 12.5px 'Baloo 2',sans-serif;background:#F6E4CB;color:#6B4A30;">IT</button>
+          <button onClick="{{ setLangEn }}" style="flex:1;border:1.5px solid rgba(61,42,27,0.15);cursor:pointer;padding:9px 12px;border-radius:999px;font:800 12.5px 'Baloo 2',sans-serif;background:#F6E4CB;color:#6B4A30;">EN</button>
+        </div>
+      </nav>
+    </sc-if>
   </div>
 
   <!-- PAGE HEADER -->
@@ -149,7 +178,8 @@ class Component extends DCLogic {
     postsLoading: true,
     siteTexts: null,
     newsletterEmail: '',
-    newsletterStatus: 'idle'
+    newsletterStatus: 'idle',
+    mobileMenuOpen: false
   };
 
   componentDidMount() {
@@ -169,6 +199,7 @@ class Component extends DCLogic {
   }
 
   setLang = (lang) => { try { localStorage.setItem('monkey_lang', lang); } catch (e) {} this.setState({ lang }); };
+  toggleMobileMenu = () => this.setState(s => ({ mobileMenuOpen: !s.mobileMenuOpen }));
 
   onNewsletterEmailChange = (e) => this.setState({ newsletterEmail: e.target.value });
   onNewsletterSubmit = () => {
@@ -210,6 +241,8 @@ class Component extends DCLogic {
       lang, t,
       setLangIt: () => this.setLang('it'),
       setLangEn: () => this.setLang('en'),
+      toggleMobileMenu: this.toggleMobileMenu,
+      mobileMenuOpen: this.state.mobileMenuOpen,
       accountInitial: user ? user.name.charAt(0).toUpperCase() : '?',
       accountLabel: user ? user.name.split(' ')[0] : (lang === 'it' ? 'Accedi' : 'Sign in'),
       posts,

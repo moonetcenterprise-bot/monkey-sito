@@ -18,6 +18,25 @@
       outline: 3px solid #FF6F59 !important;
       outline-offset: 2px !important;
     }
+    html { scroll-behavior: smooth; }
+    .monkey-hamburger-btn { display:none; }
+    @media (max-width: 900px) {
+      .monkey-nav-desktop { display:none !important; }
+      .monkey-hamburger-btn { display:flex !important; }
+    }
+    @media (max-width: 600px) {
+      .monkey-bottom-nav { display:flex !important; }
+      body { padding-bottom: 64px; }
+      .monkey-wordmark-text { display:none !important; }
+      .monkey-lang-switcher-header { display:none !important; }
+    }
+    .monkey-bottom-nav a, .monkey-bottom-nav button, .monkey-hamburger-btn {
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+    .monkey-bottom-nav a:active, .monkey-bottom-nav button:active, .monkey-hamburger-btn:active {
+      transform: scale(0.92);
+      opacity: 0.7;
+    }
   </style>
 </helmet>
 <div data-screen-label="Account" style="font-family:'Nunito',system-ui,sans-serif;background:#FFFCF7;min-height:100vh;color:#3D2A1B;">
@@ -37,20 +56,32 @@
     <div style="max-width:1280px;margin:0 auto;padding:14px clamp(20px,5vw,48px);display:flex;align-items:center;justify-content:space-between;gap:20px;">
       <a href="Home.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;">
         <img src="assets/monkey-icon.png" alt="Monkey" style="width:40px;height:40px;object-fit:contain;">
-        <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
+        <img class="monkey-wordmark-text" src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
       </a>
-      <nav style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
+      <nav class="monkey-nav-desktop" style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
         <a href="Home.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.home }}</a>
         <a href="Shop.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.shop }}</a>
         <a href="Favorites.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.favorites }}</a>
       </nav>
       <div style="display:flex;align-items:center;gap:12px;flex:none;">
-        <div style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
+        <div class="monkey-lang-switcher-header" style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
           <button onClick="{{ setLangIt }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">IT</button>
           <button onClick="{{ setLangEn }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">EN</button>
         </div>
+        <button class="monkey-hamburger-btn" onClick="{{ toggleMobileMenu }}" aria-label="Menu" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(61,42,27,0.15);background:#fff;cursor:pointer;align-items:center;justify-content:center;font-size:20px;color:#3D2A1B;">☰</button>
       </div>
     </div>
+    <sc-if value="{{ mobileMenuOpen }}" hint-placeholder-val="{{ false }}">
+      <nav style="display:flex;flex-direction:column;padding:8px clamp(20px,5vw,48px) 18px;border-top:1px solid rgba(61,42,27,0.1);background:#FFFCF7;">
+        <a href="Home.dc.html" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.home }}</a>
+        <a href="Shop.dc.html" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.shop }}</a>
+        <a href="Favorites.dc.html" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.favorites }}</a>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onClick="{{ setLangIt }}" style="flex:1;border:1.5px solid rgba(61,42,27,0.15);cursor:pointer;padding:9px 12px;border-radius:999px;font:800 12.5px 'Baloo 2',sans-serif;background:#F6E4CB;color:#6B4A30;">IT</button>
+          <button onClick="{{ setLangEn }}" style="flex:1;border:1.5px solid rgba(61,42,27,0.15);cursor:pointer;padding:9px 12px;border-radius:999px;font:800 12.5px 'Baloo 2',sans-serif;background:#F6E4CB;color:#6B4A30;">EN</button>
+        </div>
+      </nav>
+    </sc-if>
   </div>
 
   <!-- LOGGED OUT: login/register -->
@@ -171,6 +202,30 @@
     </div>
   </footer>
 
+  <!-- BOTTOM NAV (solo mobile) -->
+  <nav class="monkey-bottom-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:60;background:rgba(255,252,247,0.97);backdrop-filter:blur(8px);border-top:1px solid rgba(61,42,27,0.1);display:none;align-items:center;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));">
+    <a href="Home.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:{{ bottomNavHomeColor }};padding:6px 10px;min-width:56px;">
+      <span style="font-size:20px;line-height:1;">⌂</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">{{ t.nav.home }}</span>
+    </a>
+    <a href="Shop.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:{{ bottomNavShopColor }};padding:6px 10px;min-width:56px;">
+      <span style="font-size:20px;line-height:1;">▤</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">{{ t.nav.shop }}</span>
+    </a>
+    <a href="Favorites.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:{{ bottomNavFavColor }};padding:6px 10px;min-width:56px;position:relative;">
+      <span style="font-size:20px;line-height:1;">♡</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">{{ t.nav.favorites }}</span>
+    </a>
+    <a href="Shop.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:#6B4A30;padding:6px 10px;min-width:56px;position:relative;">
+      <span style="font-size:20px;line-height:1;">🛍</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">Carrello</span>
+    </a>
+    <a href="Account.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:#FF6F59;padding:6px 10px;min-width:56px;">
+      <span style="font-size:20px;line-height:1;">◔</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">{{ t.account.accountNavLabel }}</span>
+    </a>
+  </nav>
+
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
@@ -196,7 +251,8 @@ const STRINGS = {
       forgotIntro: 'Inserisci l\'email con cui ti sei registrato: se corrisponde a un account, riceverai un link per reimpostare la password.',
       forgotSubmit: 'Invia il link', backToLogin: '← Torna al login',
       forgotDoneTitle: 'Controlla la tua email', forgotDoneBody: 'Se l\'indirizzo corrisponde a un account esistente, hai ricevuto un\'email con il link per impostare una nuova password.',
-      forgotEmailAlsoLost: 'Non ricordi neanche l\'email associata all\'account?', forgotContactLink: 'Scrivici'
+      forgotEmailAlsoLost: 'Non ricordi neanche l\'email associata all\'account?', forgotContactLink: 'Scrivici',
+      accountNavLabel: 'Account'
     }
   },
   en: {
@@ -220,7 +276,8 @@ const STRINGS = {
       forgotIntro: 'Enter the email you registered with: if it matches an account, you\'ll receive a link to reset your password.',
       forgotSubmit: 'Send the link', backToLogin: '← Back to sign in',
       forgotDoneTitle: 'Check your email', forgotDoneBody: 'If that address matches an existing account, you\'ve received an email with a link to set a new password.',
-      forgotEmailAlsoLost: 'Don\'t remember the email on your account either?', forgotContactLink: 'Contact us'
+      forgotEmailAlsoLost: 'Don\'t remember the email on your account either?', forgotContactLink: 'Contact us',
+      accountNavLabel: 'Account'
     }
   }
 };
@@ -245,7 +302,8 @@ class Component extends DCLogic {
     siteTexts: null,
     newsletterEmail: '',
     newsletterStatus: 'idle',
-    forgotStatus: 'idle'
+    forgotStatus: 'idle',
+    mobileMenuOpen: false
   };
 
   componentDidMount() {
@@ -277,6 +335,7 @@ class Component extends DCLogic {
   };
 
   setLang = (lang) => { try { localStorage.setItem('monkey_lang', lang); } catch (e) {} this.setState({ lang }); };
+  toggleMobileMenu = () => this.setState(s => ({ mobileMenuOpen: !s.mobileMenuOpen }));
   showLogin = () => this.setState({ mode: 'login', errorKey: null, forgotStatus: 'idle' });
   showRegister = () => this.setState({ mode: 'register', errorKey: null });
   showForgot = () => this.setState({ mode: 'forgot', errorKey: null, forgotStatus: 'idle' });
@@ -337,6 +396,8 @@ class Component extends DCLogic {
       lang, t,
       setLangIt: () => this.setLang('it'),
       setLangEn: () => this.setLang('en'),
+      toggleMobileMenu: this.toggleMobileMenu,
+      mobileMenuOpen: this.state.mobileMenuOpen,
       loggedOut: !user,
       loggedIn: !!user,
       isRegisterMode,
@@ -368,6 +429,9 @@ class Component extends DCLogic {
       favoritesCount: this.state.favorites.length,
       cartCount,
       onLogout: this.onLogout,
+      bottomNavHomeColor: '#6B4A30',
+      bottomNavShopColor: '#6B4A30',
+      bottomNavFavColor: '#6B4A30',
       promoBannerActive, promoBannerText, promoBannerCode: promo.code || '',
       newsletterEmailValue: this.state.newsletterEmail,
       onNewsletterEmailChange: this.onNewsletterEmailChange,

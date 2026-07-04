@@ -18,6 +18,25 @@
       outline: 3px solid #FF6F59 !important;
       outline-offset: 2px !important;
     }
+    html { scroll-behavior: smooth; }
+    .monkey-hamburger-btn { display:none; }
+    @media (max-width: 900px) {
+      .monkey-nav-desktop { display:none !important; }
+      .monkey-hamburger-btn { display:flex !important; }
+    }
+    @media (max-width: 600px) {
+      .monkey-bottom-nav { display:flex !important; }
+      body { padding-bottom: 64px; }
+      .monkey-wordmark-text { display:none !important; }
+      .monkey-lang-switcher-header { display:none !important; }
+    }
+    .monkey-bottom-nav a, .monkey-bottom-nav button, .monkey-hamburger-btn {
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+    .monkey-bottom-nav a:active, .monkey-bottom-nav button:active, .monkey-hamburger-btn:active {
+      transform: scale(0.92);
+      opacity: 0.7;
+    }
   </style>
 </helmet>
 <div data-screen-label="Home" style="font-family:'Nunito',system-ui,sans-serif;background:#FFFCF7;min-height:100vh;color:#3D2A1B;">
@@ -37,9 +56,9 @@
     <div style="max-width:1280px;margin:0 auto;padding:14px clamp(20px,5vw,48px);display:flex;align-items:center;justify-content:space-between;gap:20px;">
       <a href="Home.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:none;">
         <img src="assets/monkey-icon.png" alt="Monkey" style="width:40px;height:40px;object-fit:contain;">
-        <img src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
+        <img class="monkey-wordmark-text" src="assets/monkey-wordmark.png" alt="Monkey" style="height:18px;object-fit:contain;">
       </a>
-      <nav style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
+      <nav class="monkey-nav-desktop" style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
         <a href="Home.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#3D2A1B;text-decoration:none;">{{ t.nav.home }}</a>
         <a href="Shop.dc.html" style="font:700 14px 'Baloo 2',sans-serif;color:#3D2A1B;text-decoration:none;">{{ t.nav.shop }}</a>
         <a href="Shop.dc.html?cat=kids" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.kids }}</a>
@@ -48,7 +67,7 @@
         <a href="#about" style="font:700 14px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.about }}</a>
       </nav>
       <div style="display:flex;align-items:center;gap:12px;flex:none;">
-        <div style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
+        <div class="monkey-lang-switcher-header" style="display:flex;background:#F6E4CB;border-radius:999px;padding:3px;gap:2px;">
           <button onClick="{{ setLangIt }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">IT</button>
           <button onClick="{{ setLangEn }}" style="border:none;cursor:pointer;padding:6px 12px;border-radius:999px;font:800 12px 'Baloo 2',sans-serif;background:transparent;color:#6B4A30;">EN</button>
         </div>
@@ -65,8 +84,23 @@
           <span>{{ accountLabel }}</span>
         </a>
         <a href="Shop.dc.html" style="padding:11px 22px;border-radius:999px;background:{{ accent }};color:#fff;font:700 14px 'Baloo 2',sans-serif;text-decoration:none;white-space:nowrap;">{{ t.nav.shop }}</a>
+        <button class="monkey-hamburger-btn" onClick="{{ toggleMobileMenu }}" aria-label="Menu" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(61,42,27,0.15);background:#fff;cursor:pointer;align-items:center;justify-content:center;font-size:20px;color:#3D2A1B;">☰</button>
       </div>
     </div>
+    <sc-if value="{{ mobileMenuOpen }}" hint-placeholder-val="{{ false }}">
+      <nav style="display:flex;flex-direction:column;padding:8px clamp(20px,5vw,48px) 18px;border-top:1px solid rgba(61,42,27,0.1);background:#FFFCF7;">
+        <a href="Home.dc.html" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#3D2A1B;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.home }}</a>
+        <a href="Shop.dc.html" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#3D2A1B;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.shop }}</a>
+        <a href="Shop.dc.html?cat=kids" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.kids }}</a>
+        <a href="Shop.dc.html?cat=teens" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.teens }}</a>
+        <a href="Shop.dc.html?cat=adults" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;border-bottom:1px solid rgba(61,42,27,0.08);">{{ t.nav.adults }}</a>
+        <a href="#about" style="padding:12px 4px;font:700 15px 'Baloo 2',sans-serif;color:#6B4A30;text-decoration:none;">{{ t.nav.about }}</a>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onClick="{{ setLangIt }}" style="flex:1;border:1.5px solid rgba(61,42,27,0.15);cursor:pointer;padding:9px 12px;border-radius:999px;font:800 12.5px 'Baloo 2',sans-serif;background:#F6E4CB;color:#6B4A30;">IT</button>
+          <button onClick="{{ setLangEn }}" style="flex:1;border:1.5px solid rgba(61,42,27,0.15);cursor:pointer;padding:9px 12px;border-radius:999px;font:800 12.5px 'Baloo 2',sans-serif;background:#F6E4CB;color:#6B4A30;">EN</button>
+        </div>
+      </nav>
+    </sc-if>
   </div>
 
   <!-- HERO -->
@@ -429,12 +463,41 @@
     </div>
   </sc-if>
 
+  <!-- BOTTOM NAV (solo mobile) -->
+  <nav class="monkey-bottom-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:60;background:rgba(255,252,247,0.97);backdrop-filter:blur(8px);border-top:1px solid rgba(61,42,27,0.1);display:none;align-items:center;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));">
+    <a href="Home.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:{{ bottomNavHomeColor }};padding:6px 10px;min-width:56px;">
+      <span style="font-size:20px;line-height:1;">⌂</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">{{ t.nav.home }}</span>
+    </a>
+    <a href="Shop.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:{{ bottomNavShopColor }};padding:6px 10px;min-width:56px;">
+      <span style="font-size:20px;line-height:1;">▤</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">{{ t.nav.shop }}</span>
+    </a>
+    <a href="Favorites.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:{{ bottomNavFavColor }};padding:6px 10px;min-width:56px;position:relative;">
+      <span style="font-size:20px;line-height:1;">♡</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">{{ t.nav.favorites }}</span>
+    </a>
+    <button onClick="{{ toggleCart }}" style="border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:#6B4A30;padding:6px 10px;min-width:56px;position:relative;">
+      <span style="font-size:20px;line-height:1;position:relative;">
+        🛍
+        <sc-if value="{{ cartCount }}" hint-placeholder-val="{{ false }}">
+          <span style="position:absolute;top:-6px;right:-8px;background:#FF6F59;color:#fff;font:800 9px 'Nunito';width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;">{{ cartCount }}</span>
+        </sc-if>
+      </span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">Carrello</span>
+    </button>
+    <a href="{{ accountHref }}" style="display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:{{ bottomNavAccountColor }};padding:6px 10px;min-width:56px;">
+      <span style="font-size:20px;line-height:1;">◔</span>
+      <span style="font:700 10px 'Baloo 2',sans-serif;">{{ accountLabel }}</span>
+    </a>
+  </nav>
+
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#FF6F59&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#FF6F59&quot;, &quot;#FFC247&quot;, &quot;#E85A47&quot;]}, &quot;showBadges&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;}}">
 const STRINGS = {
   it: {
-    nav: { home: 'Home', shop: 'Negozio', kids: 'Bambini', teens: 'Adolescenti', adults: 'Adulti', seasonal: 'Stagionali', about: 'Chi siamo', contact: 'Contatti', cart: 'Carrello' },
+    nav: { home: 'Home', shop: 'Negozio', kids: 'Bambini', teens: 'Adolescenti', adults: 'Adulti', seasonal: 'Stagionali', about: 'Chi siamo', contact: 'Contatti', cart: 'Carrello', favorites: 'Preferiti' },
     hero: {
       kicker: 'Libri da colorare Monkey', title1: 'Un colore alla volta,', title2: 'per ogni età.',
       subtitle: 'Libri da colorare pensati per bambini, adolescenti e adulti: per giocare, esprimersi e staccare la mente, una matita alla volta.',
@@ -480,7 +543,7 @@ const STRINGS = {
     shopPage: { title: 'Il negozio', subtitle: 'Tutte le nostre collezioni da colorare, in un unico posto.', all: 'Tutti', resultsCount: 'libri trovati' }
   },
   en: {
-    nav: { home: 'Home', shop: 'Shop', kids: 'Kids', teens: 'Teens', adults: 'Adults', seasonal: 'Seasonal', about: 'About', contact: 'Contact', cart: 'Cart' },
+    nav: { home: 'Home', shop: 'Shop', kids: 'Kids', teens: 'Teens', adults: 'Adults', seasonal: 'Seasonal', about: 'About', contact: 'Contact', cart: 'Cart', favorites: 'Favorites' },
     hero: {
       kicker: 'Monkey coloring books', title1: 'One color at a time,', title2: 'for every age.',
       subtitle: 'Coloring books made for kids, teens and adults: to play, express yourself and unplug — one pencil at a time.',
@@ -689,6 +752,7 @@ class Component extends DCLogic {
     lang: detectInitialLang(),
     cart: [],
     cartOpen: false,
+    mobileMenuOpen: false,
     addedId: null,
     products: PRODUCTS,
     user: null,
@@ -795,6 +859,7 @@ class Component extends DCLogic {
 
   toggleCart = () => this.setState(s => ({ cartOpen: !s.cartOpen }));
   closeCart = () => this.setState({ cartOpen: false });
+  toggleMobileMenu = () => this.setState(s => ({ mobileMenuOpen: !s.mobileMenuOpen }));
 
   addToCart = (id) => {
     const next = this.state.cart.slice();
@@ -947,6 +1012,8 @@ class Component extends DCLogic {
       setLangIt: () => this.setLang('it'),
       setLangEn: () => this.setLang('en'),
       toggleCart: this.toggleCart,
+      toggleMobileMenu: this.toggleMobileMenu,
+      mobileMenuOpen: this.state.mobileMenuOpen,
       closeCart: this.closeCart,
       cartOpen: this.state.cartOpen,
       cartCount,
@@ -960,6 +1027,10 @@ class Component extends DCLogic {
       accountHref: user ? 'Account.dc.html' : 'Account.dc.html',
       accountInitial: user ? user.name.charAt(0).toUpperCase() : '?',
       accountLabel: user ? user.name.split(' ')[0] : (lang === 'it' ? 'Accedi' : 'Sign in'),
+      bottomNavHomeColor: '#FF6F59',
+      bottomNavShopColor: '#6B4A30',
+      bottomNavFavColor: '#6B4A30',
+      bottomNavAccountColor: '#6B4A30',
       promoBannerActive, promoBannerText, promoBannerCode: promo.code || '',
       newsletterEmailValue: this.state.newsletterEmail,
       onNewsletterEmailChange: this.onNewsletterEmailChange,
