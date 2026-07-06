@@ -257,6 +257,35 @@
                 <textarea value="{{ draftDescEn }}" onChange="{{ onDescEnChange }}" rows="3" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px/1.5 'Nunito',sans-serif;outline:none;resize:vertical;"></textarea>
               </div>
 
+              <div style="margin-bottom:24px;">
+                <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;display:block;margin-bottom:6px;">Anteprima del libro (fino a 4 immagini)</label>
+                <div style="font:500 11.5px/1.5 'Nunito',sans-serif;color:#8B6749;margin-bottom:12px;max-width:560px;">{{ previewSectionNote }}</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;max-width:640px;">
+                  <sc-for list="{{ previewSlots }}" as="slot" hint-placeholder-count="4">
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                      <label onDragOver="{{ slot.onDragOver }}" onDrop="{{ slot.onDrop }}" style="width:100%;aspect-ratio:1/1;border-radius:16px;border:2px dashed rgba(61,42,27,0.25);background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 14px,#F6E4CB 14px,#F6E4CB 28px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;position:relative;overflow:hidden;cursor:pointer;">
+                        <input type="file" accept="image/*" onChange="{{ slot.onFileSelected }}" style="display:none;">
+                        <sc-if value="{{ slot.hasImage }}" hint-placeholder-val="{{ false }}">
+                          <img src="{{ slot.imageUrl }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+                        </sc-if>
+                        <sc-if value="{{ !slot.hasImage }}" hint-placeholder-val="{{ true }}">
+                          <div style="font:600 10.5px/1.3 'Nunito',sans-serif;color:#8B6749;text-align:center;padding:0 10px;">Aggiungi immagine</div>
+                        </sc-if>
+                        <sc-if value="{{ slot.uploading }}" hint-placeholder-val="{{ false }}">
+                          <div style="position:absolute;inset:0;background:rgba(255,252,247,0.9);display:flex;align-items:center;justify-content:center;font:700 10.5px 'Nunito',sans-serif;color:#6B4A30;">Caricamento...</div>
+                        </sc-if>
+                      </label>
+                      <sc-if value="{{ slot.hasImage }}" hint-placeholder-val="{{ false }}">
+                        <button onClick="{{ slot.onRemove }}" style="padding:6px 10px;border-radius:999px;border:1.5px solid rgba(61,42,27,0.15);background:transparent;color:#6B4A30;font:700 11px 'Baloo 2',sans-serif;cursor:pointer;">Rimuovi</button>
+                      </sc-if>
+                      <sc-if value="{{ slot.error }}" hint-placeholder-val="{{ false }}">
+                        <div style="font:600 10.5px/1.3 'Nunito',sans-serif;color:#C0402C;">Caricamento non riuscito.</div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
               <button onClick="{{ onSaveProduct }}" style="padding:14px 28px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ saveLabel }}</button>
             </div>
           </sc-if>
@@ -974,7 +1003,7 @@ function blankProduct() {
   return {
     id: null, slug: '', category: 'kids', price: 0, badge: '',
     title: { it: '', en: '' }, tagline: { it: '', en: '' }, description: { it: '', en: '' },
-    imageDataUrl: null, amazonUrl: null
+    imageDataUrl: null, amazonUrl: null, previewImages: [null, null, null, null]
   };
 }
 
@@ -1011,6 +1040,8 @@ class Component extends DCLogic {
     imageUploading: false,
     imageUploadError: false,
     imageUploadErrorMessage: '',
+    previewImageUploading: [false, false, false, false],
+    previewImageUploadError: [false, false, false, false],
     layoutBlocks: [],
     selectedBlockId: null,
     blockDraft: null,
@@ -1241,12 +1272,17 @@ class Component extends DCLogic {
         id: p.id, slug: p.slug, category: p.category, price: p.price, badge: p.badge || '',
         title: Object.assign({}, p.title), tagline: Object.assign({}, p.tagline), description: Object.assign({}, p.description),
         imageDataUrl: p.imageDataUrl || null, amazonUrl: p.amazonUrl || null,
+        // Sempre esattamente 4 slot (null dove non c'è ancora un'immagine),
+        // così il pannello di modifica può mostrare 4 caselle fisse.
+        previewImages: [0, 1, 2, 3].map(i => (p.previewImages && p.previewImages[i]) || null),
         order: p.order, rating: p.rating, reviewsCount: p.reviewsCount, pages: p.pages, age: p.age, oldPrice: p.oldPrice
       },
       saveFlash: false,
       imageUploading: false,
       imageUploadError: false,
-      imageUploadErrorMessage: ''
+      imageUploadErrorMessage: '',
+      previewImageUploading: [false, false, false, false],
+      previewImageUploadError: [false, false, false, false]
     });
   };
 
@@ -1297,6 +1333,55 @@ class Component extends DCLogic {
     e.target.value = '';
   };
 
+  // ---- Immagini di anteprima del libro (fino a 4, slot fissi) ----
+  uploadPreviewImage(index, file) {
+    if (!file || !this.dataApi) return;
+    this.setState(s => {
+      const uploading = s.previewImageUploading.slice(); uploading[index] = true;
+      const errors = s.previewImageUploadError.slice(); errors[index] = false;
+      return { previewImageUploading: uploading, previewImageUploadError: errors };
+    });
+    this.dataApi.uploadProductImage(file)
+      .then((imageUrl) => {
+        this.setState(s => {
+          const images = s.draft.previewImages.slice();
+          images[index] = imageUrl;
+          return { draft: Object.assign({}, s.draft, { previewImages: images }) };
+        });
+      })
+      .catch((e) => {
+        console.error('[Admin] uploadPreviewImage', e);
+        this.setState(s => {
+          const errors = s.previewImageUploadError.slice(); errors[index] = true;
+          return { previewImageUploadError: errors };
+        });
+      })
+      .finally(() => {
+        this.setState(s => {
+          const uploading = s.previewImageUploading.slice(); uploading[index] = false;
+          return { previewImageUploading: uploading };
+        });
+      });
+  }
+  onPreviewImageDragOver = (e) => { e.preventDefault(); };
+  onPreviewImageDrop = (index) => (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    this.uploadPreviewImage(index, file);
+  };
+  onPreviewImageFileSelected = (index) => (e) => {
+    const file = e.target.files && e.target.files[0];
+    this.uploadPreviewImage(index, file);
+    e.target.value = '';
+  };
+  onRemovePreviewImage = (index) => () => {
+    this.setState(s => {
+      const images = s.draft.previewImages.slice();
+      images[index] = null;
+      return { draft: Object.assign({}, s.draft, { previewImages: images }) };
+    });
+  };
+
   onProductSearchChange = (e) => this.setState({ productSearch: e.target.value });
   onProductCategoryFilterChange = (e) => this.setState({ productCategoryFilter: e.target.value });
   onProductBadgeFilterChange = (e) => this.setState({ productBadgeFilter: e.target.value });
@@ -1333,6 +1418,7 @@ class Component extends DCLogic {
       tagline: Object.assign({}, src.tagline),
       description: Object.assign({}, src.description),
       imageDataUrl: src.imageDataUrl || null,
+      previewImages: (src.previewImages || []).filter(Boolean),
       amazonUrl: null,
       slug: 'copia-' + Date.now()
     };
@@ -1619,6 +1705,22 @@ class Component extends DCLogic {
     const products = this.state.products;
     const selectedId = this.state.selectedId;
     const draft = this.state.draft;
+
+    // 4 caselle fisse per le immagini di anteprima del libro: ognuna sa se ha
+    // già un'immagine, se sta caricando, se l'ultimo tentativo è fallito, e
+    // porta con sé i propri handler già "agganciati" al proprio indice.
+    const previewImages = draft.previewImages || [null, null, null, null];
+    const previewSlots = [0, 1, 2, 3].map(i => ({
+      index: i,
+      imageUrl: previewImages[i] || null,
+      hasImage: !!previewImages[i],
+      uploading: this.state.previewImageUploading[i],
+      error: this.state.previewImageUploadError[i],
+      onDragOver: this.onPreviewImageDragOver,
+      onDrop: this.onPreviewImageDrop(i),
+      onFileSelected: this.onPreviewImageFileSelected(i),
+      onRemove: this.onRemovePreviewImage(i)
+    }));
 
     let filteredProducts = products.slice();
     const q = (this.state.productSearch || '').trim().toLowerCase();
@@ -1917,6 +2019,8 @@ class Component extends DCLogic {
       draftOrder: draft.order || 0,
       draftImageDataUrl: draft.imageDataUrl,
       draftAmazonUrl: draft.amazonUrl || '',
+      previewSlots,
+      previewSectionNote: 'Fino a 4 immagini (es. pagine interne del libro) mostrate in una sezione "Anteprima" sulla pagina prodotto. Lascia vuote le caselle che non vuoi usare.',
       onTitleItChange: this.onTitleItChange, onTitleEnChange: this.onTitleEnChange,
       onTaglineItChange: this.onTaglineItChange, onTaglineEnChange: this.onTaglineEnChange,
       onDescItChange: this.onDescItChange, onDescEnChange: this.onDescEnChange,

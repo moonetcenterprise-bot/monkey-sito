@@ -24,6 +24,7 @@
       .monkey-nav-desktop { display:none !important; }
       .monkey-hamburger-btn { display:flex !important; }
       .monkey-product-grid { grid-template-columns: repeat(2, 1fr) !important; gap:14px !important; }
+      .monkey-preview-grid { grid-template-columns: repeat(2, 1fr) !important; gap:12px !important; }
     }
     @media (max-width: 600px) {
       .monkey-bottom-nav { display:flex !important; }
@@ -181,6 +182,20 @@
       </div>
     </div>
   </section>
+
+  <!-- ANTEPRIMA (immagini interne selezionate dall'admin) -->
+  <sc-if value="{{ hasPreviewImages }}" hint-placeholder-val="{{ false }}">
+    <section style="max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,48px) clamp(60px,8vw,90px);">
+      <h2 style="font:800 clamp(24px,3.2vw,30px) 'Baloo 2',sans-serif;color:#3D2A1B;margin:0 0 24px;">{{ t.product.previewTitle }}</h2>
+      <div class="monkey-preview-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;">
+        <sc-for list="{{ previewImages }}" as="img" hint-placeholder-count="4">
+          <div style="position:relative;width:100%;aspect-ratio:1/1;border-radius:18px;overflow:hidden;border:1px solid rgba(61,42,27,0.1);background:repeating-linear-gradient(135deg,#FBEFDD 0px,#FBEFDD 14px,#F6E4CB 14px,#F6E4CB 28px);">
+            <img src="{{ img.url }}" alt="{{ p.title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-if>
 
   <!-- RELATED -->
   <section style="max-width:{{ relatedMaxWidth }}px;margin:0 auto;padding:{{ relatedPaddingY }}px clamp(20px,5vw,48px);background:{{ relatedBg }};border-radius:{{ relatedRadius }}px;color:{{ relatedTextColor }};font-family:{{ relatedFont }};">
@@ -400,7 +415,7 @@
 const STRINGS = {
   it: {
     nav: { home: 'Home', shop: 'Negozio', kids: 'Bambini', teens: 'Adolescenti', adults: 'Adulti', seasonal: 'Stagionali', about: 'Chi siamo', contact: 'Contatti', cart: 'Carrello', favorites: 'Preferiti' },
-    product: { addToCart: 'Aggiungi al carrello', buyNow: 'Acquista su Amazon', addedToCart: 'Aggiunto!', pages: 'Pagine', age: 'Età consigliata', format: 'Formato', description: 'Descrizione', related: 'Ti potrebbe piacere anche', reviews: 'recensioni', quantity: 'Quantità' },
+    product: { addToCart: 'Aggiungi al carrello', buyNow: 'Acquista su Amazon', addedToCart: 'Aggiunto!', pages: 'Pagine', age: 'Età consigliata', format: 'Formato', description: 'Descrizione', related: 'Ti potrebbe piacere anche', reviews: 'recensioni', quantity: 'Quantità', previewTitle: 'Anteprima del libro' },
     badges: { bestseller: 'Bestseller', new: 'Novità', gift: 'Idea regalo', sale: 'Offerta' },
     reviews: { title: 'Cosa dicono le famiglie Monkey' },
     footer: {
@@ -413,7 +428,7 @@ const STRINGS = {
   },
   en: {
     nav: { home: 'Home', shop: 'Shop', kids: 'Kids', teens: 'Teens', adults: 'Adults', seasonal: 'Seasonal', about: 'About', contact: 'Contact', cart: 'Cart', favorites: 'Favorites' },
-    product: { addToCart: 'Add to cart', buyNow: 'Buy on Amazon', addedToCart: 'Added!', pages: 'Pages', age: 'Recommended age', format: 'Format', description: 'Description', related: 'You might also like', reviews: 'reviews', quantity: 'Quantity' },
+    product: { addToCart: 'Add to cart', buyNow: 'Buy on Amazon', addedToCart: 'Added!', pages: 'Pages', age: 'Recommended age', format: 'Format', description: 'Description', related: 'You might also like', reviews: 'reviews', quantity: 'Quantity', previewTitle: 'Book preview' },
     badges: { bestseller: 'Bestseller', new: 'New', gift: 'Gift idea', sale: 'Sale' },
     reviews: { title: 'What Monkey families say' },
     footer: {
@@ -739,6 +754,10 @@ class Component extends DCLogic {
       amazonUrl: this.amazonUrl(raw, lang)
     };
 
+    // Fino a 4 immagini di anteprima (disegni interni) scelte dall'admin per
+    // questo libro. Se non ce n'è nessuna, la sezione resta nascosta.
+    const previewImages = (raw.previewImages || []).filter(Boolean).map(url => ({ url }));
+
     const related = allProducts.filter(pr => pr.category === raw.category && pr.id !== raw.id).slice(0, 4).map(pr => ({
       slug: pr.slug, title: pr.title[lang],
       imageDataUrl: pr.imageDataUrl || '',
@@ -816,6 +835,8 @@ class Component extends DCLogic {
       addLabel: isAdded ? t.product.addedToCart : t.product.addToCart,
       addBg: isAdded ? '#FFC247' : '#FFFFFF',
       related,
+      previewImages,
+      hasPreviewImages: previewImages.length > 0,
       reviews: realReviews,
       hasReviews: realReviews.length > 0,
       reviewsLoading: this.state.reviewsLoading,

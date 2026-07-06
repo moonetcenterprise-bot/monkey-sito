@@ -25,6 +25,10 @@ function toApi(row) {
     // che lo usano direttamente come <img src="...">: ora contiene l'URL
     // pubblico del file su Supabase Storage invece di un base64.
     imageDataUrl: row.image_url,
+    // Fino a 4 immagini di anteprima (disegni interni al libro) scelte
+    // dall'admin. Sempre un array (mai null/undefined) così il front end
+    // può testare direttamente la lunghezza senza controlli extra.
+    previewImages: Array.isArray(row.preview_images) ? row.preview_images.filter(Boolean) : [],
     // Link Amazon personalizzato impostato dall'admin per questo prodotto.
     // Se vuoto/assente, il front end ricade sul link di ricerca generato
     // automaticamente dal titolo (comportamento precedente).
@@ -48,6 +52,7 @@ function toRow(product) {
   if (product.badge !== undefined) row.badge = product.badge;
   if (product.order !== undefined) row.sort_order = product.order;
   if (product.imageDataUrl !== undefined) row.image_url = product.imageDataUrl;
+  if (product.previewImages !== undefined) row.preview_images = (product.previewImages || []).filter(Boolean);
   if (product.amazonUrl !== undefined) row.amazon_url = product.amazonUrl;
   if (product.title !== undefined) {
     if (product.title.it !== undefined) row.title_it = product.title.it;

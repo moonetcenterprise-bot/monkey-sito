@@ -20,6 +20,10 @@ create table if not exists public.products (
   badge         text,
   sort_order    integer not null default 0,
   image_url     text,
+  -- Fino a 4 URL di immagini di anteprima (disegni interni al libro),
+  -- selezionate dall'admin e mostrate in una sezione dedicata sulla pagina
+  -- prodotto. Array vuoto = nessuna anteprima, la sezione resta nascosta.
+  preview_images  jsonb not null default '[]'::jsonb,
   amazon_url    text,
   title_it        text not null default '',
   title_en        text not null default '',
