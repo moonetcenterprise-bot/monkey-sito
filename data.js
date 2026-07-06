@@ -125,6 +125,21 @@ export async function uploadProductImage(file) {
   return result.imageUrl;
 }
 
+// Carica un unico file .zip con fino a 4 immagini di anteprima del libro
+// (ordinate per nome dentro lo zip) e restituisce l'elenco di URL pubblici,
+// nello stesso ordine, così l'admin non deve caricarle una per una.
+export async function uploadProductPreviewZip(file) {
+  const form = new FormData();
+  form.append('zip', file);
+  const result = await apiFetch('/upload/product-preview-zip', {
+    method: 'POST',
+    body: form,
+    token: getAdminToken(),
+    isForm: true
+  });
+  return result.imageUrls;
+}
+
 export async function uploadLayoutImage(file) {
   const form = new FormData();
   form.append('image', file);

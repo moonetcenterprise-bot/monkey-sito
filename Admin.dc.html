@@ -284,6 +284,19 @@
                     </div>
                   </sc-for>
                 </div>
+
+                <label onDragOver="{{ onPreviewZipDragOver }}" onDrop="{{ onPreviewZipDrop }}" style="margin-top:14px;max-width:640px;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:14px;border:2px dashed rgba(61,42,27,0.25);background:#FBEFDD;cursor:pointer;">
+                  <input type="file" accept=".zip,application/zip,application/x-zip-compressed" onChange="{{ onPreviewZipFileSelected }}" style="display:none;">
+                  <sc-if value="{{ !previewZipUploading }}" hint-placeholder-val="{{ true }}">
+                    <span style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">Oppure carica un file .zip con le 4 immagini: verranno posizionate automaticamente nelle caselle qui sopra</span>
+                  </sc-if>
+                  <sc-if value="{{ previewZipUploading }}" hint-placeholder-val="{{ false }}">
+                    <span style="font:700 12.5px 'Nunito',sans-serif;color:#6B4A30;">Estrazione e caricamento delle immagini in corso...</span>
+                  </sc-if>
+                </label>
+                <sc-if value="{{ previewZipUploadError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font:600 11.5px/1.4 'Nunito',sans-serif;color:#C0402C;max-width:560px;margin-top:8px;">Caricamento ZIP non riuscito: {{ previewZipUploadErrorMessage }}</div>
+                </sc-if>
               </div>
 
               <button onClick="{{ onSaveProduct }}" style="padding:14px 28px;border-radius:999px;border:none;background:#3D2A1B;color:#FFFCF7;font:700 14px 'Baloo 2',sans-serif;cursor:pointer;">{{ saveLabel }}</button>
@@ -1042,6 +1055,9 @@ class Component extends DCLogic {
     imageUploadErrorMessage: '',
     previewImageUploading: [false, false, false, false],
     previewImageUploadError: [false, false, false, false],
+    previewZipUploading: false,
+    previewZipUploadError: false,
+    previewZipUploadErrorMessage: '',
     layoutBlocks: [],
     selectedBlockId: null,
     blockDraft: null,
@@ -1282,7 +1298,10 @@ class Component extends DCLogic {
       imageUploadError: false,
       imageUploadErrorMessage: '',
       previewImageUploading: [false, false, false, false],
-      previewImageUploadError: [false, false, false, false]
+      previewImageUploadError: [false, false, false, false],
+      previewZipUploading: false,
+      previewZipUploadError: false,
+      previewZipUploadErrorMessage: ''
     });
   };
 
@@ -1380,6 +1399,36 @@ class Component extends DCLogic {
       images[index] = null;
       return { draft: Object.assign({}, s.draft, { previewImages: images }) };
     });
+  };
+
+  // ---- Caricamento di tutte e 4 le anteprime in un colpo solo da un file .zip ----
+  uploadPreviewZip(file) {
+    if (!file || !this.dataApi) return;
+    this.setState({ previewZipUploading: true, previewZipUploadError: false, previewZipUploadErrorMessage: '' });
+    this.dataApi.uploadProductPreviewZip(file)
+      .then((imageUrls) => {
+        // Lo ZIP sostituisce tutte e 4 le caselle: quelle senza un'immagine
+        // corrispondente nello zip restano vuote, così il risultato riflette
+        // esattamente il contenuto dell'archivio appena caricato.
+        const images = [0, 1, 2, 3].map(i => imageUrls[i] || null);
+        this.setState(s => ({ draft: Object.assign({}, s.draft, { previewImages: images }) }));
+      })
+      .catch((e) => {
+        console.error('[Admin] uploadProductPreviewZip', e);
+        this.setState({ previewZipUploadError: true, previewZipUploadErrorMessage: (e && e.message) || 'errore sconosciuto' });
+      })
+      .finally(() => this.setState({ previewZipUploading: false }));
+  }
+  onPreviewZipDragOver = (e) => { e.preventDefault(); };
+  onPreviewZipDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    this.uploadPreviewZip(file);
+  };
+  onPreviewZipFileSelected = (e) => {
+    const file = e.target.files && e.target.files[0];
+    this.uploadPreviewZip(file);
+    e.target.value = '';
   };
 
   onProductSearchChange = (e) => this.setState({ productSearch: e.target.value });
@@ -2020,7 +2069,13 @@ class Component extends DCLogic {
       draftImageDataUrl: draft.imageDataUrl,
       draftAmazonUrl: draft.amazonUrl || '',
       previewSlots,
-      previewSectionNote: 'Fino a 4 immagini (es. pagine interne del libro) mostrate in una sezione "Anteprima" sulla pagina prodotto. Lascia vuote le caselle che non vuoi usare.',
+      previewSectionNote: 'Fino a 4 immagini (es. pagine interne del libro) mostrate in una sezione "Anteprima" sulla pagina prodotto. Lascia vuote le caselle che non vuoi usare, oppure carica tutte e 4 in un colpo solo con uno ZIP qui sotto.',
+      onPreviewZipDragOver: this.onPreviewZipDragOver,
+      onPreviewZipDrop: this.onPreviewZipDrop,
+      onPreviewZipFileSelected: this.onPreviewZipFileSelected,
+      previewZipUploading: this.state.previewZipUploading,
+      previewZipUploadError: this.state.previewZipUploadError,
+      previewZipUploadErrorMessage: this.state.previewZipUploadErrorMessage,
       onTitleItChange: this.onTitleItChange, onTitleEnChange: this.onTitleEnChange,
       onTaglineItChange: this.onTaglineItChange, onTaglineEnChange: this.onTaglineEnChange,
       onDescItChange: this.onDescItChange, onDescEnChange: this.onDescEnChange,
