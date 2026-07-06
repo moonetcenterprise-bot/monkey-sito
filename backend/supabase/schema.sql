@@ -31,6 +31,11 @@ create table if not exists public.products (
   tagline_en      text not null default '',
   description_it  text not null default '',
   description_en  text not null default '',
+  -- Formato del libro (es. "5.5 x 5.5 in, softcover"), inserito manualmente
+  -- dall'admin per ogni prodotto. Se vuoto, il front end mostra un valore
+  -- generico di fallback.
+  format_it       text not null default '',
+  format_en       text not null default '',
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );

@@ -231,6 +231,25 @@
                     <option value="sale">Offerta</option>
                   </select>
                 </div>
+                <div style="display:flex;gap:12px;">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Pagine</label>
+                    <input value="{{ draftPages }}" onChange="{{ onPagesChange }}" type="number" step="1" min="0" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                    <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Età consigliata</label>
+                    <input value="{{ draftAge }}" onChange="{{ onAgeChange }}" type="text" placeholder="es. 4-8" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Formato (IT) — dimensioni in pollici</label>
+                  <input value="{{ draftFormatIt }}" onChange="{{ onFormatItChange }}" type="text" placeholder="es. 8,5 x 8,5 in, copertina morbida" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                  <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Formato (EN)</label>
+                  <input value="{{ draftFormatEn }}" onChange="{{ onFormatEnChange }}" type="text" placeholder="e.g. 8.5 x 8.5 in, softcover" style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
+                  <div style="font:500 11px 'Nunito',sans-serif;color:#8B6749;">Se lasci vuoti i campi Formato, il sito mostra un valore generico predefinito.</div>
+                </div>
                 <div style="display:flex;flex-direction:column;gap:6px;">
                   <label style="font:700 12px 'Nunito',sans-serif;color:#6B4A30;">Link Amazon (opzionale)</label>
                   <input value="{{ draftAmazonUrl }}" onChange="{{ onAmazonUrlChange }}" type="text" placeholder="https://www.amazon.it/dp/..." style="padding:11px 14px;border-radius:12px;border:1.5px solid rgba(61,42,27,0.15);font:500 14px 'Nunito',sans-serif;outline:none;">
@@ -1016,6 +1035,7 @@ function blankProduct() {
   return {
     id: null, slug: '', category: 'kids', price: 0, badge: '',
     title: { it: '', en: '' }, tagline: { it: '', en: '' }, description: { it: '', en: '' },
+    format: { it: '', en: '' }, pages: '', age: '',
     imageDataUrl: null, amazonUrl: null, previewImages: [null, null, null, null]
   };
 }
@@ -1291,7 +1311,8 @@ class Component extends DCLogic {
         // Sempre esattamente 4 slot (null dove non c'è ancora un'immagine),
         // così il pannello di modifica può mostrare 4 caselle fisse.
         previewImages: [0, 1, 2, 3].map(i => (p.previewImages && p.previewImages[i]) || null),
-        order: p.order, rating: p.rating, reviewsCount: p.reviewsCount, pages: p.pages, age: p.age, oldPrice: p.oldPrice
+        format: Object.assign({ it: '', en: '' }, p.format),
+        order: p.order, rating: p.rating, reviewsCount: p.reviewsCount, pages: p.pages || '', age: p.age || '', oldPrice: p.oldPrice
       },
       saveFlash: false,
       imageUploading: false,
@@ -1327,6 +1348,10 @@ class Component extends DCLogic {
   onOrderChange = (e) => this.updateDraft({ order: parseInt(e.target.value, 10) || 0 });
   onBadgeChange = (e) => this.updateDraft({ badge: e.target.value || null });
   onAmazonUrlChange = (e) => this.updateDraft({ amazonUrl: e.target.value || null });
+  onFormatItChange = (e) => this.updateDraftNested('format', 'it', e.target.value);
+  onFormatEnChange = (e) => this.updateDraftNested('format', 'en', e.target.value);
+  onPagesChange = (e) => this.updateDraft({ pages: e.target.value === '' ? '' : (parseInt(e.target.value, 10) || 0) });
+  onAgeChange = (e) => this.updateDraft({ age: e.target.value });
 
   uploadImage(file) {
     if (!file || !this.dataApi) return;
@@ -1438,7 +1463,12 @@ class Component extends DCLogic {
 
   onSaveProduct = () => {
     if (!this.dataApi) return;
-    this.dataApi.saveProduct(this.state.draft).then(products => {
+    // "pages" è un numero lato server: se il campo è stato lasciato vuoto
+    // durante la modifica, lo omettiamo invece di mandare una stringa vuota
+    // (che lo schema rifiuterebbe come numero non valido).
+    const payload = Object.assign({}, this.state.draft);
+    if (payload.pages === '') delete payload.pages;
+    this.dataApi.saveProduct(payload).then(products => {
       this.setState({ products, saveFlash: true });
       clearTimeout(this._flashTimer);
       this._flashTimer = setTimeout(() => this.setState({ saveFlash: false }), 1600);
@@ -2068,6 +2098,11 @@ class Component extends DCLogic {
       draftOrder: draft.order || 0,
       draftImageDataUrl: draft.imageDataUrl,
       draftAmazonUrl: draft.amazonUrl || '',
+      draftFormatIt: draft.format.it, draftFormatEn: draft.format.en,
+      onFormatItChange: this.onFormatItChange, onFormatEnChange: this.onFormatEnChange,
+      draftPages: draft.pages === '' ? '' : draft.pages,
+      draftAge: draft.age || '',
+      onPagesChange: this.onPagesChange, onAgeChange: this.onAgeChange,
       previewSlots,
       previewSectionNote: 'Fino a 4 immagini (es. pagine interne del libro) mostrate in una sezione "Anteprima" sulla pagina prodotto. Lascia vuote le caselle che non vuoi usare, oppure carica tutte e 4 in un colpo solo con uno ZIP qui sotto.',
       onPreviewZipDragOver: this.onPreviewZipDragOver,

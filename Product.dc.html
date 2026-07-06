@@ -745,7 +745,9 @@ class Component extends DCLogic {
       reviewsCount: raw.reviewsCount || 0,
       pages: raw.pages,
       age: raw.age,
-      format: lang === 'it' ? '21 × 21 cm, copertina morbida' : '21 × 21 cm, softcover',
+      format: (raw.format && raw.format[lang] && raw.format[lang].trim())
+        ? raw.format[lang]
+        : (lang === 'it' ? '21 × 21 cm, copertina morbida' : '21 × 21 cm, softcover'),
       catLabel: catLabelMap[raw.category],
       catGlyphStyle: CAT_GLYPH[raw.category],
       badgeLabel: (showBadges && badgeStyle) ? t.badges[raw.badge] : null,

@@ -35,7 +35,11 @@ function toApi(row) {
     amazonUrl: row.amazon_url || null,
     title: { it: row.title_it, en: row.title_en },
     tagline: { it: row.tagline_it, en: row.tagline_en },
-    description: { it: row.description_it, en: row.description_en }
+    description: { it: row.description_it, en: row.description_en },
+    // Formato/dimensioni del libro, testo libero inserito dall'admin. Se
+    // entrambe le lingue sono vuote, il front end mostra un valore di
+    // fallback generico invece di una riga vuota.
+    format: { it: row.format_it || '', en: row.format_en || '' }
   };
 }
 
@@ -65,6 +69,10 @@ function toRow(product) {
   if (product.description !== undefined) {
     if (product.description.it !== undefined) row.description_it = product.description.it;
     if (product.description.en !== undefined) row.description_en = product.description.en;
+  }
+  if (product.format !== undefined) {
+    if (product.format.it !== undefined) row.format_it = product.format.it;
+    if (product.format.en !== undefined) row.format_en = product.format.en;
   }
   return row;
 }
