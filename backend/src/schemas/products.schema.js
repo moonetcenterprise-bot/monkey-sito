@@ -12,8 +12,15 @@ const productBase = {
   oldPrice: z.number().nonnegative().nullable().optional(),
   pages: z.number().int().positive().optional(),
   age: z.string().optional(),
-  rating: z.number().min(0).max(5).optional(),
-  reviewsCount: z.number().int().nonnegative().optional(),
+  // rating/reviewsCount sono calcolati automaticamente dalle recensioni
+  // approvate (vedi products.model.js -> applyReviewStats) e valgono null
+  // quando il prodotto non ha ancora recensioni. L'admin li rimanda indietro
+  // invariati insieme al resto del prodotto ad ogni salvataggio (es. dopo
+  // aver caricato un'immagine): lo schema deve quindi accettare null e non
+  // solo "assente", altrimenti il salvataggio fallisce con "Dati non validi"
+  // per qualunque prodotto privo di recensioni.
+  rating: z.number().min(0).max(5).nullable().optional(),
+  reviewsCount: z.number().int().nonnegative().nullable().optional(),
   badge: z.string().nullable().optional(),
   order: z.number().int().nonnegative().optional(),
   imageDataUrl: z.string().nullable().optional(),
