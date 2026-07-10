@@ -28,27 +28,78 @@ function writeJSON(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
 }
 
+// Il backend e ospitato su un piano gratuito (Render) che mette in PAUSA il
+// server dopo un periodo di inattivita. La prima richiesta di un visitatore
+// "a freddo" puo quindi fallire con un errore di rete oppure ricevere un
+// 502/503/504 dal proxy mentre il server si riavvia (cold start, anche
+// 30-50 secondi). Senza ritentare, il catalogo resterebbe vuoto e il sito
+// mostrerebbe i riquadri segnaposto al posto delle copertine dei libri e
+// degli altri blocchi - proprio il bug per cui "le immagini non compaiono
+// senza login" (chi fa login sveglia il backend, e da quel momento tutto si
+// carica). Ritentiamo automaticamente le sole letture pubbliche (GET), che
+// sono idempotenti, finche il server non risponde: cosi le immagini si
+// vedono anche senza accesso.
+const COLD_START_STATUSES = new Set([502, 503, 504]);
+// Ritardi crescenti tra i tentativi (ms): coprono ~30s complessivi, di norma
+// sufficienti a far ripartire un'istanza Render addormentata.
+const RETRY_DELAYS_MS = [1000, 2000, 4000, 6000, 8000, 10000];
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function apiFetch(path, { method = 'GET', body, token, isForm = false } = {}) {
   const headers = {};
   if (!isForm) headers['Content-Type'] = 'application/json';
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const options = {
     method,
     headers,
     body: body === undefined ? undefined : (isForm ? body : JSON.stringify(body))
-  });
+  };
 
-  if (res.status === 204) return null;
+  // Ritentiamo solo le GET: sono idempotenti, quindi ripeterle e sicuro. Le
+  // scritture (POST/PUT/DELETE) NON vengono ritentate qui per non rischiare
+  // effetti doppi (es. iscrizioni o messaggi duplicati) se la richiesta ha
+  // in realta raggiunto il server.
+  const retryable = method === 'GET';
+  const maxAttempts = retryable ? RETRY_DELAYS_MS.length + 1 : 1;
 
-  let payload = null;
-  try { payload = await res.json(); } catch (e) { /* risposta vuota */ }
+  let lastNetworkError = null;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    let res;
+    try {
+      res = await fetch(`${API_BASE_URL}${path}`, options);
+    } catch (networkError) {
+      // fetch ha lanciato: server irraggiungibile o in fase di riavvio.
+      lastNetworkError = networkError;
+      if (attempt < maxAttempts - 1) {
+        await delay(RETRY_DELAYS_MS[attempt]);
+        continue;
+      }
+      throw networkError;
+    }
 
-  if (!res.ok) {
-    const message = (payload && payload.error) || `Richiesta fallita (${res.status})`;
-    throw new Error(message);
+    // Il server sta ancora ripartendo: riprova invece di arrendersi.
+    if (COLD_START_STATUSES.has(res.status) && attempt < maxAttempts - 1) {
+      await delay(RETRY_DELAYS_MS[attempt]);
+      continue;
+    }
+
+    if (res.status === 204) return null;
+
+    let payload = null;
+    try { payload = await res.json(); } catch (e) { /* risposta vuota */ }
+
+    if (!res.ok) {
+      const message = (payload && payload.error) || `Richiesta fallita (${res.status})`;
+      throw new Error(message);
+    }
+    return payload;
   }
-  return payload;
+
+  throw lastNetworkError || new Error('Richiesta fallita dopo vari tentativi');
 }
 
 function getSession() {
