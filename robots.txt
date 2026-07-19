@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /Admin.dc.html
+Disallow: /ResetPassword.dc.html
+Disallow: /Account.dc.html
+Disallow: /Favorites.dc.html
